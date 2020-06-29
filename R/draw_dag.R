@@ -18,15 +18,20 @@ plot_dagtex <- function(.dag, density = 320, ...) {
 
   tikz_opts <- '\\usetikzlibrary{positioning, calc, shapes.geometric,
   shapes.multipart, shapes, arrows.meta, arrows, decorations.markings,
-  external, trees}'
+  external, trees, decorations.pathmorphing, positioning, shapes.swigs}'
 
-  pkg_opts <- texPreview::build_usepackage(pkg = 'tikz', uselibrary = tikz_opts)
+  pkg_opts <- c(texPreview::build_usepackage(
+    pkg = c("amsmath", "amssymb", "xcolor", "pgf")),
+    texPreview::build_usepackage(pkg = 'tikz', uselibrary = tikz_opts))
+
 
   if (is_knit_image) {
     return(
       texPreview::tex_preview(
         latex_code,
         usrPackages = pkg_opts,
+        fileDir = system.file("tex", package = "dagtex"),
+        cleanup = c("aux", "log", "txt", "Doc", "png", "tex"),
         density = density,
         resizebox = FALSE,
         returnType = "html",
@@ -38,6 +43,8 @@ plot_dagtex <- function(.dag, density = 320, ...) {
     latex_code,
     usrPackages = pkg_opts,
     density = density,
+    fileDir = system.file("tex", package = "dagtex"),
+    cleanup = c("aux", "log", "txt", "Doc", "png", "tex"),
     ...)
 }
 
@@ -133,12 +140,22 @@ get_latex_code <- function(.dag, add_header = TRUE) {
 
   latex_code <- tikz_picture(latexify_dag(.dag))
 
-  if (add_header) {
+  if (add_header & !(any_swig_nodes(.dag))) {
     tikz_opts <- '\\usetikzlibrary{positioning, calc, shapes.geometric,
     shapes.multipart, shapes, arrows.meta, arrows, decorations.markings,
     external, trees}'
 
     pkg_opts <- texPreview::build_usepackage(pkg = 'tikz', uselibrary = tikz_opts)
+    latex_code <- paste(c(pkg_opts, latex_code), collapse = "\n")
+  }
+
+  if (add_header & any_swig_nodes(.dag)) {
+    tikz_opts <- '\\usetikzlibrary{positioning, calc, shapes.geometric,
+    shapes.multipart, shapes, arrows.meta, arrows, decorations.markings,
+    external, trees, decorations.pathmorphing, positioning, shapes.swigs}'
+
+    pkg_opts <- texPreview::build_usepackage(pkg = c("amsmath", "amssymb", "xcolor", "pgf", 'tikz'),
+                                             uselibrary = tikz_opts)
     latex_code <- paste(c(pkg_opts, latex_code), collapse = "\n")
   }
 
@@ -150,10 +167,10 @@ print.latex_code <- function(x, ...) {
 }
 
 latexify_dag <- function(.dag) {
-  if (any_swig_nodes(.dag)) {}
-  nodes_latex <- purrr::map_chr(.dag$nodes, latexify_node)
+  # if (any_swig_nodes(.dag)) {}
+  nodes_latex <- purrr::map(.dag$nodes, latexify_node)
   edges_latex <- purrr::map_chr(.dag$edges, latexify_edge)
-  nodes_and_edges <- c(nodes_latex, edges_latex)
+  nodes_and_edges <- c(unlist(nodes_latex), edges_latex)
 
   paste(nodes_and_edges, collapse = "\n")
 }
@@ -191,17 +208,14 @@ compile_node_options <- function(.node) {
 
 latexify_swig <- function(.node) {
 
-  node_options <- paste0("[", .node$options, "]")
-  if (node_options == "[]") node_options <- ""
-  node_id <- paste0("(", .node$id, ")")
-  node_text <- paste0("{", .node$name, "}")
-
+  main_part <- paste0("\\node[name=",.node$id, ",shape=swig vsplit,", .node$options, "]{")
+  left_part <- paste0("\\nodepart{left}{", .node$name[1], "}")
+  right_part <- paste0("\\nodepart{right}{", .node$name[2], "}}")
 
   paste(
-    "\\node",
-    node_options,
-    node_id,
-    node_text,
+    main_part,
+    left_part,
+    right_part,
     ";"
   )
 }

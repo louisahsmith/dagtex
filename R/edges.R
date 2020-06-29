@@ -29,6 +29,8 @@ add_edge <- function(.dag, .from, .to, start_position = NULL, end_position = NUL
   if (is.character(.from)) .from <- get_id(.dag, .from)
   if (is.character(.to)) .to <- get_id(.dag, .to)
 
+  if (any(length(c(.from, .to)) < 1)) stop("Can't find node to add edge; check names")
+
   add_edge_to_dag(
     .dag = .dag,
     .id = id,
@@ -105,8 +107,10 @@ process_position <- function(target, position) {
 }
 
 get_id <- function(.dag, .var) {
-   node_names <- purrr::map_chr(.dag$nodes, "name")
+   node_names <- unlist(purrr::map(.dag$nodes, "name"))
+   swig_nodes <- purrr::map_lgl(.dag$nodes, "is_swig")
    node_ids <- purrr::map_dbl(.dag$nodes, "id")
+   node_ids <- unlist(purrr::map2(node_ids, swig_nodes, ~rep(.x, ifelse(.y, 2, 1))))
    node_index <- which(node_names == .var)
    node_ids[node_index]
 }
