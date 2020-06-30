@@ -8,6 +8,8 @@
 #' @param .options
 #' @param is_curved
 #' @param curve
+#' @param curve_in_degree
+#' @param curve_out_degree
 #' @param is_double_arrow
 #' @param linetype
 #' @param annotate
@@ -20,8 +22,9 @@
 #'
 #' @rdname add_edges
 add_edge <- function(.dag, .from, .to, start_position = NULL, end_position = NULL,
-                     .options = NULL, is_curved = FALSE, curve = "up",
-                     is_double_arrow = FALSE, linetype = "solid",
+                     .options = NULL, curve = NULL, is_curved = !is.null(curve),
+                     curve_in_degree = NULL, curve_out_degree = NULL,
+                     is_double_arrow = FALSE,
                      annotate = NULL, ...) {
 
   id <- count_edges(.dag) + 1
@@ -41,28 +44,33 @@ add_edge <- function(.dag, .from, .to, start_position = NULL, end_position = NUL
     .options = .options,
     is_curved = is_curved,
     curve =  curve,
+    curve_in_degree = curve_in_degree,
+    curve_out_degree = curve_out_degree,
     is_double_arrow = is_double_arrow,
-    linetype = linetype,
     annotate = annotate
   )
 }
 
 #' @export
-#' @rdname add_nodes
+#' @rdname add_edges
 add_curved_edge <- function(.dag, .from, .to, start_position = NULL, end_position = NULL,
-                     .options = NULL, curve = "up",
-                     is_double_arrow = FALSE, linetype = "solid",
+                     .options = NULL, curve = "up", curve_in_degree = NULL,
+                     curve_out_degree = NULL, is_double_arrow = FALSE, linetype = "solid",
                      annotate = NULL, ...) {
   add_edge(.dag = .dag, .from = .from, .to = .to, start_position = start_position,
            end_position = end_position, .options = .options, is_curved = TRUE,
-           curve = curve, is_double_arrow = is_double_arrow, linetype = linetype,
+           curve = curve, curve_in_degree = curve_in_degree,
+    curve_out_degree = curve_out_degree, is_double_arrow = is_double_arrow, linetype = linetype,
            annotate = annotate, ...)
 }
 
 add_edge_to_dag <- function(.dag, .id, .from, .to, start_position = NULL,
                             end_position = NULL, .options = NULL, is_curved = FALSE,
-                            curve = "up", is_double_arrow = FALSE, linetype = "solid",
-                            annotate = NULL) {
+                            curve = "up",
+                            curve_in_degree = NULL,
+                            curve_out_degree = NULL,
+                            is_double_arrow = FALSE, linetype = "solid",
+                            color = "black", annotate = NULL) {
 
   .from <- process_position(.from, start_position)
   .to <- process_position(.to, end_position)
@@ -75,6 +83,8 @@ add_edge_to_dag <- function(.dag, .id, .from, .to, start_position = NULL,
       to = .to,
       is_curved = is_curved,
       curve =  curve,
+      curve_in_degree = curve_in_degree,
+      curve_out_degree = curve_out_degree,
       options = .options,
       linetype = linetype,
       is_double_arrow = is_double_arrow,
@@ -91,7 +101,7 @@ add_edge_to_dag <- function(.dag, .id, .from, .to, start_position = NULL,
 
 
 #' @export
-#' @rdname add_nodes
+#' @rdname add_edges
 annotate_edge <- function(text, placement = "midway", position = "above") {
   paste0("node[", placement, ", ", position, "]{", text, "}")
 }

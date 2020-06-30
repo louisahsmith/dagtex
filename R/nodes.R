@@ -21,7 +21,7 @@
 #' @rdname add_nodes
 add_node <- function(.dag, .name, .options = NULL, x = NULL, y = NULL,
                      right_of = NULL, left_of = NULL,
-                     above = NULL, below = NULL, shape = NULL, is_swig = FALSE,
+                     above = NULL, below = NULL, is_swig = FALSE,
                      ...) {
 
   id <- count_nodes(.dag) + 1
@@ -49,6 +49,7 @@ add_node <- function(.dag, .name, .options = NULL, x = NULL, y = NULL,
     .position = position,
     .options = .options,
     shape = shape,
+    color = color,
     is_swig = is_swig
   )
 }
@@ -68,7 +69,8 @@ any_swig_nodes <- function(.dag) {
   any(purrr::map_lgl(.dag$nodes, ~.x$is_swig))
 }
 
-add_node_to_dag <- function(.dag, .name, .id, .coords, .position, .options, shape = NULL, is_swig = FALSE) {
+add_node_to_dag <- function(.dag, .name, .id, .coords, .position, .options, shape = NULL, color = NULL, is_swig = FALSE) {
+
   node <- structure(
     list(
       name = .name,
@@ -76,6 +78,7 @@ add_node_to_dag <- function(.dag, .name, .id, .coords, .position, .options, shap
       coords = .coords,
       position = .position,
       shape = shape,
+      color = color,
       is_swig = is_swig,
       options = .options
     ),
@@ -112,7 +115,7 @@ get_node_position <- function(.dag, .id, coords, right_of = NULL,
 
   # by default, place to the right of previous node
   next_to <- .id - 1
-  position <- paste("right =of", next_to)
+  position <- paste("right =of", next_to, ",")
 
   position
 }

@@ -20,9 +20,8 @@ plot_dagtex <- function(.dag, density = 320, ...) {
   shapes.multipart, shapes, arrows.meta, arrows, decorations.markings,
   external, trees, decorations.pathmorphing, positioning, shapes.swigs}'
 
-  pkg_opts <- c(texPreview::build_usepackage(
-    pkg = c("amsmath", "amssymb", "xcolor", "pgf")),
-    texPreview::build_usepackage(pkg = 'tikz', uselibrary = tikz_opts))
+  pkg_opts <- texPreview::build_usepackage(pkg = c('pgf', 'tikz'),
+                                           uselibrary = tikz_opts)
 
 
   if (is_knit_image) {
@@ -117,7 +116,7 @@ tikz_picture <- function(..., scale = NULL, scale_x = NULL, scale_y = NULL) {
   paste(
     c(
       begin_tikzpicture,
-      "\\tikzset{>=latex}",
+      "\\tikzset{>=stealth}",
       "\\tikzstyle{Arrow} = [->, thick, preaction = {decorate}]",
       "\\tikzstyle{DoubleArrow} = [<->, thick, preaction = {decorate}]",
       ...,
@@ -149,14 +148,21 @@ get_latex_code <- function(.dag, add_header = TRUE) {
     latex_code <- paste(c(pkg_opts, latex_code), collapse = "\n")
   }
 
-  if (add_header & any_swig_nodes(.dag)) {
+  if (any_swig_nodes(.dag)) {
+    if (add_header) {
     tikz_opts <- '\\usetikzlibrary{positioning, calc, shapes.geometric,
     shapes.multipart, shapes, arrows.meta, arrows, decorations.markings,
     external, trees, decorations.pathmorphing, positioning, shapes.swigs}'
 
-    pkg_opts <- texPreview::build_usepackage(pkg = c("amsmath", "amssymb", "xcolor", "pgf", 'tikz'),
+    pkg_opts <- texPreview::build_usepackage(pkg = c('pgf', 'tikz'),
                                              uselibrary = tikz_opts)
-    latex_code <- paste(c(pkg_opts, latex_code), collapse = "\n")
+  } else pkg_opts <- NULL
+    if (!is.null(.dag$swig_options)) {
+      swig_opts <- make_tex_opts(.dag$swig_options)
+      swig_opts <- paste0( "\\\\begin{tikzpicture}\\\n\\\\tikzset{swig vsplit={", swig_opts, "}}")
+      latex_code <- sub("\\\\begin\\{tikzpicture\\}", swig_opts, latex_code)
+    }
+  latex_code <- paste(c(pkg_opts, latex_code), collapse = "\n")
   }
 
   structure(latex_code, class = "latex_code")
@@ -168,17 +174,17 @@ print.latex_code <- function(x, ...) {
 
 latexify_dag <- function(.dag) {
   # if (any_swig_nodes(.dag)) {}
-  nodes_latex <- purrr::map(.dag$nodes, latexify_node)
-  edges_latex <- purrr::map_chr(.dag$edges, latexify_edge)
+  nodes_latex <- purrr::map(.dag$nodes, latexify_node, .dag = .dag)
+  edges_latex <- purrr::map_chr(.dag$edges, latexify_edge, .dag = .dag)
   nodes_and_edges <- c(unlist(nodes_latex), edges_latex)
 
   paste(nodes_and_edges, collapse = "\n")
 }
 
-latexify_node <- function(.node) {
-  if (.node$is_swig) return(latexify_swig(.node))
+latexify_node <- function(.node, .dag) {
+  if (.node$is_swig) return(latexify_swig(.node, .dag = .dag))
 
-  node_options <- compile_node_options(.node)
+  node_options <- compile_node_options(.node, .dag = .dag)
   node_id <- paste0("(", .node$id, ") ")
   node_text <- paste0("{", .node$name, "}")
 
@@ -192,23 +198,41 @@ latexify_node <- function(.node) {
   )
 }
 
-compile_node_options <- function(.node) {
-  shape <- ifelse(
-    .node$shape != "",
-    paste0(.node$shape, ", draw"),
-    ""
-  )
+make_tex_opts <- function(opts) {
+  new_names <- gsub("\\_", " ", names(opts))
+  new_names <- gsub("linetype", "", new_names)
+  if (length(new_names) < 1) new_names <- ""
+  args <- purrr::map2_chr(new_names, opts, ~paste(.x, .y, sep = "="))
+  args <- gsub("\\,\\s*\\=", ",", paste(args, collapse = ","))
+  args <- sub("^\\=", "", args)
+}
 
-  compiled_options <- paste0(shape, .node$position, .node$options, collapse = ", ")
+compile_node_options <- function(.node, .dag) {
+
+  all_opts <- .dag$node_options
+
+  poss_opts <- .node$options
+
+  draw <- any(c("rectangle", "circle", "ellipse", "circle split",
+            "forbidden sign", "diamond", "cross out", "strike out",
+            "regular polygon", "star") %in% c(all_opts, poss_opts))
+
+  compiled_options <- paste0(ifelse(draw, "draw,", ""),
+                                    .node$position, ",",
+                             make_tex_opts(all_opts), ", ",
+                             make_tex_opts(poss_opts))
 
   node_options <- paste0("[", compiled_options, "] ")
-  if (node_options == "[] ") node_options <- NULL
+  if (node_options == "[draw, ] ") node_options <- NULL
   node_options
 }
 
-latexify_swig <- function(.node) {
+latexify_swig <- function(.node, .dag) {
 
-  main_part <- paste0("\\node[name=",.node$id, ",shape=swig vsplit,", .node$options, "]{")
+  poss_opts <- .node$options
+  main_part <- paste0("\\node[name=",.node$id, ",", .node$position,
+                      ", shape=swig vsplit",
+                      make_tex_opts(poss_opts), "]{")
   left_part <- paste0("\\nodepart{left}{", .node$name[1], "}")
   right_part <- paste0("\\nodepart{right}{", .node$name[2], "}}")
 
@@ -220,24 +244,29 @@ latexify_swig <- function(.node) {
   )
 }
 
-latexify_edge <- function(.edge) {
+latexify_edge <- function(.edge, .dag) {
 
   edge_from <- paste0(" (", .edge$from, ") ")
   edge_to <- paste0("(", .edge$to, ")")
-  edge_options <- compile_edge_options(.edge)
+  edge_options <- compile_edge_options(.edge, .dag)
 
-  if (.edge$is_curved) {
+  curve_in <- ifelse(!is.null(.edge$curve_in_degree),
+                     .edge$curve_in_degree,
+                     ifelse(.edge$is_curved & .edge$curve == "up", 160,
+                            ifelse(.edge$is_curved, -160, NA)))
+
+  curve_out <- ifelse(!is.null(.edge$curve_out_degree),
+                     .edge$curve_out_degree,
+                     ifelse(.edge$is_curved & .edge$curve == "up", 25,
+                            ifelse(.edge$is_curved, -25, NA)))
+
+  if (!is.na(curve_in) & !is.na(curve_out)) {
     line_code <- "to "
-    line_curve <- ifelse(
-      .edge$curve == "up",
-      "[out=25, in=160] ",
-      "[out=-25, in=-160] "
-    )
+    line_curve <- paste0("[out=", curve_out, ", in=", curve_in, "]")
   } else {
     line_code <- "-- "
     line_curve <- NULL
   }
-
 
   paste0(
     "\\draw",
@@ -251,16 +280,17 @@ latexify_edge <- function(.edge) {
   )
 }
 
-compile_edge_options <- function(.edge) {
-  linetype <- ifelse(
-    .edge$linetype != "solid",
-    .edge$linetype,
-    ""
-  )
+compile_edge_options <- function(.edge, .dag) {
 
   arrow_type <- ifelse(.edge$is_double_arrow, "DoubleArrow", "Arrow")
 
-  compiled_options <- paste0(arrow_type, linetype, .edge$options, collapse = ", ")
+  all_opts <- .dag$edge_options
+
+  poss_opts <- .edge$options
+
+  compiled_options <- paste0(arrow_type, ",",
+                             make_tex_opts(all_opts), ", ",
+                             make_tex_opts(poss_opts))
 
   edge_options <- paste0("[", compiled_options, "]")
   edge_options
