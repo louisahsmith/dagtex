@@ -2,6 +2,7 @@
 % Please edit documentation in R/edges.R
 \name{add_edge}
 \alias{add_edge}
+\alias{add_edges}
 \alias{add_curved_edge}
 \alias{annotate_edge}
 \title{Add edges}
@@ -22,6 +23,16 @@ add_edge(
   ...
 )
 
+add_edges(
+  .dag,
+  .from,
+  .to,
+  .options = NULL,
+  is_curved = TRUE,
+  start_curve = "up",
+  ...
+)
+
 add_curved_edge(
   .dag,
   .from,
@@ -33,7 +44,6 @@ add_curved_edge(
   curve_in_degree = NULL,
   curve_out_degree = NULL,
   is_double_arrow = FALSE,
-  linetype = "solid",
   annotate = NULL,
   ...
 )
@@ -51,4 +61,12 @@ Add edges
 }
 \examples{
 
+dagtex(.node_options = list(shape = "circle")) \%>\%
+ add_node("$A_0$") \%>\%
+ add_node("$L_1$") \%>\%
+ add_node("$A_1$") \%>\%
+ add_node("$Y$") \%>\%
+ add_edges(.from = "$A_0$", .to = c("$L_1$","$A_1$", "$Y$")) \%>\%
+ add_edges(.from = "$L_1$", .to = c("$A_1$", "$Y$")) \%>\%
+ add_edge(.from = "$A_1$", .to = "$Y$")
 }

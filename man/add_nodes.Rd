@@ -2,6 +2,7 @@
 % Please edit documentation in R/nodes.R
 \name{add_node}
 \alias{add_node}
+\alias{add_nodes}
 \alias{add_swig_node}
 \title{Add nodes}
 \usage{
@@ -18,6 +19,8 @@ add_node(
   is_swig = FALSE,
   ...
 )
+
+add_nodes(.dag, .names, .options = NULL, ...)
 
 add_swig_node(
   .dag,
@@ -44,4 +47,10 @@ Add nodes
 }
 \examples{
 
+dagtex(.node_options = list(shape = "ellipse"),
+       .swig_options = list(gap = "3pt", line_color_right = "red")) \%>\%
+ add_nodes(list(c("$A_0$", "$a_0$"), "$L_1$", c("$A_1$", "$a_1$"), "$Y$")) \%>\%
+ add_edges(.from = "$a_0$", .to = c("$L_1$","$A_1$", "$Y$")) \%>\%
+ add_edges(.from = "$L_1$", .to = c("$A_1$", "$Y$")) \%>\%
+ add_edge(.from = "$a_1$", .to = "$Y$")
 }

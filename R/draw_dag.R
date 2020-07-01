@@ -37,7 +37,7 @@ plot_dagtex <- function(.dag, density = 320, ...) {
 #' @param x
 #' @param ...
 #' @export
-knit_print.dagtex <- function(x, density = 320,
+knit_print.dagtex <- function(x, density = knitr::opts_current$get("density"),
                               fig.path = knitr::opts_current$get("fig.path"),
                               ...) {
 
@@ -46,6 +46,7 @@ knit_print.dagtex <- function(x, density = 320,
   if (knitr::is_latex_output()) return(knitr::asis_output(latex_code))
 
   if (is.null(fig.path)) fig.path <- "tikz"
+  if (is.null(density)) density <- 360
 
   if (!dir.exists(fig.path)) dir.create(fig.path, recursive = TRUE)
 
