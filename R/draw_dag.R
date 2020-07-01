@@ -12,31 +12,15 @@ plot_dagtex <- function(.dag, density = 320, ...) {
 
   latex_code <- get_latex_code(.dag, add_header = FALSE)
 
-  if (knitr::is_latex_output()) return(knitr::asis_output(latex_code))
-
-  is_knit_image <- isTRUE(getOption("knitr.in.progress"))
-
   tikz_opts <- '\\usetikzlibrary{positioning, calc, shapes.geometric,
   shapes.multipart, shapes, arrows.meta, arrows, decorations.markings,
-  external, trees, decorations.pathmorphing, positioning, shapes.swigs}'
+  external, trees, decorations.pathmorphing, positioning'
+  tikz_opts <- ifelse(any_swig_nodes(.dag),
+                      paste0(tikz_opts, ", shapes.swigs}"),
+                      paste0(tikz_opts, "}"))
 
-  pkg_opts <- texPreview::build_usepackage(pkg = c('pgf', 'tikz'),
+  pkg_opts <- texPreview::build_usepackage(pkg = 'tikz',
                                            uselibrary = tikz_opts)
-
-
-  if (is_knit_image) {
-    return(
-      texPreview::tex_preview(
-        latex_code,
-        usrPackages = pkg_opts,
-        fileDir = system.file("tex", package = "dagtex"),
-        cleanup = c("aux", "log", "txt", "Doc", "png", "tex"),
-        density = density,
-        resizebox = FALSE,
-        returnType = "html",
-        ...)
-    )
-  }
 
   texPreview::tex_preview(
     latex_code,
@@ -46,6 +30,47 @@ plot_dagtex <- function(.dag, density = 320, ...) {
     cleanup = c("aux", "log", "txt", "Doc", "png", "tex"),
     ...)
 }
+
+#' Draw DAGs with knitr
+#' @importFrom knitr knit_print
+#'
+#' @param x
+#' @param ...
+#' @export
+knit_print.dagtex <- function(x, density = 320,
+                              fig.path = knitr::opts_current$get("fig.path"),
+                              ...) {
+
+  latex_code <- get_latex_code(x, add_header = FALSE)
+
+  if (knitr::is_latex_output()) return(knitr::asis_output(latex_code))
+
+  if (is.null(fig.path)) fig.path <- "tikz"
+
+  if (!dir.exists(fig.path)) dir.create(fig.path, recursive = TRUE)
+
+  tikz_opts <- '\\usetikzlibrary{positioning, calc, shapes.geometric,
+  shapes.multipart, shapes, arrows.meta, arrows, decorations.markings,
+  external, trees, decorations.pathmorphing, positioning'
+  tikz_opts <- ifelse(any_swig_nodes(x),
+                      paste0(tikz_opts, ", shapes.swigs}"),
+                      paste0(tikz_opts, "}"))
+
+  pkg_opts <- texPreview::build_usepackage(pkg = c('pgf', 'tikz'),
+                                           uselibrary = tikz_opts)
+
+  filename <- texPreview::tex_preview(
+        latex_code,
+        usrPackages = pkg_opts,
+        fileDir = fig.path,
+        density = density,
+        stem = runif(1),
+        cleanup = c("aux", "log", "txt", "Doc", "tex"),
+        returnType = "engine")
+
+  knitr::include_graphics(filename)
+}
+
 
 #' Explicitly draw DAG
 #'
@@ -173,7 +198,7 @@ print.latex_code <- function(x, ...) {
 }
 
 latexify_dag <- function(.dag) {
-  # if (any_swig_nodes(.dag)) {}
+
   nodes_latex <- purrr::map(.dag$nodes, latexify_node, .dag = .dag)
   edges_latex <- purrr::map_chr(.dag$edges, latexify_edge, .dag = .dag)
   nodes_and_edges <- c(unlist(nodes_latex), edges_latex)

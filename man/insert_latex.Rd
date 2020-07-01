@@ -9,6 +9,9 @@ insert_latex(.dag, ...)
 \arguments{
 \item{...}{}
 }
+\value{
+
+}
 \description{
 Insert LaTeX
 }

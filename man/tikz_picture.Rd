@@ -9,6 +9,9 @@ tikz_picture(..., scale = NULL, scale_x = NULL, scale_y = NULL)
 \arguments{
 \item{scale_y}{}
 }
+\value{
+
+}
 \description{
 Create tikz picture
 }

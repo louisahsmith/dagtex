@@ -2,14 +2,49 @@
 % Please edit documentation in R/edges.R
 \name{add_edge}
 \alias{add_edge}
+\alias{add_curved_edge}
+\alias{annotate_edge}
 \title{Add edges}
 \usage{
-add_edge(.dag, .from, .to, start_position = NULL, end_position = NULL,
-  .options = NULL, is_curved = FALSE, curve = "up",
-  is_double_arrow = FALSE, linetype = "solid", annotate = NULL, ...)
+add_edge(
+  .dag,
+  .from,
+  .to,
+  start_position = NULL,
+  end_position = NULL,
+  .options = NULL,
+  curve = NULL,
+  is_curved = !is.null(curve),
+  curve_in_degree = NULL,
+  curve_out_degree = NULL,
+  is_double_arrow = FALSE,
+  annotate = NULL,
+  ...
+)
+
+add_curved_edge(
+  .dag,
+  .from,
+  .to,
+  start_position = NULL,
+  end_position = NULL,
+  .options = NULL,
+  curve = "up",
+  curve_in_degree = NULL,
+  curve_out_degree = NULL,
+  is_double_arrow = FALSE,
+  linetype = "solid",
+  annotate = NULL,
+  ...
+)
+
+annotate_edge(text, placement = "midway", position = "above")
 }
 \arguments{
 \item{...}{}
+}
+\value{
+
 }
 \description{
 Add edges

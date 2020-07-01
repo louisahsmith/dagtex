@@ -9,6 +9,9 @@ plot_dagtex(.dag, density = 320, ...)
 \arguments{
 \item{...}{}
 }
+\value{
+
+}
 \description{
 Plot DAGs
 }

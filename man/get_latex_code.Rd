@@ -9,6 +9,9 @@ get_latex_code(.dag, add_header = TRUE)
 \arguments{
 \item{add_header}{}
 }
+\value{
+
+}
 \description{
 Get LaTeX code
 }
