@@ -9,7 +9,6 @@
 #' @param left_of
 #' @param above
 #' @param below
-#' @param shape
 #' @param is_swig
 #' @param ...
 #'
@@ -48,8 +47,6 @@ add_node <- function(.dag, .name, .options = NULL, x = NULL, y = NULL,
     .coords = coords,
     .position = position,
     .options = .options,
-    shape = shape,
-    color = color,
     is_swig = is_swig
   )
 }
@@ -59,17 +56,17 @@ add_node <- function(.dag, .name, .options = NULL, x = NULL, y = NULL,
 #' @rdname add_nodes
 add_swig_node <- function(.dag, .left, .right, .options = NULL, x = NULL, y = NULL,
                           right_of = NULL, left_of = NULL,
-                          above = NULL, below = NULL, shape = NULL, ...) {
+                          above = NULL, below = NULL, ...) {
   add_node(.dag, .name = c(.left, .right), .options = .options, x = x, y = y,
            right_of = right_of, left_of = left_of,
-           above = above, below = below, shape = shape, is_swig = TRUE, ...)
+           above = above, below = below, is_swig = TRUE, ...)
 }
 
 any_swig_nodes <- function(.dag) {
   any(purrr::map_lgl(.dag$nodes, ~.x$is_swig))
 }
 
-add_node_to_dag <- function(.dag, .name, .id, .coords, .position, .options, shape = NULL, color = NULL, is_swig = FALSE) {
+add_node_to_dag <- function(.dag, .name, .id, .coords, .position, .options, is_swig = FALSE) {
 
   node <- structure(
     list(
@@ -77,8 +74,6 @@ add_node_to_dag <- function(.dag, .name, .id, .coords, .position, .options, shap
       id = .id,
       coords = .coords,
       position = .position,
-      shape = shape,
-      color = color,
       is_swig = is_swig,
       options = .options
     ),
