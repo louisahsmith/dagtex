@@ -12,7 +12,7 @@ dagtex() %>%
   add_edge("x", "y", is_curved = TRUE)
 ```
 
-<img src="man/figures/README-/0.982885225908831.png" width="400px" style="display: block; margin: auto;" />
+<img src="man/figures/README-/0.570640245685354.png" width="400px" style="display: block; margin: auto;" />
 
 ``` r
 
@@ -33,7 +33,7 @@ dagtex() %>%
   add_edge("u3", "y", start_position = "north", end_position = "south")
 ```
 
-<img src="man/figures/README-/0.485403407830745.png" width="400px" style="display: block; margin: auto;" />
+<img src="man/figures/README-/0.0237138650845736.png" width="400px" style="display: block; margin: auto;" />
 
 ``` r
 
@@ -52,7 +52,7 @@ dagtex(.node_options = list(shape = "star"),
   add_node("hello", above = 2, .options = list(fill = "yellow"))
 ```
 
-<img src="man/figures/README-/0.0713722733780742.png" width="400px" style="display: block; margin: auto;" />
+<img src="man/figures/README-/0.646546168718487.png" width="400px" style="display: block; margin: auto;" />
 
 ``` r
 
@@ -66,7 +66,7 @@ dagtex(.node_options = list(shape = "circle")) %>%
   add_edge(.from = "$A_1$", .to = "$Y$")
 ```
 
-<img src="man/figures/README-/0.398820945061743.png" width="400px" style="display: block; margin: auto;" />
+<img src="man/figures/README-/0.41264676512219.png" width="400px" style="display: block; margin: auto;" />
 
 ``` r
 
@@ -78,4 +78,4 @@ dagtex(.node_options = list(shape = "ellipse"),
   add_edge(.from = "$a_1$", .to = "$Y$")
 ```
 
-<img src="man/figures/README-/0.56702325027436.png" width="400px" style="display: block; margin: auto;" />
+<img src="man/figures/README-/0.714809488272294.png" width="400px" style="display: block; margin: auto;" />
