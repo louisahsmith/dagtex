@@ -17,7 +17,7 @@
 #'
 #' @examples
 #'
-#' @rdname add_nodes
+#' @rdname add_node
 add_node <- function(.dag, .name, .options = NULL, x = NULL, y = NULL,
                      right_of = NULL, left_of = NULL,
                      above = NULL, below = NULL, is_swig = FALSE,
@@ -56,13 +56,13 @@ add_node <- function(.dag, .name, .options = NULL, x = NULL, y = NULL,
 #' @examples
 #' dagtex(.node_options = list(shape = "ellipse"),
 #'        .swig_options = list(gap = "3pt", line_color_right = "red")) %>%
-#'  add_nodes(list(c("$A_0$", "$a_0$"), "$L_1$", c("$A_1$", "$a_1$"), "$Y$")) %>%
-#'  add_edges(.from = "$a_0$", .to = c("$L_1$","$A_1$", "$Y$")) %>%
-#'  add_edges(.from = "$L_1$", .to = c("$A_1$", "$Y$")) %>%
+#'  add_many_nodes(list(c("$A_0$", "$a_0$"), "$L_1$", c("$A_1$", "$a_1$"), "$Y$")) %>%
+#'  add_many_edges(.from = "$a_0$", .to = c("$L_1$","$A_1$", "$Y$")) %>%
+#'  add_many_edges(.from = "$L_1$", .to = c("$A_1$", "$Y$")) %>%
 #'  add_edge(.from = "$a_1$", .to = "$Y$")
 
-#' @rdname add_nodes
-add_nodes <- function(.dag, .names, .options = NULL, ...) {
+#' @rdname add_node
+add_many_nodes <- function(.dag, .names, .options = NULL, ...) {
 
   for (i in seq_along(.names)) {
     args <- c(.dag = list(.dag), .name = list(.names[[i]]),
@@ -75,7 +75,7 @@ add_nodes <- function(.dag, .names, .options = NULL, ...) {
 }
 
 #' @export
-#' @rdname add_nodes
+#' @rdname add_node
 add_swig_node <- function(.dag, .left, .right, .options = NULL, x = NULL, y = NULL,
                           right_of = NULL, left_of = NULL,
                           above = NULL, below = NULL, ...) {

@@ -21,7 +21,7 @@
 #'
 #' @examples
 #'
-#' @rdname add_edges
+#' @rdname add_edge
 add_edge <- function(.dag, .from, .to, start_position = NULL, end_position = NULL,
                      .options = NULL, curve = NULL, is_curved = !is.null(curve),
                      curve_in_degree = NULL, curve_out_degree = NULL,
@@ -57,18 +57,18 @@ add_edge <- function(.dag, .from, .to, start_position = NULL, end_position = NUL
 }
 
 #' @export
-#' @rdname add_edges
+#' @rdname add_edge
 #' @examples
 #' dagtex(.node_options = list(shape = "circle")) %>%
 #'  add_node("$A_0$") %>%
 #'  add_node("$L_1$") %>%
 #'  add_node("$A_1$") %>%
 #'  add_node("$Y$") %>%
-#'  add_edges(.from = "$A_0$", .to = c("$L_1$","$A_1$", "$Y$")) %>%
-#'  add_edges(.from = "$L_1$", .to = c("$A_1$", "$Y$")) %>%
+#'  add_many_edges(.from = "$A_0$", .to = c("$L_1$","$A_1$", "$Y$")) %>%
+#'  add_many_edges(.from = "$L_1$", .to = c("$A_1$", "$Y$")) %>%
 #'  add_edge(.from = "$A_1$", .to = "$Y$")
 
-add_edges <- function(.dag, .from, .to, .options = NULL,
+add_many_edges <- function(.dag, .from, .to, .options = NULL,
                       is_curved = TRUE, start_curve = "up", ...) {
 
   to_ids <- purrr::map_dbl(.to, get_id, .dag = .dag)
@@ -105,7 +105,7 @@ add_edges <- function(.dag, .from, .to, .options = NULL,
 }
 
 #' @export
-#' @rdname add_edges
+#' @rdname add_edge
 add_curved_edge <- function(.dag, .from, .to, start_position = NULL, end_position = NULL,
                      .options = NULL, curve = "up", curve_in_degree = NULL,
                      curve_out_degree = NULL, is_double_arrow = FALSE, is_headless = FALSE,
@@ -156,7 +156,7 @@ add_edge_to_dag <- function(.dag, .id, .from, .to, start_position = NULL,
 
 
 #' @export
-#' @rdname add_edges
+#' @rdname add_edge
 annotate_edge <- function(text, placement = "midway", position = "above") {
   paste0("node[", placement, ", ", position, "]{", text, "}")
 }
