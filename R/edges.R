@@ -5,14 +5,16 @@
 #' @param .to
 #' @param start_position
 #' @param end_position
-#' @param .options
+#' @param .options https://gist.github.com/AndiH/f99d9b0cbd3519c27af5b96cfbeff97c
 #' @param is_curved
 #' @param curve
 #' @param curve_in_degree
 #' @param curve_out_degree
 #' @param is_double_arrow
+#' @param is_headless
 #' @param annotate
 #' @param ...
+#'
 #'
 #' @return
 #' @export
@@ -23,7 +25,7 @@
 add_edge <- function(.dag, .from, .to, start_position = NULL, end_position = NULL,
                      .options = NULL, curve = NULL, is_curved = !is.null(curve),
                      curve_in_degree = NULL, curve_out_degree = NULL,
-                     is_double_arrow = FALSE,
+                     is_double_arrow = FALSE, is_headless = FALSE,
                      annotate = NULL, ...) {
 
   # default
@@ -49,6 +51,7 @@ add_edge <- function(.dag, .from, .to, start_position = NULL, end_position = NUL
     curve_in_degree = curve_in_degree,
     curve_out_degree = curve_out_degree,
     is_double_arrow = is_double_arrow,
+    is_headless = is_headless,
     annotate = annotate
   )
 }
@@ -105,12 +108,13 @@ add_edges <- function(.dag, .from, .to, .options = NULL,
 #' @rdname add_edges
 add_curved_edge <- function(.dag, .from, .to, start_position = NULL, end_position = NULL,
                      .options = NULL, curve = "up", curve_in_degree = NULL,
-                     curve_out_degree = NULL, is_double_arrow = FALSE,
+                     curve_out_degree = NULL, is_double_arrow = FALSE, is_headless = FALSE,
                      annotate = NULL, ...) {
   add_edge(.dag = .dag, .from = .from, .to = .to, start_position = start_position,
            end_position = end_position, .options = .options, is_curved = TRUE,
            curve = curve, curve_in_degree = curve_in_degree,
     curve_out_degree = curve_out_degree, is_double_arrow = is_double_arrow,
+    is_headless = is_headless,
            annotate = annotate, ...)
 }
 
@@ -120,6 +124,7 @@ add_edge_to_dag <- function(.dag, .id, .from, .to, start_position = NULL,
                             curve_in_degree = NULL,
                             curve_out_degree = NULL,
                             is_double_arrow = FALSE,
+                            is_headless = FALSE,
                             annotate = NULL) {
 
   .from <- process_position(.from, start_position)
@@ -137,6 +142,7 @@ add_edge_to_dag <- function(.dag, .id, .from, .to, start_position = NULL,
       curve_out_degree = curve_out_degree,
       options = .options,
       is_double_arrow = is_double_arrow,
+      is_headless = is_headless,
       annotate = annotate
     ),
     class = "dagtex_edge"

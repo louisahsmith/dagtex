@@ -19,6 +19,7 @@ add_edge(
   curve_in_degree = NULL,
   curve_out_degree = NULL,
   is_double_arrow = FALSE,
+  is_headless = FALSE,
   annotate = NULL,
   ...
 )
@@ -44,6 +45,7 @@ add_curved_edge(
   curve_in_degree = NULL,
   curve_out_degree = NULL,
   is_double_arrow = FALSE,
+  is_headless = FALSE,
   annotate = NULL,
   ...
 )
@@ -51,6 +53,8 @@ add_curved_edge(
 annotate_edge(text, placement = "midway", position = "above")
 }
 \arguments{
+\item{.options}{https://gist.github.com/AndiH/f99d9b0cbd3519c27af5b96cfbeff97c}
+
 \item{...}{}
 }
 \value{

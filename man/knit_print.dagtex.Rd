@@ -6,7 +6,7 @@
 \usage{
 \method{knit_print}{dagtex}(
   x,
-  density = 320,
+  density = knitr::opts_current$get("density"),
   fig.path = knitr::opts_current$get("fig.path"),
   ...
 )

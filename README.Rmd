@@ -39,10 +39,10 @@ dagtex() %>%
   add_edge("u3", "a", start_position = "north", end_position = "south") %>% 
   add_edge("u3", "y", start_position = "north", end_position = "south")
 
-dagtex(
+code <- dagtex(
  .node_options = list(shape = "star"),
- .swig_options = list(gap = "3pt", line_color_right = "red",
-                      fill_color_left = "pink", line_width_left = 2.75),
+ .swig_options = list(gap = "3pt", line_color_upper = "red", split = "h",
+                      fill_color_lower = "pink", line_width_lower = 2.75),
  .edge_options = list(linetype = "dashed", color = "green")
 ) %>%
  add_node("THIS IS A SWIG",
@@ -61,7 +61,7 @@ dagtex(
           curve_in_degree = 0, curve_out_degree = 40
           ) %>%
  add_node("hello", above = 2,
-          .options = list(fill = "yellow"))
+          .options = list(fill = "yellow")) %>% latexify_dag()
 
 dagtex(.node_options = list(shape = "circle")) %>%
  add_node("$A_0$") %>%
