@@ -2,16 +2,25 @@
 % Please edit documentation in R/draw_dag.R
 \name{get_latex_code}
 \alias{get_latex_code}
-\title{Get LaTeX code}
+\title{Create tikz picture}
 \usage{
 get_latex_code(.dag, add_header = TRUE)
 }
 \arguments{
 \item{add_header}{}
+
+\item{scale_y}{}
 }
 \value{
 
+
+
 }
 \description{
+Create tikz picture
+}
+\examples{
 Get LaTeX code
+
+
 }

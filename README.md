@@ -12,7 +12,7 @@ dagtex() %>%
   add_edge("x", "y", is_curved = TRUE)
 ```
 
-<img src="man/figures/README-/0.443051064386964.png" width="400px" style="display: block; margin: auto;" />
+<img src="man/figures/README-/0.982885225908831.png" width="400px" style="display: block; margin: auto;" />
 
 ``` r
 
@@ -33,59 +33,49 @@ dagtex() %>%
   add_edge("u3", "y", start_position = "north", end_position = "south")
 ```
 
-<img src="man/figures/README-/0.418934673070908.png" width="400px" style="display: block; margin: auto;" />
+<img src="man/figures/README-/0.485403407830745.png" width="400px" style="display: block; margin: auto;" />
 
 ``` r
 
-dagtex(
- .node_options = list(shape = "star"),
- .swig_options = list(gap = "3pt", line_color_right = "red",
-                      fill_color_left = "pink", line_width_left = 2.75),
- .edge_options = list(linetype = "dashed", color = "green")
-) %>%
- add_node("THIS IS A SWIG",
-          .options = list(shape = "forbidden sign", color = "blue",
-                          line_width = 4)
-          ) %>%
- add_swig_node(.left = "$X$", .right = "$x = 1$") %>%
- add_node("$Y^{x = 1}$",
-          .options = list(color = "violet", text = "olive")
-          ) %>%
- add_edge("$x = 1$", "$Y^{x = 1}$",
-          curve = "up", is_double_arrow = TRUE,
-          .options = list(color = "teal", linetype = "solid")
-          ) %>%
- add_edge(1, 3,
-          curve_in_degree = 0, curve_out_degree = 40
-          ) %>%
- add_node("hello", above = 2,
-          .options = list(fill = "yellow"))
+dagtex(.node_options = list(shape = "star"),
+       .swig_options = list(gap = "3pt", line_color_upper = "red", split = "h",
+                            fill_color_lower = "pink", line_width_lower = 2.75),
+       .edge_options = list(linetype = "dashed", color = "green")) %>%
+  add_node("THIS IS A SWIG",
+           .options = list(shape = "forbidden sign", color = "blue", line_width = 4)) %>%
+  add_swig_node(.left = "$X$", .right = "$x = 1$") %>%
+  add_node("$Y^{x = 1}$",
+           .options = list(color = "violet", text = "olive")) %>%
+  add_edge("$x = 1$", "$Y^{x = 1}$", curve = "up", is_double_arrow = TRUE,
+           .options = list(color = "teal", linetype = "solid")) %>%
+  add_edge(1, 3, curve_in_degree = 0, curve_out_degree = 40) %>%
+  add_node("hello", above = 2, .options = list(fill = "yellow"))
 ```
 
-<img src="man/figures/README-/0.430669584078714.png" width="400px" style="display: block; margin: auto;" />
+<img src="man/figures/README-/0.0713722733780742.png" width="400px" style="display: block; margin: auto;" />
 
 ``` r
 
 dagtex(.node_options = list(shape = "circle")) %>%
- add_node("$A_0$") %>%
- add_node("$L_1$") %>%
- add_node("$A_1$") %>%
- add_node("$Y$") %>%
- add_edges(.from = "$A_0$", .to = c("$L_1$","$A_1$", "$Y$")) %>%
- add_edges(.from = "$L_1$", .to = c("$A_1$", "$Y$")) %>%
- add_edge(.from = "$A_1$", .to = "$Y$")
+  add_node("$A_0$") %>%
+  add_node("$L_1$") %>%
+  add_node("$A_1$") %>%
+  add_node("$Y$") %>%
+  add_edges(.from = "$A_0$", .to = c("$L_1$","$A_1$", "$Y$")) %>%
+  add_edges(.from = "$L_1$", .to = c("$A_1$", "$Y$")) %>%
+  add_edge(.from = "$A_1$", .to = "$Y$")
 ```
 
-<img src="man/figures/README-/0.829240513965487.png" width="400px" style="display: block; margin: auto;" />
+<img src="man/figures/README-/0.398820945061743.png" width="400px" style="display: block; margin: auto;" />
 
 ``` r
 
 dagtex(.node_options = list(shape = "ellipse"),
        .swig_options = list(gap = "3pt", line_color_right = "red")) %>%
- add_nodes(list(c("$A_0$", "$a_0$"), "$L_1$", c("$A_1$", "$a_1$"), "$Y$")) %>%
- add_edges(.from = "$a_0$", .to = c("$L_1$","$A_1$", "$Y$")) %>%
- add_edges(.from = "$L_1$", .to = c("$A_1$", "$Y$")) %>%
- add_edge(.from = "$a_1$", .to = "$Y$")
+  add_nodes(list(c("$A_0$", "$a_0$"), "$L_1$", c("$A_1$", "$a_1$"), "$Y$")) %>%
+  add_edges(.from = "$a_0$", .to = c("$L_1$","$A_1$", "$Y$")) %>%
+  add_edges(.from = "$L_1$", .to = c("$A_1$", "$Y$")) %>%
+  add_edge(.from = "$a_1$", .to = "$Y$")
 ```
 
-<img src="man/figures/README-/0.941140963928774.png" width="400px" style="display: block; margin: auto;" />
+<img src="man/figures/README-/0.56702325027436.png" width="400px" style="display: block; margin: auto;" />
