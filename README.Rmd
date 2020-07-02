@@ -13,6 +13,20 @@ knitr::opts_chunk$set(
 )
 ```
 
+
+# Installation
+
+This is a fork of [Malcolm Barrett's dagtex](https://github.com/malcolmbarrett/dagtex/) that I am working on. It is not yet on CRAN, but in the meantime you can install this development version:
+
+```{r, eval = FALSE}
+install.packages("remotes")
+remotes::install_github("louisahsmith/dagtex")
+```
+
+The package converts R code into [TikZ code](https://en.wikipedia.org/wiki/PGF/TikZ), language for producing vector graphics. If you want to actually see the graphs, either in the viewer window or in an RMarkdown document, you must have TeX installed. The easiest way to do so is with the [R package `tinytex`](https://yihui.org/tinytex/) by Yihui Xie. The [R package `texPreview`](https://yonicd.github.io/texPreview/) is used to show graphs in the viewer, as well as in non-pdf RMarkdown documents. 
+
+SWIGs are drawn using Thomas Richardson's [TikZ shapes library](https://www.stat.washington.edu/tsr/website/documents/2018/tikz-for-swigs/swig-examples.pdf). The source code for this library is in `inst/tex`. Because it is not part of the TikZ distribution, it must be installed manually, or the `.tex` file must be included in the user's working directory when it is called. If you have installed LaTeX via `tinytex` or another TeXLive distribution, you can use the `dagtex::install_swigs()` function to attempt to place the TikZ library in the appropriate directory on your computer and tell TeX where it is. No guarantees!
+
 # Examples
 
 ```{r example, fig.align = "center", density = 600, out.width = "400px"}

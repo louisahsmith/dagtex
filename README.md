@@ -1,6 +1,37 @@
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
+# Installation
+
+This is a fork of [Malcolm Barrett’s
+dagtex](https://github.com/malcolmbarrett/dagtex/) that I am working on.
+It is not yet on CRAN, but in the meantime you can install this
+development version:
+
+``` r
+install.packages("remotes")
+remotes::install_github("louisahsmith/dagtex")
+```
+
+The package converts R code into [TikZ
+code](https://en.wikipedia.org/wiki/PGF/TikZ), language for producing
+vector graphics. If you want to actually see the graphs, either in the
+viewer window or in an RMarkdown document, you must have TeX installed.
+The easiest way to do so is with the [R package
+`tinytex`](https://yihui.org/tinytex/) by Yihui Xie. The [R package
+`texPreview`](https://yonicd.github.io/texPreview/) is used to show
+graphs in the viewer, as well as in non-pdf RMarkdown documents.
+
+SWIGs are drawn using Thomas Richardson’s [TikZ shapes
+library](https://www.stat.washington.edu/tsr/website/documents/2018/tikz-for-swigs/swig-examples.pdf).
+The source code for this library is in `inst/tex`. Because it is not
+part of the TikZ distribution, it must be installed manually, or the
+`.tex` file must be included in the user’s working directory when it is
+called. If you have installed LaTeX via `tinytex` or another TeXLive
+distribution, you can use the `dagtex::install_swigs()` function to
+attempt to place the TikZ library in the appropriate directory on your
+computer and tell TeX where it is. No guarantees\!
+
 # Examples
 
 ``` r
@@ -12,7 +43,7 @@ dagtex() %>%
   add_edge("x", "y", is_curved = TRUE)
 ```
 
-<img src="man/figures/README-/0.570640245685354.png" width="400px" style="display: block; margin: auto;" />
+<img src="man/figures/README-/0.852252094307914.png" width="400px" style="display: block; margin: auto;" />
 
 ``` r
 
@@ -33,7 +64,7 @@ dagtex() %>%
   add_edge("u3", "y", start_position = "north", end_position = "south")
 ```
 
-<img src="man/figures/README-/0.0237138650845736.png" width="400px" style="display: block; margin: auto;" />
+<img src="man/figures/README-/0.63992148055695.png" width="400px" style="display: block; margin: auto;" />
 
 ``` r
 
@@ -52,7 +83,7 @@ dagtex(.node_options = list(shape = "star"),
   add_node("hello", above = 2, .options = list(fill = "yellow"))
 ```
 
-<img src="man/figures/README-/0.646546168718487.png" width="400px" style="display: block; margin: auto;" />
+<img src="man/figures/README-/0.420485985931009.png" width="400px" style="display: block; margin: auto;" />
 
 ``` r
 
@@ -61,21 +92,21 @@ dagtex(.node_options = list(shape = "circle")) %>%
   add_node("$L_1$") %>%
   add_node("$A_1$") %>%
   add_node("$Y$") %>%
-  add_edges(.from = "$A_0$", .to = c("$L_1$","$A_1$", "$Y$")) %>%
-  add_edges(.from = "$L_1$", .to = c("$A_1$", "$Y$")) %>%
+  add_many_edges(.from = "$A_0$", .to = c("$L_1$","$A_1$", "$Y$")) %>%
+  add_many_edges(.from = "$L_1$", .to = c("$A_1$", "$Y$")) %>%
   add_edge(.from = "$A_1$", .to = "$Y$")
 ```
 
-<img src="man/figures/README-/0.41264676512219.png" width="400px" style="display: block; margin: auto;" />
+<img src="man/figures/README-/0.42189430585131.png" width="400px" style="display: block; margin: auto;" />
 
 ``` r
 
 dagtex(.node_options = list(shape = "ellipse"),
        .swig_options = list(gap = "3pt", line_color_right = "red")) %>%
-  add_nodes(list(c("$A_0$", "$a_0$"), "$L_1$", c("$A_1$", "$a_1$"), "$Y$")) %>%
-  add_edges(.from = "$a_0$", .to = c("$L_1$","$A_1$", "$Y$")) %>%
-  add_edges(.from = "$L_1$", .to = c("$A_1$", "$Y$")) %>%
+  add_many_nodes(list(c("$A_0$", "$a_0$"), "$L_1$", c("$A_1$", "$a_1$"), "$Y$")) %>%
+  add_many_edges(.from = "$a_0$", .to = c("$L_1$","$A_1$", "$Y$")) %>%
+  add_many_edges(.from = "$L_1$", .to = c("$A_1$", "$Y$")) %>%
   add_edge(.from = "$a_1$", .to = "$Y$")
 ```
 
-<img src="man/figures/README-/0.714809488272294.png" width="400px" style="display: block; margin: auto;" />
+<img src="man/figures/README-/0.741302447160706.png" width="400px" style="display: block; margin: auto;" />
