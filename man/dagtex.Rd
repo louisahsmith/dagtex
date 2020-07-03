@@ -10,6 +10,7 @@ dagtex(
   .swig_options = NULL,
   help_lines = FALSE,
   help_angles = FALSE,
+  adorn_math = FALSE,
   ...
 )
 }

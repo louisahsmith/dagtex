@@ -17,24 +17,13 @@ add_node(
   above = NULL,
   below = NULL,
   is_swig = FALSE,
+  adorn_math = NULL,
   ...
 )
 
 add_many_nodes(.dag, .names, .options = NULL, ...)
 
-add_swig_node(
-  .dag,
-  .left,
-  .right,
-  .options = NULL,
-  x = NULL,
-  y = NULL,
-  right_of = NULL,
-  left_of = NULL,
-  above = NULL,
-  below = NULL,
-  ...
-)
+add_swig_node(.dag, .left, .right, .options = NULL, ...)
 }
 \arguments{
 \item{...}{}

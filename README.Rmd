@@ -78,15 +78,35 @@ dagtex(.node_options = list(shape = "circle")) %>%
 
 dagtex(.node_options = list(shape = "ellipse"),
        .swig_options = list(gap = "3pt", line_color_right = "red", shape = "ellipse")) %>%
-  add_many_nodes(list(c("$A_0$", "$a_0$"), "$L_1$", c("$A_1$", "$a_1$"), "$Y$")) %>%
-  add_many_edges(.from = "$a_0$", .to = c("$L_1$","$A_1$", "$Y$")) %>%
-  add_many_edges(.from = "$L_1$", .to = c("$A_1$", "$Y$")) %>%
-  add_edge(.from = "$a_1$", .to = "$Y$")
+  add_many_nodes(list(c("$A_0$", "$a_0$"), "$L_1^{a_0}$", c("$A_1^{a_0}$", "$a_1$"), "$Y^{a_0, a_1}$")) %>%
+  add_many_edges(.from = "$a_0$", .to = c("$L_1^{a_0}$","$A_1^{a_0}$", "$Y^{a_0, a_1}$")) %>%
+  add_many_edges(.from = "$L_1^{a_0}$", .to = c("$A_1^{a_0}$", "$Y^{a_0, a_1}$")) %>%
+  add_edge(.from = "$a_1$", .to = "$Y^{a_0, a_1}$")
 
-dagtex(.swig_options = list(gap = "1pt")) %>%
-  add_many_nodes(list(c("$A_0$", "$a_0$"), "$L_1$", c("$A_1$", "$a_1$"), "$Y$")) %>%
-  add_many_edges(.from = "$a_0$", .to = c("$L_1$","$A_1$", "$Y$")) %>%
-  add_many_edges(.from = "$L_1$", .to = c("$A_1$", "$Y$")) %>%
-  add_edge(.from = "$a_1$", .to = "$Y$")
+dagtex(.swig_options = list(gap = "1pt"),
+       adorn_math = TRUE) %>%
+  add_many_nodes(list(c("A_0", "a_0"), "L_1^{a_0}", c("A_1^{a_0}", "a_1"), "Y^{a_0, a_1}")) %>%
+  add_many_edges(.from = "a_0", .to = c("L_1^{a_0}","A_1^{a_0}", "Y^{a_0, a_1}")) %>%
+  add_many_edges(.from = "L_1^{a_0}", .to = c("A_1^{a_0}", "Y^{a_0, a_1}")) %>%
+  add_edge(.from = "a_1", .to = "Y^{a_0, a_1}")
+
+exposure0 <- "A_0"
+exposure1 <- "A_1"
+confounder1 <- "L_1"
+outcome <- "Y"
+
+dagtex(.node_options = list(shape = "circle"),
+       adorn_math = TRUE) %>%
+  add_many_nodes(c(exposure0, confounder1, exposure1, outcome)) %>%
+  add_many_edges(.from = exposure0, 
+                 .to = c(confounder1, exposure1, outcome)) %>%
+  add_many_edges(.from = confounder1, .to = c(exposure1, outcome)) %>%
+  add_edge(.from = exposure1, .to = outcome)
+
+dagtex(help_angles = TRUE, .node_options = list(color = "orange")) %>%
+  add_node("easy") %>%
+  add_node("as") %>%
+  add_node("\\pi", adorn_math = TRUE, x = 1, y = -1,
+           .options = list(color = "purple", fill = "teal", shape = "circle"))
 ```
 

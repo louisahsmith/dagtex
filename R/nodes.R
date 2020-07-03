@@ -21,7 +21,7 @@
 add_node <- function(.dag, .name, .options = NULL, x = NULL, y = NULL,
                      right_of = NULL, left_of = NULL,
                      above = NULL, below = NULL, is_swig = FALSE,
-                     adorn_math = FALSE,
+                     adorn_math = NULL,
                      ...) {
 
   if ((!is.null(x) & is.null(y)) | (!is.null(y) & is.null(x))) {
@@ -97,7 +97,7 @@ any_swig_nodes <- function(.dag) {
   any(purrr::map_lgl(.dag$nodes, ~.x$is_swig))
 }
 
-add_node_to_dag <- function(.dag, .name, .id, .coords, .position, .options, is_swig = FALSE, adorn_math = FALSE, ...) {
+add_node_to_dag <- function(.dag, .name, .id, .coords, .position, .options, is_swig = FALSE, adorn_math = NULL, ...) {
 
   node <- structure(
     list(
@@ -166,13 +166,14 @@ get_node_coords <- function(.dag, id, coords, right_of = NULL,
 
   to_add <- purrr::map_dbl(positions, get_id, .dag = .dag)
 
-  if (!all(is.na(to_add))) {
-
-    if (!is.null(coords)) {
+  if (!is.null(coords)) {
+    if (!all(is.na(to_add))) {
       warning("Supplied coordinates as well as relative position. Choosing coordinates.")
-      return(coords)
     }
+    return(coords)
+  }
 
+  if (!all(is.na(to_add))) {
     to_add <- to_add[!is.na(to_add)]
 
     if(length(to_add) > 1){

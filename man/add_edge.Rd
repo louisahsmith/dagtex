@@ -34,21 +34,7 @@ add_many_edges(
   ...
 )
 
-add_curved_edge(
-  .dag,
-  .from,
-  .to,
-  start_position = NULL,
-  end_position = NULL,
-  .options = NULL,
-  curve = "up",
-  curve_in_degree = NULL,
-  curve_out_degree = NULL,
-  is_double_arrow = FALSE,
-  is_headless = FALSE,
-  annotate = NULL,
-  ...
-)
+add_curved_edge(.dag, .from, .to, .options = NULL, curve = "up", ...)
 
 annotate_edge(text, placement = "midway", position = "above")
 }

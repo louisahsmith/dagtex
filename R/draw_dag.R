@@ -261,7 +261,10 @@ make_tex_opts <- function(opts, exclude = c("split"), remove = c("linetype")) {
 latexify_node <- function(.node, .dag) {
 
   node_id <- paste0("(", .node$id, ") ")
-  node_text <- paste0("{", .node$name, "}")
+
+  math <- .node$adorn_math %||% .dag$adorn_math
+  if (math) node_text <- paste0("{$", .node$name, "$}") else
+    node_text <- paste0("{", .node$name, "}")
 
   poss_opts <- .node$options
 
@@ -307,8 +310,16 @@ latexify_node <- function(.node, .dag) {
     main_part <- paste0(compiled_options,
                         ", shape=swig ", split, "split, swig ",
                         split, "split={", make_tex_opts(swig_opts), "}]{")
-    left_part <- paste0("\\nodepart{", left, "}{", .node$name[1], "}")
-    right_part <- paste0("\\nodepart{",right, "}{", .node$name[2], "}}")
+    left_part <- paste0("\\nodepart{", left, "}{",
+                        if (math) "$",
+                        .node$name[1],
+                        if (math) "$",
+                        "}")
+    right_part <- paste0("\\nodepart{",right, "}{",
+                         if (math) "$",
+                        .node$name[2],
+                        if (math) "$",
+                        "}}")
     all_parts <- paste0("\\node[name=",.node$id, ",",
                         main_part, left_part,right_part, ";",
                         node_split)
