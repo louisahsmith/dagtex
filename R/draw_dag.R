@@ -145,7 +145,6 @@ get_latex_code <- function(.dag, add_header = TRUE) {
   edge_opts <- make_tex_opts(.dag$edge_options)
   edge_paste <- paste0("\\begin{tikzpicture}[every path/.style={>=stealth, thick,",
                        edge_opts, "}]")
-  # TODO: Make sure arrowhead gets changed still...
 
   draw_node <- "shape" %in% names(.dag$node_options)
 
@@ -159,34 +158,26 @@ get_latex_code <- function(.dag, add_header = TRUE) {
                          ",", swig_opts$right_included, ",", swig_opts$all_included,
                          "}}\n\\tikzset{swig hsplit={gap=3pt,",swig_opts$upper_included,
                          ",", swig_opts$lower_included, ",", swig_opts$all_included,"}}")
-    # TODO: MUST REMOVE THE WORD TEXT FROM left_text_color (after greping)
-    # TODO: check that anything
+
+    # TODO: MUST REMOVE THE WORD LEFT (?text?) FROM left_text_color (after greping)
     swig_paste_style <- paste0("\tikzset{swig vsplit/.style={opacity = ",
                                as.numeric(draw_swig), ",", swig_opts$all_excluded,
                                ", text opacity = 1}}\n",
                                "\tikzset{swig hsplit/.style={opacity = ",
                                as.numeric(draw_swig), ",", swig_opts$all_excluded,
                                ", text opacity = 1}}")
+
     # if color is in here, it is TEXT color
     swig_paste_l <-  paste0("\\tikzset{l/.style={", swig_opts$left_excluded, "}}")
     swig_paste_r <-  paste0("\\tikzset{r/.style={", swig_opts$right_excluded, "}}")
     swig_paste_lo <-  paste0("\\tikzset{lo/.style={", swig_opts$lower_excluded, "}}")
     swig_paste_up <-  paste0("\\tikzset{up/.style={", swig_opts$lower_excluded, "}}")
 
-
-    # if swigs have a shape, need to add it individually to tell them not to be drawn?
-    # TODO: come back here and move to left/right set
-    # if ("shape" %in% names(.dag$swig_options)) {
-    #   for (i in seq_along(.dag$nodes)) {
-    #     if (!.dag$nodes[[i]]$is_swig) next
-    #     .dag$nodes[[i]]$options <- as.list(c(.dag$nodes[[i]]$options,
-    #                                  shape = .dag$swig_options[["shape"]]))
-    #   }
-    # }
   }
 
   node_opts <- make_tex_opts(.dag$node_options)
 
+  # start off with defaults so not overwritten by edge style (which applies to all paths)
   node_paste <- paste0("\\tikzstyle{every node}=[solid,black,text=black,",
                        ifelse(draw_node, "draw,", ""),
                        node_opts, "]")
@@ -260,6 +251,7 @@ get_tikz_library <- function(.dag = NULL, has_swig = FALSE, ...) {
 
 #' @export
 print.latex_code <- function(x, ...) {
+  # TODO: might be nice to clean things up (remove extra commas) here...
   cat(x, ...)
 }
 
@@ -272,7 +264,9 @@ latexify_dag <- function(.dag) {
   paste(nodes_and_edges, collapse = "\n")
 }
 
-
+#' @param exclude Options to exclude (character vector)
+#' @param remove Names (regular expression) of options to remove (i.e., paste bare argument)
+#'
 make_tex_opts <- function(opts, exclude = c("split"), remove = c("line_type")) {
   opts <- opts[!names(opts) %in% exclude]
   new_names <- gsub(remove, "", names(opts))
@@ -284,8 +278,11 @@ make_tex_opts <- function(opts, exclude = c("split"), remove = c("line_type")) {
   args
 }
 
+#' @param exclude Text (regular expression) for searching out SWIG options
+#' that use the terms left/right/upper/lower but can't be passed directly
+#' to the
+#'
 split_swig_opts <- function(.swig_options, exclude = "text", ...) {
-
   # excluded are those that do not get placed within the swig vsplit={}
   # list but instead in the /.style={} list
   upper <- grepl("upper", names(.swig_options))
@@ -301,7 +298,7 @@ split_swig_opts <- function(.swig_options, exclude = "text", ...) {
   lower_included <- .swig_options[as.logical(lower * !excluded)]
   left_included <- .swig_options[as.logical(left * !excluded)]
   right_included <- .swig_options[as.logical(right * !excluded)]
-  all_included <- .swig_options[grepl("gap", names(.swig_options))]
+  all_included <- .swig_options[["gap"]]
   all_excluded <- .swig_options[!(.swig_options %in%
                                      c(upper_excluded, lower_excluded,
                                        left_excluded , right_excluded,
@@ -331,10 +328,6 @@ latexify_node <- function(.node, .dag) {
 
   node_opts <- if (.node$is_swig) split_swig_opts(.node$options) else
     make_tex_opts(.node$options)
-
-  # for_swig <- grepl("(upper)|(lower)|(left)|(right)|(gap)", names(poss_opts))
-  # node_opts <- poss_opts[!for_swig]
-  # swig_opts <- poss_opts[for_swig]
 
   shape <- .node$options[["shape"]] %||% .dag$node_options[["shape"]]
   draw <- !is.null(shape)
@@ -373,13 +366,6 @@ latexify_node <- function(.node, .dag) {
 
   # now deal with swig specific options, i.e. left/right excluded and all included
   if (.node$is_swig) {
-    # left <- ifelse(split == "v", "left", "upper")
-    # right <- ifelse(split == "v", "right", "lower")
-
-    # make a special tikzset for left and right nodes if there are text-related options
-    # swig_specific <- swig_opts[-grepl("text", names(swig_opts))]
-    # left_specific <- swig_opts[grepl(paste0(left, ".*text"), names(swig_opts))]
-    # right_specific <- swig_opts[grepl(paste0(right, ".*text"), names(swig_opts))]
 
     main_part <- paste0(compiled_options,
                         ", ", node_opts$all_excluded,
@@ -424,6 +410,7 @@ latexify_node <- function(.node, .dag) {
     compiled_options <- paste0(compiled_options, node_opts, "] ")
     if (compiled_options == "draw, ] ") compiled_options <- "] "
     # TODO: check on this
+    # TODO: need to do the whole text color thing for nodes too...
 
     node_to_paste <- paste0("\\node[", compiled_options, node_id,
                             ifelse(is.null(.node$position),
