@@ -106,16 +106,8 @@ add_many_edges <- function(.dag, .from, .to, .options = NULL,
 
 #' @export
 #' @rdname add_edge
-add_curved_edge <- function(.dag, .from, .to, start_position = NULL, end_position = NULL,
-                     .options = NULL, curve = "up", curve_in_degree = NULL,
-                     curve_out_degree = NULL, is_double_arrow = FALSE, is_headless = FALSE,
-                     annotate = NULL, ...) {
-  add_edge(.dag = .dag, .from = .from, .to = .to, start_position = start_position,
-           end_position = end_position, .options = .options, is_curved = TRUE,
-           curve = curve, curve_in_degree = curve_in_degree,
-    curve_out_degree = curve_out_degree, is_double_arrow = is_double_arrow,
-    is_headless = is_headless,
-           annotate = annotate, ...)
+add_curved_edge <- function(.dag, .from, .to, .options = NULL, curve = "up", ...) {
+  add_edge(.dag = .dag, .from = .from, .to = .to, curve = curve, .options = .options, is_curved = TRUE, ...)
 }
 
 add_edge_to_dag <- function(.dag, .id, .from, .to, start_position = NULL,

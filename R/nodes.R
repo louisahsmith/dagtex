@@ -21,6 +21,7 @@
 add_node <- function(.dag, .name, .options = NULL, x = NULL, y = NULL,
                      right_of = NULL, left_of = NULL,
                      above = NULL, below = NULL, is_swig = FALSE,
+                     adorn_math = FALSE,
                      ...) {
 
   if ((!is.null(x) & is.null(y)) | (!is.null(y) & is.null(x))) {
@@ -58,7 +59,8 @@ add_node <- function(.dag, .name, .options = NULL, x = NULL, y = NULL,
     .coords = coords,
     .position = position,
     .options = .options,
-    is_swig = is_swig
+    is_swig = is_swig,
+    adorn_math = adorn_math
   )
 }
 
@@ -78,7 +80,7 @@ add_many_nodes <- function(.dag, .names, .options = NULL, ...) {
   for (i in seq_along(.names)) {
     args <- c(.dag = list(.dag), .name = list(.names[[i]]),
               is_swig = length(.names[[i]]) > 1,
-              .options = .options)
+              .options = .options, ...)
     .dag <- do.call(add_node, args)
   }
 
@@ -87,19 +89,15 @@ add_many_nodes <- function(.dag, .names, .options = NULL, ...) {
 
 #' @export
 #' @rdname add_node
-add_swig_node <- function(.dag, .left, .right, .options = NULL, x = NULL, y = NULL,
-                          right_of = NULL, left_of = NULL,
-                          above = NULL, below = NULL, ...) {
-  add_node(.dag, .name = c(.left, .right), .options = .options, x = x, y = y,
-           right_of = right_of, left_of = left_of,
-           above = above, below = below, is_swig = TRUE, ...)
+add_swig_node <- function(.dag, .left, .right, .options = NULL,  ...) {
+  add_node(.dag, .name = c(.left, .right), .options = .options, is_swig = TRUE, ...)
 }
 
 any_swig_nodes <- function(.dag) {
   any(purrr::map_lgl(.dag$nodes, ~.x$is_swig))
 }
 
-add_node_to_dag <- function(.dag, .name, .id, .coords, .position, .options, is_swig = FALSE) {
+add_node_to_dag <- function(.dag, .name, .id, .coords, .position, .options, is_swig = FALSE, adorn_math = FALSE, ...) {
 
   node <- structure(
     list(
@@ -108,6 +106,7 @@ add_node_to_dag <- function(.dag, .name, .id, .coords, .position, .options, is_s
       coords = .coords,
       position = .position,
       is_swig = is_swig,
+      adorn_math = adorn_math,
       options = .options
     ),
     class = "dagtex_node"
