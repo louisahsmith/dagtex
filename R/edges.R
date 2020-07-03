@@ -178,5 +178,6 @@ get_id <- function(.dag, .var) {
    node_ids <- purrr::map_dbl(.dag$nodes, "id")
    node_ids <- unlist(purrr::map2(node_ids, swig_nodes, ~rep(.x, ifelse(.y, 2, 1))))
    node_index <- which(node_names == .var)
-   node_ids[node_index]
+   id <- node_ids[node_index]
+   ifelse(length(id) != 1, NA_real_, id)
 }

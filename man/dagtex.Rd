@@ -4,7 +4,14 @@
 \alias{dagtex}
 \title{Create a new DAG}
 \usage{
-dagtex(.node_options = NULL, .edge_options = NULL, .swig_options = NULL, ...)
+dagtex(
+  .node_options = NULL,
+  .edge_options = NULL,
+  .swig_options = NULL,
+  help_lines = FALSE,
+  help_angles = FALSE,
+  ...
+)
 }
 \arguments{
 \item{.node_options}{List of options that apply to each node (can be

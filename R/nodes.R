@@ -23,26 +23,37 @@ add_node <- function(.dag, .name, .options = NULL, x = NULL, y = NULL,
                      above = NULL, below = NULL, is_swig = FALSE,
                      ...) {
 
+  if ((!is.null(x) & is.null(y)) | (!is.null(y) & is.null(x))) {
+    stop("Must specify both of x and y, or neither")
+  }
+
   id <- count_nodes(.dag) + 1
 
   coords <- get_node_coords(
-    x = x,
-    y = y
-  )
-
-  position <- get_node_position(
     .dag,
     id,
-    coords,
+    coords = c(x, y),
     right_of = right_of,
     left_of = left_of,
     above = above,
     below = below
   )
 
+  if (is.null(c(x,y))) {
+    position <- get_node_position(
+      .dag,
+      id,
+      right_of = right_of,
+      left_of = left_of,
+      above = above,
+      below = below
+    )
+  } else position <- NULL
+
+
   add_node_to_dag(
     .dag = .dag,
-    .name = .name,
+    .name = as.character(.name), # so not a problem when getting id
     .id = id,
     .coords = coords,
     .position = position,
@@ -107,10 +118,10 @@ add_node_to_dag <- function(.dag, .name, .id, .coords, .position, .options, is_s
   .dag
 }
 
-get_node_position <- function(.dag, .id, coords, right_of = NULL,
+get_node_position <- function(.dag, .id, right_of = NULL,
                               left_of = NULL, above = NULL, below = NULL) {
-  # don't set position if coordinates are given or if this is the first node
-  if (!is.null(coords) | .id == 1) return(NULL)
+  # don't set position if this is the first node
+  if (.id == 1) return(NULL)
 
   positions <- c(right_of %||% NA, left_of %||% NA, above %||% NA, below %||% NA)
   positions_not_na <- purrr::map_lgl(positions, ~!is.na(.x))
@@ -137,24 +148,52 @@ get_node_position <- function(.dag, .id, coords, right_of = NULL,
   position
 }
 
-get_node_coords <- function(x = NULL, y = NULL) {
-  if (!is.null(x) & !is.null(x)) return(paste0("(", x, ",", y, ")"))
+# get_node_coords <- function(x, y) paste0("(", x, ",", y, ")")
 
-  NULL
+get_node_coords <- function(.dag, id, coords, right_of = NULL,
+                            left_of = NULL, above = NULL, below = NULL) {
+
+  if (is.null(coords) & id == 1) return(c(0,0))
+
+  positions <- c(right_of %||% NA, left_of %||% NA, above %||% NA, below %||% NA)
+
+  if (!is.null(right_of) & !is.null(left_of)) {
+    warning("Cannot place nodes both left and right of another node. Choosing one.")
+  }
+
+  if (!is.null(above) & !is.null(below)) {
+    warning("Cannot place nodes both above and below another node. Choosing one.")
+  }
+
+  to_add <- purrr::map_dbl(positions, get_id, .dag = .dag)
+
+  if (!all(is.na(to_add))) {
+
+    if (!is.null(coords)) {
+      warning("Supplied coordinates as well as relative position. Choosing coordinates.")
+      return(coords)
+    }
+
+    to_add <- to_add[!is.na(to_add)]
+
+    if(length(to_add) > 1){
+      if (!all(purrr::map_lgl(to_add[2:length(to_add)], identical, to_add[1]))) {
+        warning("Cannot place nodes relative to > 1 other node. Choosing one.")
+      }
+    }
+
+    to_add <- to_add[1]
+
+    vals_h <- c(2, -2)[!is.na(positions[1:2])] %0% 0
+    vals_v <- c(2, -2)[!is.na(positions[3:4])] %0% 0
+
+    new_coords <- .dag$nodes[[to_add]]$coords + c(vals_h, vals_v)
+
+    return(new_coords)
+  }
+
+  c((id - 1)*2, 0)
+
 }
 
 count_nodes <- function(.dag) length(.dag$nodes)
-
-last_node <- function() {
-  function(.dag) {
-    previous_node <- count_nodes(.dag) - 1
-
-    if (previous_node == 0) {
-      warning("No previous node: returning `NA`")
-      return(NA)
-    }
-
-    previous_node
-  }
-}
-

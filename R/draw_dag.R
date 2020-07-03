@@ -51,13 +51,13 @@ knit_print.dagtex <- function(x, density = knitr::opts_current$get("density"),
                                            uselibrary = tikz_opts)
 
   filename <- texPreview::tex_preview(
-        latex_code,
-        usrPackages = pkg_opts,
-        fileDir = fig.path,
-        density = density,
-        stem = runif(1),
-        cleanup = c("aux", "log", "txt", "Doc", "tex"),
-        returnType = "engine")
+    latex_code,
+    usrPackages = pkg_opts,
+    fileDir = fig.path,
+    density = density,
+    stem = runif(1),
+    cleanup = c("aux", "log", "txt", "Doc", "tex"),
+    returnType = "engine")
 
   knitr::include_graphics(filename)
 }
@@ -88,20 +88,6 @@ print.dagtex <- function(x, ...) {
 #' @method plot dagtex
 plot.dagtex <- print.dagtex
 
-#' Insert LaTeX
-#'
-#' @param .dag
-#' @param ...
-#'
-#' @return
-#' @export
-#'
-#' @examples
-insert_latex <- function(.dag, ...) {
-  .dag$latex <- c(.dag$latex, ...)
-
-  .dag
-}
 
 #' Create tikz picture
 #'
@@ -153,23 +139,25 @@ insert_latex <- function(.dag, ...) {
 
 get_latex_code <- function(.dag, add_header = TRUE) {
 
+  swig_paste <- pkg_opts <- lines_paste <- angle_paste <- NULL
+
   edge_opts <- make_tex_opts(.dag$edge_options)
-  to_paste_1 <- paste0("\\begin{tikzpicture}[every path/.style={>=stealth,thick,",
-  edge_opts, "}]")
+  edge_paste <- paste0("\\begin{tikzpicture}[every path/.style={>=stealth,thick,",
+                       edge_opts, "}]")
 
   if (any_swig_nodes(.dag)) {
     swig_opts <- make_tex_opts(.dag$swig_options)
     split <- .dag$swig_options$split %||% "v"
-    to_paste_2 <- paste0("\\tikzset{swig ", split,
+    swig_paste <- paste0("\\tikzset{swig ", split,
                          "split={gap=3pt,", swig_opts, "}}")
-  } else to_paste_2 <- NULL
+  }
 
   node_opts <- make_tex_opts(.dag$node_options)
   draw <- any(c("rectangle", "circle", "ellipse", "circle split",
-            "forbidden sign", "diamond", "cross out", "strike out",
-            "regular polygon", "star") %in% .dag$node_options)
+                "forbidden sign", "diamond", "cross out", "strike out",
+                "regular polygon", "star") %in% .dag$node_options)
 
-  to_paste_3 <- paste0("\\tikzstyle{every node}=[solid,text=black,",
+  node_paste <- paste0("\\tikzstyle{every node}=[solid,black,text=black,",
                        ifelse(draw, "draw,", ""),
                        node_opts, "]")
 
@@ -177,17 +165,54 @@ get_latex_code <- function(.dag, add_header = TRUE) {
     tikz_opts <- get_tikz_library(.dag)
     pkg_opts <- texPreview::build_usepackage(pkg = 'tikz',
                                              uselibrary = tikz_opts)
-  } else pkg_opts <- NULL
+  }
 
-  latex_code <- paste(c(pkg_opts, to_paste_1, to_paste_2, to_paste_3,
-                        latexify_dag(.dag), "\\end{tikzpicture}"),
-                        collapse = "\n")
+  if (sum(.dag$help_lines)) {
+
+    if (!is.numeric(.dag$help_lines) | length(.dag$help_lines) != 2) {
+      .dag$help_lines <- get_dimensions(.dag)
+    }
+    lines_paste <- paste0("\\draw[help lines] (0,0) grid (",
+                           .dag$help_lines[1],",",.dag$help_lines[2],");")
+  }
+
+  if (sum(.dag$help_angles)) {
+
+    if (!is.numeric(.dag$help_angles)) {
+      .dag$help_angles <- seq(0, 360, 30)
+    }
+    angle_vals <- paste(.dag$help_angles, collapse = ", ")
+    node_names <- paste(purrr::map_dbl(.dag$nodes, ~.$id), collapse = ", ")
+
+    angle_paste <- paste(c(paste0("\\foreach \\name in {", node_names,"}"),
+            paste0("\\foreach \\angle in {", angle_vals, "}"),
+            "\\draw[gray, thin, solid] (\\name) -- +(\\angle:1);"),
+          collapse = "\n")
+    }
+
+  latex_code <- paste(c(pkg_opts, edge_paste, swig_paste,
+                        node_paste, lines_paste,
+                        latexify_dag(.dag), angle_paste,
+                        "\\end{tikzpicture}"),
+                      collapse = "\n")
 
   structure(latex_code,
             class = "latex_code")
 }
 
+
+get_dimensions <- function(.dag, ...) {
+
+  x <- max(purrr::map_dbl(.dag$nodes, ~.$coords[1]))
+  y <- max(purrr::map_dbl(.dag$nodes, ~.$coords[2]))
+
+  c(x, y)
+}
+
+#' @export
+#'
 get_tikz_library <- function(.dag, ...) {
+  # TODO: make for easy printing without a dag
   tikz_opts <- '\\usetikzlibrary{positioning, calc, shapes.geometric,
   shapes.multipart, shapes, arrows.meta, arrows, decorations.markings,
   external, trees, decorations.pathmorphing, positioning'
@@ -197,6 +222,7 @@ get_tikz_library <- function(.dag, ...) {
   tikz_opts
 }
 
+#' @export
 print.latex_code <- function(x, ...) {
   cat(x, ...)
 }
@@ -215,8 +241,7 @@ make_tex_opts <- function(opts, exclude = c("split"), remove = c("linetype")) {
   opts <- opts[!names(opts) %in% exclude]
   new_names <- gsub(remove, "", names(opts))
   new_names <- gsub("arrowhead", ">", new_names)
-  new_names <- gsub("\\_", " ", new_names)
-  if (length(new_names) < 1) new_names <- ""
+  new_names <- gsub("\\_", " ", new_names) %0% ""
   args <- purrr::map2_chr(new_names, opts, ~paste(.x, .y, sep = "="))
   args <- gsub("\\,\\s*\\=", ",", paste(args, collapse = ","))
   args <- sub("^\\=", "", args)
@@ -235,11 +260,11 @@ latexify_node <- function(.node, .dag) {
   swig_opts <- poss_opts[for_swig]
 
   draw <- any(c("rectangle", "circle", "ellipse", "circle split",
-            "forbidden sign", "diamond", "cross out", "strike out",
-            "regular polygon", "star") %in% node_opts)
+                "forbidden sign", "diamond", "cross out", "strike out",
+                "regular polygon", "star") %in% node_opts)
 
   compiled_options <- paste0(ifelse(draw, "draw,", ""),
-                                    .node$position, ",",
+                             .node$position, ",",
                              make_tex_opts(node_opts))
 
   if (.node$is_swig) {
@@ -248,20 +273,25 @@ latexify_node <- function(.node, .dag) {
     left <- ifelse(split == "v", "left", "upper")
     right <- ifelse(split == "v", "right", "lower")
     main_part <- paste0(compiled_options,
-                      ", shape=swig ", split, "split, swig ",
-                      split, "split={", make_tex_opts(swig_opts), "}]{")
+                        ", shape=swig ", split, "split, swig ",
+                        split, "split={", make_tex_opts(swig_opts), "}]{")
     left_part <- paste0("\\nodepart{", left, "}{", .node$name[1], "}")
     right_part <- paste0("\\nodepart{",right, "}{", .node$name[2], "}}")
 
     return(paste0("\\node[name=",.node$id, ",",
-                        main_part, left_part,right_part, ";"))
+                  main_part, left_part,right_part, ";"))
   } else {
 
     compiled_options <- paste0(compiled_options, "] ")
     if (compiled_options == "draw, ] ") compiled_options <- "] "
 
-    return(paste0("\\node[", compiled_options, node_id,
-                  node_text, " ;"))
+    node_to_paste <- paste0("\\node[", compiled_options, node_id,
+                            ifelse(is.null(.node$position),
+                                   paste0("at (", .node$coords[1],
+                                          ",", .node$coords[2], ") "), ""),
+                            node_text, " ;")
+
+    return(node_to_paste)
   }
 
 }
@@ -271,7 +301,7 @@ latexify_edge <- function(.edge, .dag) {
 
   arrow_type <- ifelse(.edge$is_double_arrow, "<->,",
                        ifelse(.edge$is_headless, "",
-                       "->,"))
+                              "->,"))
 
   edge_options <- paste0("[", arrow_type, make_tex_opts(.edge$options), "]")
 

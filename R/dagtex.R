@@ -53,7 +53,8 @@
 #'   add_node("hello", above = 2,
 #'            .options = list(fill = "yellow"))
 #'
-dagtex <- function(.node_options = NULL, .edge_options = NULL, .swig_options = NULL, ...) {
+dagtex <- function(.node_options = NULL, .edge_options = NULL, .swig_options = NULL,
+                   help_lines = FALSE, help_angles = FALSE, ...) {
   structure(
     list(
       nodes = list(),
@@ -62,6 +63,8 @@ dagtex <- function(.node_options = NULL, .edge_options = NULL, .swig_options = N
       node_options = .node_options,
       edge_options = .edge_options,
       swig_options = .swig_options,
+      help_lines = help_lines,
+      help_angles = help_angles,
       texPreview_options = list(...)
     ),
     class = "dagtex"
