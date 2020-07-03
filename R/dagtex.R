@@ -4,27 +4,43 @@
 #'   overwritten for individual nodes).
 #' @param .edge_options List of options that apply to each edge (can be
 #'   overwritten for individual edges).
-#' @param .swig_options List of options that apply to each SWIG node. Currently
-#'   cannot be overwritten individually.
+#' @param .swig_options List of options that apply to each SWIG node (some can be
+#'   overwritten for individual SWIG nodes).
 #' @return
 #' @details
 #'
-#' For (non-SWIG) nodes, shape options are "rectangle", "circle", "ellipse",
+#' For non-SWIG nodes, `shape` options are "rectangle", "circle", "ellipse",
 #' "circle split", "forbidden sign", "diamond", "cross out", "strike out",
-#' "regular polygon", "star".
+#' "regular polygon", "star". For SWIG nodes, the only option is "ellipse"
+#' (although "circle" and "circle split" return the same result). If no shape
+#' is supplied, the nodes default to being bare, and SWIG nodes are split
+#' with a simple line.
 #'
-#' SWIG nodes take the following possible options: gap, fill_color_left,
-#' line_color_left, line_width_left, inner_line_width_left.
+#' SWIG nodes take the following possible options: `split`, `shape`, `gap`,
+#' `fill_color_{x}`, `line_color_{x}`, `line_width_{x}`, `inner_line_width_{x}`,
+#' where `{x}` is `left`, `right`, `upper`, or `lower.` The `split` option
+#' allows for choosing "v" (vertical) or "h" (horizontal) node splits.
+#' Only left/right options should be specified for vertical splits, and only
+#' upper/lower for horizontal splits; TikZ errors will otherwise result.
 #'
+#' Line type ("solid", "dashed", etc.) is denoted with `line_type = `. Arrowhead type
+#' ("stealth", "latex", etc.) is denoted with `arrowhead = `.
+#'
+#' Color options include `color = ` for edges and nodes and `text = `
+#' for text color. Note that including color as a node option will also
+#' turn the SWIG nodes that color, unless the individual line_colors are changed.
 #' Color values can be any of: "red", "green", "blue", "cyan", "magenta",
-#' "yellow", "black", "gray",  "darkgray", "lightgray", "brown", "lime",
-#' "olive", "orange", "pink",  "purple", "teal", "violet", "white".
+#' "yellow", "black", "gray", "darkgray", "lightgray", "brown", "lime",
+#' "olive", "orange", "pink", "purple", "teal", "violet", "white". They
+#' can be lighted or combined as with TIkz, e.g., "red!40" or "red!30!blue!30"
 #'
-#' Other options should be named as in Tikz code, with "_" (underscores) replacing
-#' spaces. A resource for these options is here:
+#' left_text, upper_text, right_text, lower_text = color
+#'
+#'
+#' Other options should be named as in Tikz code. Underscores (`_`) can be used
+#' to replace any spaces in the option names. A resource for these options is here:
 #' (https://en.wikibooks.org/wiki/LaTeX/PGF/TikZ).
 #'
-#' Line type ("solid", "dashed", etc.) is denoted with `linetype =`.
 #'
 #' @export
 #'
@@ -33,7 +49,7 @@
 #'   .node_options = list(shape = "star"),
 #'   .swig_options = list(gap = "3pt", line_color_right = "red",
 #'                        fill_color_left = "pink", line_width_left = 2.75),
-#'   .edge_options = list(linetype = "dashed", color = "green")
+#'   .edge_options = list(line_type = "dashed", color = "green")
 #' ) %>%
 #'   add_node("THIS IS A SWIG",
 #'            .options = list(shape = "forbidden sign", color = "blue",
@@ -45,7 +61,7 @@
 #'            ) %>%
 #'   add_edge("$x = 1$", "$Y^{x = 1}$",
 #'            curve = "up", is_double_arrow = TRUE,
-#'            .options = list(color = "teal", linetype = "solid")
+#'            .options = list(color = "teal", line_type = "solid")
 #'            ) %>%
 #'   add_edge(1, 3,
 #'            curve_in_degree = 0, curve_out_degree = 40
@@ -53,8 +69,20 @@
 #'   add_node("hello", above = 2,
 #'            .options = list(fill = "yellow"))
 #'
-dagtex <- function(.node_options = NULL, .edge_options = NULL, .swig_options = NULL,
-                   help_lines = FALSE, help_angles = FALSE, adorn_math = FALSE, ...) {
+dagtex <- function(.node_options = getOption("dagtex.node_options"),
+                   .edge_options = getOption("dagtex.edge_options"),
+                   .swig_options = getOption("dagtex.swig_options"),
+                   help_lines = getOption("dagtex.help_lines"),
+                   help_angles = getOption("dagtex.help_angles"),
+                   adorn_math = getOption("dagtex.adorn_math"), ...) {
+
+  if (!is.null(getOption("dagtex.shape"))) {
+    if (getOption("dagtex.shape") %in% c("ellipse", "circle", "circle part")) {
+    .swig_options <- as.list(c(.swig_options, shape = getOption("dagtex.shape")))
+    }
+    .node_options <- as.list(c(.node_options, shape = getOption("dagtex.shape")))
+  }
+
   structure(
     list(
       nodes = list(),

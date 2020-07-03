@@ -4,7 +4,7 @@
 \alias{plot_dagtex}
 \title{Plot DAGs}
 \usage{
-plot_dagtex(.dag, density = 320, ...)
+plot_dagtex(.dag, density = getOption("dagtex.density"), ...)
 }
 \arguments{
 \item{...}{}
