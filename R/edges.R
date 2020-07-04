@@ -33,10 +33,10 @@ add_edge <- function(.dag, .from, .to, start_position = NULL, end_position = NUL
 
   id <- count_edges(.dag) + 1
 
-  if (is.character(.from)) .from <- get_id(.dag, .from)
-  if (is.character(.to)) .to <- get_id(.dag, .to)
+  .from <- get_id(.dag, .from)
+  .to <- get_id(.dag, .to)
 
-  if (any(length(c(.from, .to)) < 1)) stop("Can't find node to add edge; check names")
+  if (anyNA(c(.from, .to))) stop("Can't find node to add edge; check names")
 
   add_edge_to_dag(
     .dag = .dag,
@@ -78,7 +78,7 @@ add_many_edges <- function(.dag, .from, .to, .options = NULL,
   if (!is_curved) {
     for (i in seq_along(to_ids)) {
       args <- c(.dag = list(.dag), .from = .from,
-                .to = to_ids[i], .options = .options)
+                .to = to_ids[i], .options = list(.options), ...)
       .dag <- do.call(add_edge, args)
     }
     return(.dag)
@@ -90,14 +90,15 @@ add_many_edges <- function(.dag, .from, .to, .options = NULL,
 
   for (i in seq_along(adj)) {
     args <- c(.dag = list(.dag), .from = .from,
-              .to = adj[i], .options = .options)
+              .to = adj[i], .options = list(.options), ...)
     .dag <- do.call(add_edge, args)
   }
 
   for (i in seq_along(not_adj)) {
     curve = ifelse(i %% 2 == 1, start_curve, next_curve)
     args <- c(.dag = list(.dag), .from = .from,
-              .to = not_adj[i], curve = curve, .options = .options)
+              .to = not_adj[i], curve = curve,
+              .options = list(.options), ...)
     .dag <- do.call(add_edge, args)
   }
 
@@ -164,7 +165,7 @@ process_position <- function(target, position) {
 }
 
 get_id <- function(.dag, .var) {
-  if (is.double(.var)) return(.var)
+  if (is.numeric(.var)) return(.var)
    node_names <- unlist(purrr::map(.dag$nodes, "name"))
    swig_nodes <- purrr::map_lgl(.dag$nodes, "is_swig")
    node_ids <- purrr::map_dbl(.dag$nodes, "id")

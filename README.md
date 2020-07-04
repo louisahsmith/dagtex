@@ -43,7 +43,7 @@ dagtex() %>%
   add_edge("x", "y", is_curved = TRUE)
 ```
 
-<img src="man/figures/README-/0.679816744290292.png" width="400px" style="display: block; margin: auto;" />
+<img src="man/figures/README/dagtex_353d844651c.png" width="500px" />
 
 ``` r
 
@@ -64,26 +64,26 @@ dagtex() %>%
   add_edge("u3", "y", start_position = "north", end_position = "south")
 ```
 
-<img src="man/figures/README-/0.115032531321049.png" width="400px" style="display: block; margin: auto;" />
+<img src="man/figures/README/dagtex_353d424a1581.png" width="500px" />
 
 ``` r
 
 dagtex(.node_options = list(shape = "star"),
        .swig_options = list(gap = "3pt", line_color_upper = "red", split = "h",
                             fill_color_lower = "pink", line_width_lower = 2.75),
-       .edge_options = list(linetype = "dashed", color = "green")) %>%
+       .edge_options = list(line_type = "dashed", color = "green")) %>%
   add_node("THIS IS A SWIG",
            .options = list(shape = "forbidden sign", color = "blue", line_width = 4)) %>%
   add_swig_node(.left = "$X$", .right = "$x = 1$") %>%
   add_node("$Y^{x = 1}$",
            .options = list(color = "violet", text = "olive")) %>%
   add_edge("$x = 1$", "$Y^{x = 1}$", curve = "up", is_double_arrow = TRUE,
-           .options = list(color = "teal", linetype = "solid")) %>%
+           .options = list(color = "teal", line_type = "solid")) %>%
   add_edge(1, 3, curve_in_degree = 0, curve_out_degree = 40) %>%
   add_node("hello", above = 2, .options = list(fill = "yellow"))
 ```
 
-<img src="man/figures/README-/0.696144692832604.png" width="400px" style="display: block; margin: auto;" />
+<img src="man/figures/README/dagtex_353ddc9ea27.png" width="500px" />
 
 ``` r
 
@@ -97,7 +97,7 @@ dagtex(.node_options = list(shape = "circle")) %>%
   add_edge(.from = "$A_1$", .to = "$Y$")
 ```
 
-<img src="man/figures/README-/0.132741749286652.png" width="400px" style="display: block; margin: auto;" />
+<img src="man/figures/README/dagtex_353d432bad83.png" width="500px" />
 
 ``` r
 
@@ -109,11 +109,12 @@ dagtex(.node_options = list(shape = "ellipse"),
   add_edge(.from = "$a_1$", .to = "$Y^{a_0, a_1}$")
 ```
 
-<img src="man/figures/README-/0.93939732410945.png" width="400px" style="display: block; margin: auto;" />
+<img src="man/figures/README/dagtex_353d688c95e8.png" width="500px" />
 
 ``` r
 
-dagtex(.swig_options = list(gap = "1pt"),
+dagtex(.swig_options = list(gap = "1pt",
+                                    right_text = "red"),
        adorn_math = TRUE) %>%
   add_many_nodes(list(c("A_0", "a_0"), "L_1^{a_0}", c("A_1^{a_0}", "a_1"), "Y^{a_0, a_1}")) %>%
   add_many_edges(.from = "a_0", .to = c("L_1^{a_0}","A_1^{a_0}", "Y^{a_0, a_1}")) %>%
@@ -121,10 +122,62 @@ dagtex(.swig_options = list(gap = "1pt"),
   add_edge(.from = "a_1", .to = "Y^{a_0, a_1}")
 ```
 
-<img src="man/figures/README-/0.104813754791394.png" width="400px" style="display: block; margin: auto;" />
+<img src="man/figures/README/dagtex_353d65c5e7f7.png" width="500px" />
 
 ``` r
 
+dagtex(.swig_options = list(gap = "1pt",
+                            right_text = "red"),
+       adorn_math = TRUE) %>%
+  add_many_nodes(list(c("A_0", "a_0"), 
+                      "L_1", 
+                      c("A_1", "a_1"), 
+                      "Y")) %>%
+  add_many_edges(.from = "a_0", .to = c("L_1","A_1", "Y")) %>%
+  add_many_edges(.from = "L_1", .to = c("A_1", "Y")) %>%
+  add_edge(.from = "a_1", .to = "Y") %>%
+  adorn_counterfactuals()
+```
+
+<img src="man/figures/README/dagtex_353d24003d54.png" width="500px" />
+
+``` r
+
+dagtex(.swig_options = list(gap = "1pt",
+                            right_text = "red"),
+       adorn_math = FALSE) %>%
+  add_many_nodes(list(c("$A_0$", "$a_0$"), 
+                      "$L_1$", 
+                      c("$A_1$", "$a_1$"), 
+                      "$Y$")) %>%
+  add_many_edges(.from = "$a_0$", .to = c("$L_1$","$A_1$", "$Y$")) %>%
+  add_many_edges(.from = "$L_1$", .to = c("$A_1$", "$Y$")) %>%
+  add_edge(.from = "$a_1$", .to = "$Y$") %>%
+  adorn_counterfactuals()
+```
+
+<img src="man/figures/README/dagtex_353dbba6843.png" width="500px" />
+
+``` r
+
+dagtex(.swig_options = list(gap = "1pt", text = "teal",
+                                    shape = "circle", 
+                                    line_color_left = "purple"),
+       .node_options = list(color = "green", shape = "star", fill = "red!30!blue!30"),
+       .edge_options = list(color = "blue", arrowhead = "latex", line_type = "dashed"),
+       adorn_math = TRUE) %>%
+  add_swig_node(.left = "A_0", .right = "a_0", 
+                .options = list(left_text = "magenta", line_color_right = "cyan")) %>%
+  add_swig_node(.left = "A_1", .right = "a_1", 
+           .options = list(gap = "3pt")) %>%
+  add_node("Y^{a_0, a_1}") %>%
+  add_edge(.from = "a_1", .to = "Y^{a_0, a_1}")
+```
+
+<img src="man/figures/README/dagtex_353d7b130cb8.png" width="500px" />
+
+``` r
+ 
 exposure0 <- "A_0"
 exposure1 <- "A_1"
 confounder1 <- "L_1"
@@ -139,7 +192,7 @@ dagtex(.node_options = list(shape = "circle"),
   add_edge(.from = exposure1, .to = outcome)
 ```
 
-<img src="man/figures/README-/0.760028041433543.png" width="400px" style="display: block; margin: auto;" />
+<img src="man/figures/README/dagtex_353d1fa84328.png" width="500px" />
 
 ``` r
 
@@ -150,4 +203,33 @@ dagtex(help_angles = TRUE, .node_options = list(color = "orange")) %>%
            .options = list(color = "purple", fill = "teal", shape = "circle"))
 ```
 
-<img src="man/figures/README-/0.946859396528453.png" width="400px" style="display: block; margin: auto;" />
+<img src="man/figures/README/dagtex_353d5fd10754.png" width="500px" />
+
+``` r
+
+options(dagtex.shape = "circle",
+        dagtex.adorn_math = TRUE,
+        dagtex.edge_options = list(line_type = "densely dotted", color = "darkgray", cap = "round", arrowhead = "latex"))
+
+dagtex(adorn_math = TRUE) %>%
+  add_node("\\alpha^{\\textcolor{red}{y}}") %>%
+  add_node("\\beta") %>%
+  add_node("\\gamma") %>%
+  add_edge(1, "\\beta") %>%
+  add_edge("\\beta", "\\gamma") %>%
+  add_edge(1, "\\gamma", is_headless = TRUE, is_curved = TRUE,
+           start_position = "north", end_position = "north")
+```
+
+<img src="man/figures/README/dagtex_353d14384cf1.png" width="500px" />
+
+``` r
+
+dagtex(.edge_options = list(arrowhead = "{Rays[n=5]}")) %>%
+  add_many_nodes(list(c("A", "a"), "b", c("C", "c"), "d")) %>%
+  complete(arrow_type = "double", .options = list(line_type = "dotted")) %>%
+    add_many_edges("a", c("b", "C"), is_headless = TRUE,
+                   .options = list(color = "red", line_type = "dashed"))
+```
+
+<img src="man/figures/README/dagtex_353d7c436c95.png" width="500px" />

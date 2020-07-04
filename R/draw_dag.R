@@ -24,6 +24,7 @@ plot_dagtex <- function(.dag, density = getOption("dagtex.density"), ...) {
     fileDir = system.file("tex", package = "dagtex"),
     cleanup = c("aux", "log", "txt", "Doc", "png", "tex"),
     ...)
+
 }
 
 #' Draw DAGs with knitr
@@ -55,7 +56,7 @@ knit_print.dagtex <- function(x, density = knitr::opts_current$get("density"),
     usrPackages = pkg_opts,
     fileDir = fig.path,
     density = density,
-    stem = tempfile(pattern = "dagtex_", tmpdir = ""),
+    stem = substr(tempfile(pattern = "dagtex_", tmpdir = ""), 2, 21),
     cleanup = getOption("dagtex.cleanup"),
     returnType = "engine")
 
@@ -80,8 +81,7 @@ print.dagtex <- function(x, ...) {
     return(invisible(x))
   }
 
-  #  wrap in print for print.magick-image when obj is HTML
-  print(plot_dagtex(x, ...), info = FALSE)
+  plot_dagtex(x, ...)
 }
 
 #' @export
@@ -251,7 +251,10 @@ get_tikz_library <- function(.dag = NULL, has_swig = FALSE, ...) {
 
 #' @export
 print.latex_code <- function(x, ...) {
-  # TODO: might be nice to clean things up (remove extra commas) here...
+  # clean things up
+  x <- gsub("(\\s*\\,\\s*)+", ", ", x)
+  x <- gsub("\\,\\s*(\\}|\\])", "\\1", x)
+  x <- gsub("(\\{|\\[)\\s*\\,\\s*", "\\1", x)
   cat(x, ...)
 }
 
@@ -299,12 +302,17 @@ split_swig_opts <- function(.swig_options, exclude = "text", ...) {
   left_included <- .swig_options[as.logical(left * !excluded)]
   right_included <- .swig_options[as.logical(right * !excluded)]
   all_included <- .swig_options[["gap"]]
+  if (!is.null(all_included)) all_included <- list(gap = all_included)
   all_excluded <- .swig_options[!(.swig_options %in%
                                      c(upper_excluded, lower_excluded,
                                        left_excluded , right_excluded,
                                        upper_included, lower_included,
                                        left_included , right_included,
                                        all_included))]
+  names(left_excluded) <- sub("^left\\_", "", names(left_excluded)) %0% NULL
+  names(right_excluded) <- sub("^right\\_", "", names(right_excluded)) %0% NULL
+  names(upper_excluded) <- sub("^upper\\_", "", names(upper_excluded)) %0% NULL
+  names(lower_excluded) <- sub("^lower\\_", "", names(lower_excluded)) %0% NULL
 
   setNames(
     purrr::map(
@@ -369,7 +377,7 @@ latexify_node <- function(.node, .dag) {
 
     main_part <- paste0(compiled_options,
                         ", ", node_opts$all_excluded,
-                        ", shape=swig ", split, "split, text = ",
+                        ", shape=swig ", split, "split, text=",
                         .node$options[["text"]] %||% .dag$swig_options[["text"]] %||% "black",
                         ", swig ", split, "split={",
                         ifelse(split == "v", node_opts$left_included, node_opts$upper_included),
@@ -407,10 +415,11 @@ latexify_node <- function(.node, .dag) {
 
   } else {
 
-    compiled_options <- paste0(compiled_options, node_opts, "] ")
-    if (compiled_options == "draw, ] ") compiled_options <- "] "
-    # TODO: check on this
-    # TODO: need to do the whole text color thing for nodes too...
+    compiled_options <- paste0(compiled_options, node_opts,
+                               ", text=",
+                               .node$options[["text"]] %||% .dag$node_options[["text"]] %||% "black",
+                               "] ")
+
 
     node_to_paste <- paste0("\\node[", compiled_options, node_id,
                             ifelse(is.null(.node$position),

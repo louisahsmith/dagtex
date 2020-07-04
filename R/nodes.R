@@ -80,7 +80,7 @@ add_many_nodes <- function(.dag, .names, .options = NULL, ...) {
   for (i in seq_along(.names)) {
     args <- c(.dag = list(.dag), .name = list(.names[[i]]),
               is_swig = length(.names[[i]]) > 1,
-              .options = .options, ...)
+              .options = list(.options), ...)
     .dag <- do.call(add_node, args)
   }
 
@@ -132,9 +132,9 @@ get_node_position <- function(.dag, .id, right_of = NULL,
       unique() %>%
       purrr::map_dbl(~ifelse(is.character(.x), get_id(.dag, .x), .x))
 
-    position <- paste(
+    position <- paste0(
       location,
-      "=of",
+      "=of ",
       next_to
     )
     return(position)
@@ -142,7 +142,7 @@ get_node_position <- function(.dag, .id, right_of = NULL,
 
   # by default, place to the right of previous node
   next_to <- .id - 1
-  position <- paste("right =of", next_to, ",")
+  position <- paste("right=of", next_to, ",")
 
   position
 }

@@ -8,8 +8,9 @@ output: github_document
 knitr::opts_chunk$set(
   collapse = TRUE,
   comment = "#>",
-  fig.path = "man/figures/README-",
-  out.width = "35%"
+  fig.path = "man/figures/README",
+  out.width = "500px",
+  density = 360
 )
 ```
 
@@ -29,7 +30,7 @@ SWIGs are drawn using Thomas Richardson's [TikZ shapes library](https://www.stat
 
 # Examples
 
-```{r example, fig.align = "center", density = 600, out.width = "400px"}
+```{r example}
 library(dagtex)
 
 dagtex() %>% 
@@ -83,26 +84,51 @@ dagtex(.node_options = list(shape = "ellipse"),
   add_many_edges(.from = "$L_1^{a_0}$", .to = c("$A_1^{a_0}$", "$Y^{a_0, a_1}$")) %>%
   add_edge(.from = "$a_1$", .to = "$Y^{a_0, a_1}$")
 
-.dag <- dagtex(.swig_options = list(gap = "1pt",
-                                    text_right = "red"),
+dagtex(.swig_options = list(gap = "1pt",
+                                    right_text = "red"),
        adorn_math = TRUE) %>%
   add_many_nodes(list(c("A_0", "a_0"), "L_1^{a_0}", c("A_1^{a_0}", "a_1"), "Y^{a_0, a_1}")) %>%
   add_many_edges(.from = "a_0", .to = c("L_1^{a_0}","A_1^{a_0}", "Y^{a_0, a_1}")) %>%
   add_many_edges(.from = "L_1^{a_0}", .to = c("A_1^{a_0}", "Y^{a_0, a_1}")) %>%
   add_edge(.from = "a_1", .to = "Y^{a_0, a_1}")
-# Y not showing up a circle
-# nothing is blue...
-# text in swigs is orange but preferably not (overwrite with text color)
+
 dagtex(.swig_options = list(gap = "1pt",
-                                    shape = "circle", color = "blue",
-                                    line_color_left = "purple"),
+                            right_text = "red"),
        adorn_math = TRUE) %>%
-  add_swig_node(.left = "A_0", .right = "a_0") %>%
+  add_many_nodes(list(c("A_0", "a_0"), 
+                      "L_1", 
+                      c("A_1", "a_1"), 
+                      "Y")) %>%
+  add_many_edges(.from = "a_0", .to = c("L_1","A_1", "Y")) %>%
+  add_many_edges(.from = "L_1", .to = c("A_1", "Y")) %>%
+  add_edge(.from = "a_1", .to = "Y") %>%
+  adorn_counterfactuals()
+
+dagtex(.swig_options = list(gap = "1pt",
+                            right_text = "red"),
+       adorn_math = FALSE) %>%
+  add_many_nodes(list(c("$A_0$", "$a_0$"), 
+                      "$L_1$", 
+                      c("$A_1$", "$a_1$"), 
+                      "$Y$")) %>%
+  add_many_edges(.from = "$a_0$", .to = c("$L_1$","$A_1$", "$Y$")) %>%
+  add_many_edges(.from = "$L_1$", .to = c("$A_1$", "$Y$")) %>%
+  add_edge(.from = "$a_1$", .to = "$Y$") %>%
+  adorn_counterfactuals()
+
+dagtex(.swig_options = list(gap = "1pt", text = "teal",
+                                    shape = "circle", 
+                                    line_color_left = "purple"),
+       .node_options = list(color = "green", shape = "star", fill = "red!30!blue!30"),
+       .edge_options = list(color = "blue", arrowhead = "latex", line_type = "dashed"),
+       adorn_math = TRUE) %>%
+  add_swig_node(.left = "A_0", .right = "a_0", 
+                .options = list(left_text = "magenta", line_color_right = "cyan")) %>%
   add_swig_node(.left = "A_1", .right = "a_1", 
-           .options = list(gap = "3pt", shape = NULL, color = "orange")) %>%
+           .options = list(gap = "3pt")) %>%
   add_node("Y^{a_0, a_1}") %>%
-  add_edge(.from = "a_1", .to = "Y^{a_0, a_1}") -> .dag
-# 
+  add_edge(.from = "a_1", .to = "Y^{a_0, a_1}")
+ 
 exposure0 <- "A_0"
 exposure1 <- "A_1"
 confounder1 <- "L_1"
@@ -121,5 +147,24 @@ dagtex(help_angles = TRUE, .node_options = list(color = "orange")) %>%
   add_node("as") %>%
   add_node("\\pi", adorn_math = TRUE, x = 1, y = -1,
            .options = list(color = "purple", fill = "teal", shape = "circle"))
+
+options(dagtex.shape = "circle",
+        dagtex.adorn_math = TRUE,
+        dagtex.edge_options = list(line_type = "densely dotted", color = "darkgray", cap = "round", arrowhead = "latex"))
+
+dagtex(adorn_math = TRUE) %>%
+  add_node("\\alpha^{\\textcolor{red}{y}}") %>%
+  add_node("\\beta") %>%
+  add_node("\\gamma") %>%
+  add_edge(1, "\\beta") %>%
+  add_edge("\\beta", "\\gamma") %>%
+  add_edge(1, "\\gamma", is_headless = TRUE, is_curved = TRUE,
+           start_position = "north", end_position = "north")
+
+dagtex(.edge_options = list(arrowhead = "{Rays[n=5]}")) %>%
+  add_many_nodes(list(c("A", "a"), "b", c("C", "c"), "d")) %>%
+  complete(arrow_type = "double", .options = list(line_type = "dotted")) %>%
+    add_many_edges("a", c("b", "C"), is_headless = TRUE,
+                   .options = list(color = "red", line_type = "dashed"))
 ```
 

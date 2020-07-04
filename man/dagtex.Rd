@@ -23,9 +23,22 @@ overwritten for individual edges).}
 
 \item{.swig_options}{List of options that apply to each SWIG node (some can be
 overwritten for individual SWIG nodes).}
+
+\item{help_lines}{Logical or numeric vector of length 2 giving the (x,y)
+coordinates that will be used (along with (0,0)) to help troubleshoot node
+placement. If \code{TRUE}, the upper-right coordinates will be the best guess of
+what will contain the diagram. Defaults to FALSE.}
+
+\item{help_angles}{Logical or numeric vector of angles in degrees. If \code{TRUE},
+plots lines extending from each node at 0, 30, ..., 360 degrees to
+troubleshoot arrow placement. If a numeric vector, lines extend at those
+angles. Defaults to FALSE.}
+
+\item{adorn_math}{Logical. If all node names should be printed in math mode,
+you can avoid surrounding them all with \verb{$...$} by setting \code{adorn_math = TRUE}.}
 }
 \value{
-
+DAG contents, invisibly (DAG is printed to the viewer).
 }
 \description{
 Create a new DAG
@@ -34,29 +47,35 @@ Create a new DAG
 For non-SWIG nodes, \code{shape} options are "rectangle", "circle", "ellipse",
 "circle split", "forbidden sign", "diamond", "cross out", "strike out",
 "regular polygon", "star". For SWIG nodes, the only option is "ellipse"
-(although "circle" and "circle split" return the same result). If no shape
-is supplied, the nodes default to being bare, and SWIG nodes are split
-with a simple line.
+(although "circle" and "circle split" return the same result). If no shape is
+supplied, the nodes default to being bare, and SWIG nodes are split with a
+simple line.
 
 SWIG nodes take the following possible options: \code{split}, \code{shape}, \code{gap},
 \verb{fill_color_\{x\}}, \verb{line_color_\{x\}}, \verb{line_width_\{x\}}, \verb{inner_line_width_\{x\}},
-where \code{{x}} is \code{left}, \code{right}, \code{upper}, or \code{lower.} The \code{split} option
-allows for choosing "v" (vertical) or "h" (horizontal) node splits.
-Only left/right options should be specified for vertical splits, and only
-upper/lower for horizontal splits; TikZ errors will otherwise result.
+where \code{{x}} is \code{left}, \code{right}, \code{upper}, or \code{lower.} The \code{split} option allows
+for choosing "v" (vertical) or "h" (horizontal) node splits. Only left/right
+options should be specified for vertical splits, and only upper/lower for
+horizontal splits; TikZ errors will otherwise result.
 
-Line type ("solid", "dashed", etc.) is denoted with \verb{line_type = }. Arrowhead type
-("stealth", "latex", etc.) is denoted with \verb{arrowhead = }.
+Line type ("solid", "dashed", etc.) is denoted with \verb{line_type = }. Arrowhead
+type ("stealth", "latex", etc.) is denoted with \verb{arrowhead = }.
 
-Color options include \verb{color = } for paths/node shapes and \verb{text_color = }
-for text color.
-Color values can be any of: "red", "green", "blue", "cyan", "magenta",
-"yellow", "black", "gray", "darkgray", "lightgray", "brown", "lime",
-"olive", "orange", "pink", "purple", "teal", "violet", "white".
+Color options include \verb{color = } for edges and nodes and \verb{text = } for text
+color. Note that including color as a node option will also turn the SWIG
+nodes that color, unless the individual line_colors are changed. Color values
+can be any of: "red", "green", "blue", "cyan", "magenta", "yellow", "black",
+"gray", "darkgray", "lightgray", "brown", "lime", "olive", "orange", "pink",
+"purple", "teal", "violet", "white". They can be lighted or combined as with
+TIkz, e.g., "red!40" or "red!30!blue!30".
 
 Other options should be named as in Tikz code. Underscores (\verb{_}) can be used
-to replace any spaces in the option names. A resource for these options is here:
-(https://en.wikibooks.org/wiki/LaTeX/PGF/TikZ).
+to replace any spaces in the option names. A resource for these options is
+here: (https://en.wikibooks.org/wiki/LaTeX/PGF/TikZ).
+
+To apply a style to just the left or right side of a SWIG node, name the
+option with the prefix \code{left_}, \code{right_}, \code{upper_}, or \code{lower_}, and it will
+be treated like a regular TikZ style option.
 }
 \examples{
 dagtex(
@@ -83,4 +102,9 @@ dagtex(
   add_node("hello", above = 2,
            .options = list(fill = "yellow"))
 
+# options() can be used to set options for a session
+options(dagtex.node_options = list(fill = "orange!30", shape = "rectangle"),
+   dagtex.adorn_math = TRUE)
+dagtex() \%>\% add_node("\\\\pi")
+# The special option "dagtex.shape" sets shape for regular and swig nodes
 }
