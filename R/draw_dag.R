@@ -159,7 +159,6 @@ get_latex_code <- function(.dag, add_header = TRUE) {
                          "}}\n\\tikzset{swig hsplit={gap=3pt,",swig_opts$upper_included,
                          ",", swig_opts$lower_included, ",", swig_opts$all_included,"}}")
 
-    # TODO: MUST REMOVE THE WORD LEFT (?text?) FROM left_text_color (after greping)
     swig_paste_style <- paste0("\tikzset{swig vsplit/.style={opacity = ",
                                as.numeric(draw_swig), ",", swig_opts$all_excluded,
                                ", text opacity = 1}}\n",
@@ -212,13 +211,9 @@ get_latex_code <- function(.dag, add_header = TRUE) {
   }
 
   latex_code <- paste(c(pkg_opts, edge_paste, swig_paste,
-                        node_paste, swig_paste_l ,
-                        swig_paste_r,
-                        swig_paste_lo,
-                        swig_paste_up,
-                        lines_paste,
-                        latexify_dag(.dag), angle_paste,
-                        "\\end{tikzpicture}"),
+                        node_paste, swig_paste_l, swig_paste_r,
+                        swig_paste_lo, swig_paste_up, lines_paste,
+                        latexify_dag(.dag), angle_paste, "\\end{tikzpicture}"),
                       collapse = "\n")
 
   structure(latex_code,
@@ -303,26 +298,25 @@ split_swig_opts <- function(.swig_options, exclude = "text", ...) {
   right_included <- .swig_options[as.logical(right * !excluded)]
   all_included <- .swig_options[["gap"]]
   if (!is.null(all_included)) all_included <- list(gap = all_included)
-  all_excluded <- .swig_options[!(.swig_options %in%
-                                     c(upper_excluded, lower_excluded,
-                                       left_excluded , right_excluded,
-                                       upper_included, lower_included,
-                                       left_included , right_included,
-                                       all_included))]
-  names(left_excluded) <- sub("^left\\_", "", names(left_excluded)) %0% NULL
-  names(right_excluded) <- sub("^right\\_", "", names(right_excluded)) %0% NULL
-  names(upper_excluded) <- sub("^upper\\_", "", names(upper_excluded)) %0% NULL
-  names(lower_excluded) <- sub("^lower\\_", "", names(lower_excluded)) %0% NULL
+  all_excluded <- .swig_options[
+    !(.swig_options %in% c(upper_excluded, lower_excluded, left_excluded,
+                           right_excluded, upper_included, lower_included,
+                           left_included , right_included,all_included))
+    ]
+  names(left_excluded) <- sub("\\_left$", "", names(left_excluded)) %0% NULL
+  names(right_excluded) <- sub("\\_right$", "", names(right_excluded)) %0% NULL
+  names(upper_excluded) <- sub("\\_upper$", "", names(upper_excluded)) %0% NULL
+  names(lower_excluded) <- sub("\\_lower$", "", names(lower_excluded)) %0% NULL
 
   setNames(
     purrr::map(
-      list(upper_excluded, lower_excluded, left_excluded ,
-           right_excluded, upper_included, lower_included,
-           left_included , right_included, all_included, all_excluded),
+      list(upper_excluded, lower_excluded, left_excluded, right_excluded,
+           upper_included, lower_included, left_included , right_included,
+           all_included, all_excluded),
       make_tex_opts),
-    c("upper_excluded","lower_excluded","left_excluded",
-      "right_excluded","upper_included","lower_included",
-      "left_included","right_included","all_included","all_excluded")
+    c("upper_excluded", "lower_excluded", "left_excluded", "right_excluded",
+      "upper_included", "lower_included", "left_included", "right_included",
+      "all_included", "all_excluded")
   )
 }
 

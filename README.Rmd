@@ -85,7 +85,7 @@ dagtex(.node_options = list(shape = "ellipse"),
   add_edge(.from = "$a_1$", .to = "$Y^{a_0, a_1}$")
 
 dagtex(.swig_options = list(gap = "1pt",
-                                    right_text = "red"),
+                                    text_right = "red"),
        adorn_math = TRUE) %>%
   add_many_nodes(list(c("A_0", "a_0"), "L_1^{a_0}", c("A_1^{a_0}", "a_1"), "Y^{a_0, a_1}")) %>%
   add_many_edges(.from = "a_0", .to = c("L_1^{a_0}","A_1^{a_0}", "Y^{a_0, a_1}")) %>%
@@ -93,7 +93,7 @@ dagtex(.swig_options = list(gap = "1pt",
   add_edge(.from = "a_1", .to = "Y^{a_0, a_1}")
 
 dagtex(.swig_options = list(gap = "1pt",
-                            right_text = "red"),
+                            text_right = "red"),
        adorn_math = TRUE) %>%
   add_many_nodes(list(c("A_0", "a_0"), 
                       "L_1", 
@@ -105,7 +105,7 @@ dagtex(.swig_options = list(gap = "1pt",
   adorn_counterfactuals()
 
 dagtex(.swig_options = list(gap = "1pt",
-                            right_text = "red"),
+                            text_right = "red"),
        adorn_math = FALSE) %>%
   add_many_nodes(list(c("$A_0$", "$a_0$"), 
                       "$L_1$", 
@@ -123,7 +123,7 @@ dagtex(.swig_options = list(gap = "1pt", text = "teal",
        .edge_options = list(color = "blue", arrowhead = "latex", line_type = "dashed"),
        adorn_math = TRUE) %>%
   add_swig_node(.left = "A_0", .right = "a_0", 
-                .options = list(left_text = "magenta", line_color_right = "cyan")) %>%
+                .options = list(text_left = "magenta", line_color_right = "cyan")) %>%
   add_swig_node(.left = "A_1", .right = "a_1", 
            .options = list(gap = "3pt")) %>%
   add_node("Y^{a_0, a_1}") %>%
@@ -138,15 +138,42 @@ dagtex(.node_options = list(shape = "circle"),
        adorn_math = TRUE) %>%
   add_many_nodes(c(exposure0, confounder1, exposure1, outcome)) %>%
   add_many_edges(.from = exposure0, 
-                 .to = c(confounder1, exposure1, outcome)) %>%
+                 .to = c(confounder1, exposure1, outcome), 
+                 annotate = annotate_edge("From $A_0$!", position = "yshift=3pt, xshift=-2pt", 
+                                          size = "tiny", color = "purple")) %>%
   add_many_edges(.from = confounder1, .to = c(exposure1, outcome)) %>%
   add_edge(.from = exposure1, .to = outcome)
+
+dagtex() %>%
+  add_node("Pentagon", 
+           .options = list(shape = "regular polygon", regular_polygon_sides = 5, color = "orange")) %>%
+  add_node("Star",
+           .options = list(shape = "star", star_point_ratio = 0.3, star_points = 7, color = "teal",
+                           font = "\\tiny", minimum_size = "10pt")) %>%
+  add_node("Octagon", 
+           .options = list(shape = "regular polygon", regular_polygon_sides = 8, color = "purple"))
 
 dagtex(help_angles = TRUE, .node_options = list(color = "orange")) %>%
   add_node("easy") %>%
   add_node("as") %>%
   add_node("\\pi", adorn_math = TRUE, x = 1, y = -1,
            .options = list(color = "purple", fill = "teal", shape = "circle"))
+
+dagtex(.edge_options = list(arrowhead = "{Rays[n=5]}")) %>%
+  add_many_nodes(list(c("A", "a"), "b", c("C", "c"), "d")) %>%
+  complete(arrow_type = "directed", .options = list(line_type = "dotted")) %>%
+    add_many_edges("a", c("b", "C"), is_headless = TRUE,
+                   .options = list(color = "red", line_type = "dashed")) %>%
+  adorn_counterfactuals(notation = "parens", text_color = "red")
+
+
+dagtex(adorn_math = TRUE,
+       .swig_options = list(shape = "ellipse", text_right = "red", line_color_right = "red"),
+       .node_options = list(shape = "ellipse", minimum_height = "2em", minimum_width = "5em")) %>%
+  add_many_nodes(c("A_0", "L_1", "A_1", "Y")) %>%
+  complete() %>%
+  swigify(intervention_nodes = c("A_0", "A_1")) %>%
+  adorn_counterfactuals(text_color = "red")
 
 options(dagtex.shape = "circle",
         dagtex.adorn_math = TRUE,
@@ -160,11 +187,5 @@ dagtex(adorn_math = TRUE) %>%
   add_edge("\\beta", "\\gamma") %>%
   add_edge(1, "\\gamma", is_headless = TRUE, is_curved = TRUE,
            start_position = "north", end_position = "north")
-
-dagtex(.edge_options = list(arrowhead = "{Rays[n=5]}")) %>%
-  add_many_nodes(list(c("A", "a"), "b", c("C", "c"), "d")) %>%
-  complete(arrow_type = "double", .options = list(line_type = "dotted")) %>%
-    add_many_edges("a", c("b", "C"), is_headless = TRUE,
-                   .options = list(color = "red", line_type = "dashed"))
 ```
 

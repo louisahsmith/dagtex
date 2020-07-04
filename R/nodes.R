@@ -176,7 +176,7 @@ get_node_coords <- function(.dag, id, coords, right_of = NULL,
   if (!all(is.na(to_add))) {
     to_add <- to_add[!is.na(to_add)]
 
-    if(length(to_add) > 1){
+    if (length(to_add) > 1) {
       if (!all(purrr::map_lgl(to_add[2:length(to_add)], identical, to_add[1]))) {
         warning("Cannot place nodes relative to > 1 other node. Choosing one.")
       }

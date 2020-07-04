@@ -25,7 +25,7 @@
 #'"regular polygon", "star". For SWIG nodes, the only option is "ellipse"
 #'(although "circle" and "circle split" return the same result). If no shape is
 #'supplied, the nodes default to being bare, and SWIG nodes are split with a
-#'simple line.
+#'simple line. Other options regarding shapes can be passed to .node_options.
 #'
 #'SWIG nodes take the following possible options: `split`, `shape`, `gap`,
 #'`fill_color_{x}`, `line_color_{x}`, `line_width_{x}`, `inner_line_width_{x}`,
@@ -50,7 +50,7 @@
 #'here: (https://en.wikibooks.org/wiki/LaTeX/PGF/TikZ).
 #'
 #'To apply a style to just the left or right side of a SWIG node, name the
-#'option with the prefix `left_`, `right_`, `upper_`, or `lower_`, and it will
+#'option with the suffix `_left`, `_right`, `_upper`, or `_lower`, and it will
 #'be treated like a regular TikZ style option.
 #'
 #'
@@ -82,6 +82,9 @@
 #'   add_node("hello", above = 2,
 #'            .options = list(fill = "yellow"))
 #'
+#' dagtex(.node_options = list(shape = "star", star_point_ratio = 0.8, star_points = 7)) %>%
+#'    add_node("Star")
+#'
 #'# options() can be used to set options for a session
 #' options(dagtex.node_options = list(fill = "orange!30", shape = "rectangle"),
 #'    dagtex.adorn_math = TRUE)
@@ -97,9 +100,9 @@ dagtex <- function(.node_options = getOption("dagtex.node_options"),
 
   if (!is.null(getOption("dagtex.shape"))) {
     if (getOption("dagtex.shape") %in% c("ellipse", "circle", "circle part")) {
-    .swig_options <- as.list(c(.swig_options, shape = getOption("dagtex.shape")))
+    .swig_options <- as.list(c(shape = getOption("dagtex.shape"), .swig_options))
     }
-    .node_options <- as.list(c(.node_options, shape = getOption("dagtex.shape")))
+    .node_options <- as.list(c(shape = getOption("dagtex.shape"), .node_options))
   }
 
   structure(

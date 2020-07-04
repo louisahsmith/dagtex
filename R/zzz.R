@@ -30,7 +30,8 @@
     dagtex.node_options = NULL,
     dagtex.edge_options = NULL,
     dagtex.cleanup = c("aux", "log", "txt", "Doc", "tex"),
-    dagtex.shape = NULL
+    dagtex.shape = NULL,
+    dagtex.notation = "superscript"
     )
   toset <- !(names(op.dagtex) %in% names(op))
   if (any(toset)) options(op.dagtex[toset])

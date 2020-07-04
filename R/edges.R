@@ -150,8 +150,13 @@ add_edge_to_dag <- function(.dag, .id, .from, .to, start_position = NULL,
 
 #' @export
 #' @rdname add_edge
-annotate_edge <- function(text, placement = "midway", position = "above") {
-  paste0("node[", placement, ", ", position, "]{", text, "}")
+#'
+
+annotate_edge <- function(text, placement = "midway", position = "above",
+                          size = "normalsize", color = NULL) {
+  size <- match.arg(size, c("tiny", "scriptsize", "footnotesize", "small",
+                             "normalsize", "large", "Large", "LARGE", "huge", "Huge"))
+  paste0("node[draw=none, text=", color, ", ", placement, ", ", position, "]{\\", size, " ", text, "}")
 }
 
 count_edges <- function(.dag) length(.dag$edges)

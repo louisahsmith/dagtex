@@ -49,7 +49,7 @@ For non-SWIG nodes, \code{shape} options are "rectangle", "circle", "ellipse",
 "regular polygon", "star". For SWIG nodes, the only option is "ellipse"
 (although "circle" and "circle split" return the same result). If no shape is
 supplied, the nodes default to being bare, and SWIG nodes are split with a
-simple line.
+simple line. Other options regarding shapes can be passed to .node_options.
 
 SWIG nodes take the following possible options: \code{split}, \code{shape}, \code{gap},
 \verb{fill_color_\{x\}}, \verb{line_color_\{x\}}, \verb{line_width_\{x\}}, \verb{inner_line_width_\{x\}},
@@ -74,7 +74,7 @@ to replace any spaces in the option names. A resource for these options is
 here: (https://en.wikibooks.org/wiki/LaTeX/PGF/TikZ).
 
 To apply a style to just the left or right side of a SWIG node, name the
-option with the prefix \code{left_}, \code{right_}, \code{upper_}, or \code{lower_}, and it will
+option with the suffix \verb{_left}, \verb{_right}, \verb{_upper}, or \verb{_lower}, and it will
 be treated like a regular TikZ style option.
 }
 \examples{
@@ -101,6 +101,9 @@ dagtex(
            ) \%>\%
   add_node("hello", above = 2,
            .options = list(fill = "yellow"))
+
+dagtex(.node_options = list(shape = "star", star_point_ratio = 0.8, star_points = 7)) \%>\%
+   add_node("Star")
 
 # options() can be used to set options for a session
 options(dagtex.node_options = list(fill = "orange!30", shape = "rectangle"),
