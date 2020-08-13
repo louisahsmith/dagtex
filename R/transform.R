@@ -19,8 +19,8 @@ adorn_counterfactuals <- function(.dag, notation = getOption("dagtex.notation"),
   swig_names <- purrr::map_chr(swig_nodes, ~.x$new_name[2])
   swig_ids <- purrr::map_dbl(swig_nodes, ~.x$id)
   directed_edges <- .dag$edges[purrr::map_lgl(.dag$edges, ~!.x$is_double_arrow & !.x$is_headless)]
-  all_pairs <- purrr::map_dfr(directed_edges, ~data.frame(from = .x$from,
-                                                          to = .x$to))
+  all_pairs <- purrr::map_dfr(directed_edges, ~data.frame(from = as.numeric(sub("(.*?)\\..*", "\\1", .x$from)),
+                                                          to = as.numeric(sub("(.*?)\\..*", "\\1", .x$to))))
   descendants <- list()
   for (swig in swig_ids) {
     if (!swig %in% all_pairs$from) {descendants[[swig]] <- NULL; next}
@@ -92,7 +92,7 @@ swigify <- function(.dag, intervention_nodes, ...) {
 #' @param ... Other options passed to [add_edge].
 #' @export
 
-complete <- function(.dag, arrow_type = "directed", .options = NULL, ...) {
+dag_complete <- function(.dag, arrow_type = "directed", .options = NULL, ...) {
 
   arrow_type <- match.arg(arrow_type, c("directed", "headless", "double"))
 
@@ -104,12 +104,12 @@ complete <- function(.dag, arrow_type = "directed", .options = NULL, ...) {
   if (arrow_type == "double") directed_edges <- .dag$edges[purrr::map_lgl(.dag$edges, ~.x$is_double_arrow)]
 
   suppressMessages(
-  all_pairs <- purrr::map_dfr(directed_edges, ~data.frame(from = .x$from,
-                                                          to = .x$to))
+  all_pairs <- purrr::map_dfr(directed_edges, ~data.frame(from = as.numeric(sub("(.*?)\\..*", "\\1", .x$from)),
+                                                          to = as.numeric(sub("(.*?)\\..*", "\\1", .x$to))))
   )
 
   for (i in seq_len(max_id)) {
-    existing <- ifelse(purrr::is_empty(all_pairs), NA, all_pairs$to[all_pairs$from == i])
+    existing <- if(purrr::is_empty(all_pairs)) NA else all_pairs$to[all_pairs$from == i]
     .dag <- .dag %>%
       add_many_edges(.from = i, .to = setdiff(i:max_id, c(existing, i)),
                       is_headless = arrow_type == "headless",

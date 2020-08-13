@@ -5,12 +5,13 @@
 \title{Create a new DAG}
 \usage{
 dagtex(
-  .node_options = getOption("dagtex.node_options"),
-  .edge_options = getOption("dagtex.edge_options"),
-  .swig_options = getOption("dagtex.swig_options"),
+  .node_options = NULL,
+  .edge_options = NULL,
+  .swig_options = NULL,
   help_lines = getOption("dagtex.help_lines"),
   help_angles = getOption("dagtex.help_angles"),
   adorn_math = getOption("dagtex.adorn_math"),
+  node_distance = "1cm",
   ...
 )
 }

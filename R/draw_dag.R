@@ -10,6 +10,8 @@
 #' @examples
 plot_dagtex <- function(.dag, density = getOption("dagtex.density"), ...) {
 
+  .dag$texPreview_options$density <- .dag$texPreview_options$density %||% density
+
   latex_code <- get_latex_code(.dag, add_header = FALSE)
 
   tikz_opts <- get_tikz_library(.dag)
@@ -17,13 +19,13 @@ plot_dagtex <- function(.dag, density = getOption("dagtex.density"), ...) {
   pkg_opts <- texPreview::build_usepackage(pkg = 'tikz',
                                            uselibrary = tikz_opts)
 
-  texPreview::tex_preview(
-    latex_code,
-    usrPackages = pkg_opts,
-    density = density,
-    fileDir = system.file("tex", package = "dagtex"),
-    cleanup = c("aux", "log", "txt", "Doc", "png", "tex"),
-    ...)
+  args <- c(obj = latex_code,
+            usrPackages = list(pkg_opts),
+            fileDir = list(system.file("tex", package = "dagtex")),
+            cleanup = list(c("aux", "log", "txt", "Doc", "png", "tex")),
+            .dag$texPreview_options)
+
+  do.call(texPreview::tex_preview, args)
 
 }
 
@@ -35,11 +37,16 @@ plot_dagtex <- function(.dag, density = getOption("dagtex.density"), ...) {
 #' @export
 knit_print.dagtex <- function(x, density = knitr::opts_current$get("density"),
                               fig.path = knitr::opts_current$get("fig.path"),
+                              save.dag = knitr::opts_current$get("save.dag"),
+                              label = knitr::opts_current$get("label"),
+                              print.dag = knitr::opts_current$get("print.dag"),
                               ...) {
 
   latex_code <- get_latex_code(x, add_header = FALSE)
+  save.dag <- save.dag %||% FALSE
+  print.dag <- print.dag %||% TRUE
 
-  if (knitr::is_latex_output()) return(knitr::asis_output(latex_code))
+  if (knitr::is_latex_output() & print.dag & !save.dag) return(knitr::asis_output(latex_code))
 
   fig.path <- fig.path %||% "tikz"
   density <- density %||% getOption("dagtex.density")
@@ -51,16 +58,21 @@ knit_print.dagtex <- function(x, density = knitr::opts_current$get("density"),
   pkg_opts <- texPreview::build_usepackage(pkg = 'tikz',
                                            uselibrary = tikz_opts)
 
+  stem <- label %||% substr(tempfile(pattern = "dagtex_", tmpdir = ""), 2, 21)
+
   filename <- texPreview::tex_preview(
     latex_code,
     usrPackages = pkg_opts,
     fileDir = fig.path,
     density = density,
-    stem = substr(tempfile(pattern = "dagtex_", tmpdir = ""), 2, 21),
+    stem = stem,
     cleanup = getOption("dagtex.cleanup"),
     returnType = "engine")
 
-  knitr::include_graphics(filename)
+  if (knitr::is_latex_output() & print.dag) return(knitr::asis_output(latex_code))
+
+  if (print.dag) return(knitr::include_graphics(filename))
+
 }
 
 
@@ -137,13 +149,14 @@ plot.dagtex <- print.dagtex
 #'
 
 
-get_latex_code <- function(.dag, add_header = TRUE) {
+get_latex_code <- function(.dag, add_header = TRUE, node_distance = .dag$node_distance) {
 
   swig_paste <- pkg_opts <- lines_paste <- angle_paste <- NULL
   swig_paste_l <- swig_paste_r <- swig_paste_lo <- swig_paste_up <- NULL
 
   edge_opts <- make_tex_opts(.dag$edge_options)
-  edge_paste <- paste0("\\begin{tikzpicture}[every path/.style={>=stealth, thick,",
+  edge_paste <- paste0("\\begin{tikzpicture}[node distance = ", node_distance,
+                       ", every path/.style={>=stealth, thick,",
                        edge_opts, "}]")
 
   draw_node <- "shape" %in% names(.dag$node_options)
@@ -170,7 +183,7 @@ get_latex_code <- function(.dag, add_header = TRUE) {
     swig_paste_l <-  paste0("\\tikzset{l/.style={", swig_opts$left_excluded, "}}")
     swig_paste_r <-  paste0("\\tikzset{r/.style={", swig_opts$right_excluded, "}}")
     swig_paste_lo <-  paste0("\\tikzset{lo/.style={", swig_opts$lower_excluded, "}}")
-    swig_paste_up <-  paste0("\\tikzset{up/.style={", swig_opts$lower_excluded, "}}")
+    swig_paste_up <-  paste0("\\tikzset{up/.style={", swig_opts$upper_excluded, "}}")
 
   }
 
@@ -236,7 +249,7 @@ get_tikz_library <- function(.dag = NULL, has_swig = FALSE, ...) {
   if (!is.null(.dag) & any_swig_nodes(.dag)) has_swig <- TRUE
   tikz_opts <- '\\usetikzlibrary{positioning, calc, shapes.geometric,
   shapes.multipart, shapes, arrows.meta, arrows, decorations.markings,
-  external, trees, decorations.pathmorphing, positioning'
+  external, trees, decorations.pathmorphing, positioning, shapes.arrows'
   tikz_opts <- ifelse(has_swig,
                       paste0(tikz_opts, ", shapes.swigs}"),
                       paste0(tikz_opts, "}"))

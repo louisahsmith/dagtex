@@ -4,7 +4,7 @@
 \alias{get_latex_code}
 \title{Create tikz picture}
 \usage{
-get_latex_code(.dag, add_header = TRUE)
+get_latex_code(.dag, add_header = TRUE, node_distance = .dag$node_distance)
 }
 \arguments{
 \item{add_header}{}

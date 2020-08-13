@@ -36,7 +36,7 @@ add_edge <- function(.dag, .from, .to, start_position = NULL, end_position = NUL
   .from <- get_id(.dag, .from)
   .to <- get_id(.dag, .to)
 
-  if (anyNA(c(.from, .to))) stop("Can't find node to add edge; check names")
+  if (anyNA(c(.from, .to))) stop("Can't find node to add edge; check names. If multiple nodes have the same name, you must use node number.")
 
   add_edge_to_dag(
     .dag = .dag,

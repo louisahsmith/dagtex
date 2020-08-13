@@ -12,6 +12,7 @@
             "shapes",
             "arrows.meta",
             "arrows",
+            "shapes.arrows",
             "decorations.markings",
             "external",
             "trees")
@@ -26,11 +27,11 @@
     dagtex.help_lines = FALSE,
     dagtex.help_arrows = FALSE,
     dagtex.density = 320,
-    dagtex.swig_options = NULL,
-    dagtex.node_options = NULL,
-    dagtex.edge_options = NULL,
+    dagtex.swig_options = NA,
+    dagtex.node_options = NA,
+    dagtex.edge_options = NA,
     dagtex.cleanup = c("aux", "log", "txt", "Doc", "tex"),
-    dagtex.shape = NULL,
+    dagtex.shape = NA,
     dagtex.notation = "superscript"
     )
   toset <- !(names(op.dagtex) %in% names(op))

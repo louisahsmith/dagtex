@@ -8,6 +8,9 @@
   x,
   density = knitr::opts_current$get("density"),
   fig.path = knitr::opts_current$get("fig.path"),
+  save.dag = knitr::opts_current$get("save.dag"),
+  label = knitr::opts_current$get("label"),
+  print.dag = knitr::opts_current$get("print.dag"),
   ...
 )
 }

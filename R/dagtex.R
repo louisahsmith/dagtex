@@ -91,19 +91,33 @@
 #' dagtex() %>% add_node("\\pi")
 #' # The special option "dagtex.shape" sets shape for regular and swig nodes
 
-dagtex <- function(.node_options = getOption("dagtex.node_options"),
-                   .edge_options = getOption("dagtex.edge_options"),
-                   .swig_options = getOption("dagtex.swig_options"),
+dagtex <- function(.node_options = NULL,
+                   .edge_options = NULL,
+                   .swig_options = NULL,
                    help_lines = getOption("dagtex.help_lines"),
                    help_angles = getOption("dagtex.help_angles"),
-                   adorn_math = getOption("dagtex.adorn_math"), ...) {
+                   adorn_math = getOption("dagtex.adorn_math"),
+                   node_distance = "1cm", ...) {
 
-  if (!is.null(getOption("dagtex.shape"))) {
+  if (!is.na(getOption("dagtex.shape"))) {
     if (getOption("dagtex.shape") %in% c("ellipse", "circle", "circle part")) {
     .swig_options <- as.list(c(shape = getOption("dagtex.shape"), .swig_options))
     }
     .node_options <- as.list(c(shape = getOption("dagtex.shape"), .node_options))
   }
+
+    # can't have null defaults or you can't store them...
+  node_opts <- edge_opts <- swig_opts <- NULL
+  node_opts <- if (!(length(getOption("dagtex.node_options")) == 1 & is.na(getOption("dagtex.node_options")[1])))
+    getOption("dagtex.node_options")
+  edge_opts <- if (!(length(getOption("dagtex.edge_options")) == 1 & is.na(getOption("dagtex.edge_options")[1])))
+    getOption("dagtex.edge_options")
+  swig_opts <- if (!(length(getOption("dagtex.swig_options")) == 1 & is.na(getOption("dagtex.swig_options")[1])))
+    getOption("dagtex.swig_options")
+
+  .node_options <- c(node_opts, .node_options)
+  .edge_options <- c(edge_opts, .edge_options)
+  .swig_options <- c(edge_opts, .swig_options)
 
   structure(
     list(
@@ -116,6 +130,7 @@ dagtex <- function(.node_options = getOption("dagtex.node_options"),
       help_lines = help_lines,
       help_angles = help_angles,
       adorn_math = adorn_math,
+      node_distance = node_distance,
       texPreview_options = list(...)
     ),
     class = "dagtex"
