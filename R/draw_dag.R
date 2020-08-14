@@ -49,6 +49,7 @@ knit_print.dagtex <- function(x, density = knitr::opts_current$get("density"),
   if (knitr::is_latex_output() & print.dag & !save.dag) return(knitr::asis_output(latex_code))
 
   fig.path <- fig.path %||% "tikz"
+  fig.path <- sub("\\/$", "", fig.path)
   density <- density %||% getOption("dagtex.density")
 
   if (!dir.exists(fig.path)) dir.create(fig.path, recursive = TRUE)
@@ -71,7 +72,7 @@ knit_print.dagtex <- function(x, density = knitr::opts_current$get("density"),
 
   if (knitr::is_latex_output() & print.dag) return(knitr::asis_output(latex_code))
 
-  if (print.dag) return(knitr::include_graphics(filename))
+  if (print.dag) knitr::include_graphics(filename)
 
 }
 
