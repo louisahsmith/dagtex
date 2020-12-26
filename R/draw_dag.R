@@ -99,7 +99,7 @@ knit_print.dagtex <- function(x, density = knitr::opts_current$get("density"),
 #'
 #' @export
 #' @method print dagtex
-printdagtex <- function(x, ...) {
+print.dagtex <- function(x, ...) {
   nodes_and_edges <- x[c("nodes", "edges")]
   is_empty_dag <- all(purrr::map_lgl(nodes_and_edges, purrr::is_empty))
 
@@ -113,7 +113,7 @@ printdagtex <- function(x, ...) {
 
 #' @export
 #' @method plot dagtex
-plotdagtex <- printdagtex
+plot.dagtex <- print.dagtex
 
 
 #' Get LaTeX code
