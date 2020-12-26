@@ -63,4 +63,8 @@ dagtex(node_options = list(shape = "circle")) \%>\%
  add_many_edges(from = "$A_0$", to = c("$L_1$","$A_1$", "$Y$")) \%>\%
  add_many_edges(from = "$L_1$", to = c("$A_1$", "$Y$")) \%>\%
  add_edge(from = "$A_1$", to = "$Y$")
+
+dagtex() \%>\%
+ add_many_nodes("A", "B", "C", "D") \%>\%
+ add_many_edges(from = c("A", "B", "C"), to = "D")
 }

@@ -67,38 +67,70 @@ add_edge <- function(dag, from, to, start_position = NULL, end_position = NULL,
 #'  add_many_edges(from = "$A_0$", to = c("$L_1$","$A_1$", "$Y$")) %>%
 #'  add_many_edges(from = "$L_1$", to = c("$A_1$", "$Y$")) %>%
 #'  add_edge(from = "$A_1$", to = "$Y$")
+#'
+#' dagtex() %>%
+#'  add_many_nodes("A", "B", "C", "D") %>%
+#'  add_many_edges(from = c("A", "B", "C"), to = "D")
 
 add_many_edges <- function(dag, from, to, options = NULL,
                       is_curved = TRUE, start_curve = "up", ...) {
 
-  to_ids <- purrr::map_dbl(to, get_id, dag = dag)
+  if (length(from) > 1 & length(to) > 1) stop("Can only choose a single \"from\" or \"to\" node at a time")
 
+  # originally written from one to many, backwards allows for many to one
+  start_node <- from
+  end_node <- to
+  backwards <- FALSE
+
+  if (length(start_node) > length(end_node)) {
+    from <- end_node
+    to <- start_node
+    backwards <- TRUE
+  }
+
+  to_ids <- purrr::map_dbl(to, get_id, dag = dag)
   from_id <- get_id(dag, from)
 
   if (!is_curved) {
     for (i in seq_along(to_ids)) {
-      args <- c(dag = list(dag), from = from,
-                to = to_ids[i], options = list(options), ...)
+      if (backwards) {
+        args <- c(dag = list(dag), to = from,
+                  from = to_ids[i], options = list(options), ...)
+      } else {
+        args <- c(dag = list(dag), from = from,
+                  to = to_ids[i], options = list(options), ...)
+      }
       dag <- do.call(add_edge, args)
     }
     return(dag)
   }
 
-  not_adj <- to_ids[to_ids - from_id > 1]
+  not_adj <- to_ids[abs(to_ids - from_id) > 1]
   adj <- setdiff(to_ids, not_adj)
   next_curve <- ifelse(start_curve == "up", "down", "up")
 
   for (i in seq_along(adj)) {
-    args <- c(dag = list(dag), from = from,
-              to = adj[i], options = list(options), ...)
+    if (backwards) {
+      args <- c(dag = list(dag), to = from,
+                from = adj[i], options = list(options), ...)
+    } else {
+      args <- c(dag = list(dag), from = from,
+                to = adj[i], options = list(options), ...)
+    }
     dag <- do.call(add_edge, args)
   }
 
   for (i in seq_along(not_adj)) {
     curve = ifelse(i %% 2 == 1, start_curve, next_curve)
-    args <- c(dag = list(dag), from = from,
-              to = not_adj[i], curve = curve,
-              options = list(options), ...)
+    if (backwards) {
+      args <- c(dag = list(dag), to = from,
+                from = not_adj[i], curve = curve,
+                options = list(options))
+    } else {
+      args <- c(dag = list(dag), from = from,
+                to = not_adj[i], curve = curve,
+                options = list(options))
+    }
     dag <- do.call(add_edge, args)
   }
 
