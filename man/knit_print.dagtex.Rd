@@ -11,6 +11,8 @@
   save.dag = knitr::opts_current$get("save.dag"),
   label = knitr::opts_current$get("label"),
   print.dag = knitr::opts_current$get("print.dag"),
+  is_latex_code = knitr::opts_current$get("is_latex_code"),
+  has_swig = knitr::opts_current$get("has_swig"),
   ...
 )
 }

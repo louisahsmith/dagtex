@@ -4,7 +4,13 @@
 \alias{plot_dagtex}
 \title{Plot DAGs}
 \usage{
-plot_dagtex(.dag, density = getOption("dagtex.density"), ...)
+plot_dagtex(
+  .dag,
+  density = getOption("dagtex.density"),
+  is_latex_code = FALSE,
+  has_swig = FALSE,
+  ...
+)
 }
 \arguments{
 \item{...}{}
