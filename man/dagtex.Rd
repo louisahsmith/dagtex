@@ -60,7 +60,8 @@ options should be specified for vertical splits, and only upper/lower for
 horizontal splits; TikZ errors will otherwise result.
 
 Line type ("solid", "dashed", etc.) is denoted with \verb{line_type = }. Arrowhead
-type ("stealth", "latex", etc.) is denoted with \verb{arrowhead = }.
+type ("stealth", "latex", etc.) is denoted with \verb{arrowhead = }. Arrowhead types
+can be viewed here: https://gist.github.com/AndiH/f99d9b0cbd3519c27af5b96cfbeff97c.
 
 Color options include \verb{color = } for edges and nodes and \verb{text = } for text
 color. Note that including color as a node option will also turn the SWIG

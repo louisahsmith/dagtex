@@ -147,7 +147,6 @@ get_node_position <- function(dag, id, right_of = NULL,
   position
 }
 
-# get_node_coords <- function(x, y) paste0("(", x, ",", y, ")")
 
 get_node_coords <- function(dag, id, coords, right_of = NULL,
                             left_of = NULL, above = NULL, below = NULL) {

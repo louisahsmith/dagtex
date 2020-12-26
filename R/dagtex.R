@@ -35,7 +35,8 @@
 #'horizontal splits; TikZ errors will otherwise result.
 #'
 #'Line type ("solid", "dashed", etc.) is denoted with `line_type = `. Arrowhead
-#'type ("stealth", "latex", etc.) is denoted with `arrowhead = `.
+#'type ("stealth", "latex", etc.) is denoted with `arrowhead = `. Arrowhead types
+#'can be viewed here: https://gist.github.com/AndiH/f99d9b0cbd3519c27af5b96cfbeff97c.
 #'
 #'Color options include `color = ` for edges and nodes and `text = ` for text
 #'color. Note that including color as a node option will also turn the SWIG
@@ -106,7 +107,7 @@ dagtex <- function(node_options = NULL,
     node_options <- as.list(c(shape = getOption("dagtex.shape"), node_options))
   }
 
-    # can't have null defaults or you can't store them...
+  # can't have null defaults or you can't store them...
 
   node_opts <- getOption("dagtex.node_options")
   edge_opts <- getOption("dagtex.edge_options")

@@ -5,7 +5,7 @@
 #' @param to
 #' @param start_position
 #' @param end_position
-#' @param options https://gist.github.com/AndiH/f99d9b0cbd3519c27af5b96cfbeff97c
+#' @param options
 #' @param is_curved
 #' @param curve
 #' @param curve_in_degree
@@ -123,7 +123,6 @@ add_edge_to_dag <- function(dag, id, from, to, start_position = NULL,
   from <- process_position(from, start_position)
   to <- process_position(to, end_position)
 
-
   edge <- structure(
     list(
       id = id,
@@ -140,7 +139,6 @@ add_edge_to_dag <- function(dag, id, from, to, start_position = NULL,
     ),
     class = "dagtex_edge"
   )
-
 
   dag$edges[[id]] <- edge
 

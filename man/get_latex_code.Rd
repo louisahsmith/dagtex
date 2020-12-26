@@ -2,25 +2,19 @@
 % Please edit documentation in R/draw_dag.R
 \name{get_latex_code}
 \alias{get_latex_code}
-\title{Create tikz picture}
+\title{Get LaTeX code}
 \usage{
 get_latex_code(dag, add_header = TRUE, node_distance = dag$node_distance)
 }
 \arguments{
 \item{add_header}{}
-
-\item{scale_y}{}
 }
 \value{
 
-
-
 }
 \description{
-Create tikz picture
+Get LaTeX code
 }
 \examples{
-Get LaTeX code
-
 
 }

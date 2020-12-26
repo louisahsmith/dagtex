@@ -40,7 +40,7 @@ plot_dagtex <- function(dag, density = getOption("dagtex.density"),
 #' @param x
 #' @param ...
 #' @export
-knit_printdagtex <- function(x, density = knitr::opts_current$get("density"),
+knit_print.dagtex <- function(x, density = knitr::opts_current$get("density"),
                               fig.path = knitr::opts_current$get("fig.path"),
                               savedag = knitr::opts_current$get("savedag"),
                               label = knitr::opts_current$get("label"),
@@ -116,42 +116,6 @@ printdagtex <- function(x, ...) {
 plotdagtex <- printdagtex
 
 
-#' Create tikz picture
-#'
-#' @param ...
-#' @param scale
-#' @param scale_x
-#' @param scale_y
-#'
-#' @return
-#' @export
-#'
-#' @examples
-# tikz_picture <- function(..., scale = NULL, scale_x = NULL, scale_y = NULL) {
-#   # TODO: should just be options?
-#   dag_scale <- paste0(
-#     "[",
-#     ifelse(is.null(scale), "", paste0("scale=", scale)),
-#     ifelse(is.null(scale_x), "", paste0("xscale=", scale_x)),
-#     ifelse(is.null(scale_y), "", paste0("yscale=", scale_y)),
-#     "]"
-#   )
-#
-#   if (dag_scale == "[]") dag_scale <- NULL
-#
-#   begin_tikzpicture <- paste0("\\begin{tikzpicture}", dag_scale)
-#
-#
-#   paste(
-#     c(
-#       begin_tikzpicture,
-#       ...,
-#       "\\end{tikzpicture}"
-#     ),
-#     collapse = "\n"
-#   )
-# }
-
 #' Get LaTeX code
 #'
 #' @param dag
@@ -162,7 +126,6 @@ plotdagtex <- printdagtex
 #'
 #' @examples
 #'
-
 
 get_latex_code <- function(dag, add_header = TRUE, node_distance = dag$node_distance) {
 
@@ -266,7 +229,7 @@ get_tikz_library <- function(dag = NULL, has_swig = FALSE, ...) {
   shapes.multipart, shapes, arrows.meta, arrows, decorations.markings,
   external, trees, decorations.pathmorphing, positioning, shapes.arrows'
   tikz_opts <- ifelse(has_swig,
-                      paste0(tikz_opts, ", shapesswigs}"),
+                      paste0(tikz_opts, ", shapes.swigs}"),
                       paste0(tikz_opts, "}"))
   class(tikz_opts) <- "latex_code"
   tikz_opts

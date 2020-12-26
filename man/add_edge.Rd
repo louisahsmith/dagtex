@@ -45,8 +45,6 @@ annotate_edge(
 )
 }
 \arguments{
-\item{options}{https://gist.github.com/AndiH/f99d9b0cbd3519c27af5b96cfbeff97c}
-
 \item{...}{}
 }
 \value{
