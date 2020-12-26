@@ -7,9 +7,9 @@
 \title{Add nodes}
 \usage{
 add_node(
-  .dag,
-  .name,
-  .options = NULL,
+  dag,
+  name,
+  options = NULL,
   x = NULL,
   y = NULL,
   right_of = NULL,
@@ -21,9 +21,9 @@ add_node(
   ...
 )
 
-add_many_nodes(.dag, .names, .options = NULL, ...)
+add_many_nodes(dag, names, options = NULL, ...)
 
-add_swig_node(.dag, .left, .right, .options = NULL, ...)
+add_swig_node(dag, left, right, options = NULL, ...)
 }
 \arguments{
 \item{...}{}
@@ -36,10 +36,10 @@ Add nodes
 }
 \examples{
 
-dagtex(.node_options = list(shape = "ellipse"),
-       .swig_options = list(gap = "3pt", line_color_right = "red")) \%>\%
+dagtex(node_options = list(shape = "ellipse"),
+       swig_options = list(gap = "3pt", line_color_right = "red")) \%>\%
  add_many_nodes(list(c("$A_0$", "$a_0$"), "$L_1$", c("$A_1$", "$a_1$"), "$Y$")) \%>\%
- add_many_edges(.from = "$a_0$", .to = c("$L_1$","$A_1$", "$Y$")) \%>\%
- add_many_edges(.from = "$L_1$", .to = c("$A_1$", "$Y$")) \%>\%
- add_edge(.from = "$a_1$", .to = "$Y$")
+ add_many_edges(from = "$a_0$", to = c("$L_1$","$A_1$", "$Y$")) \%>\%
+ add_many_edges(from = "$L_1$", to = c("$A_1$", "$Y$")) \%>\%
+ add_edge(from = "$a_1$", to = "$Y$")
 }

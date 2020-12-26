@@ -8,12 +8,12 @@
 \title{Add edges}
 \usage{
 add_edge(
-  .dag,
-  .from,
-  .to,
+  dag,
+  from,
+  to,
   start_position = NULL,
   end_position = NULL,
-  .options = NULL,
+  options = NULL,
   curve = NULL,
   is_curved = !is.null(curve),
   curve_in_degree = NULL,
@@ -25,16 +25,16 @@ add_edge(
 )
 
 add_many_edges(
-  .dag,
-  .from,
-  .to,
-  .options = NULL,
+  dag,
+  from,
+  to,
+  options = NULL,
   is_curved = TRUE,
   start_curve = "up",
   ...
 )
 
-add_curved_edge(.dag, .from, .to, .options = NULL, curve = "up", ...)
+add_curved_edge(dag, from, to, options = NULL, curve = "up", ...)
 
 annotate_edge(
   text,
@@ -45,7 +45,7 @@ annotate_edge(
 )
 }
 \arguments{
-\item{.options}{https://gist.github.com/AndiH/f99d9b0cbd3519c27af5b96cfbeff97c}
+\item{options}{https://gist.github.com/AndiH/f99d9b0cbd3519c27af5b96cfbeff97c}
 
 \item{...}{}
 }
@@ -57,12 +57,12 @@ Add edges
 }
 \examples{
 
-dagtex(.node_options = list(shape = "circle")) \%>\%
+dagtex(node_options = list(shape = "circle")) \%>\%
  add_node("$A_0$") \%>\%
  add_node("$L_1$") \%>\%
  add_node("$A_1$") \%>\%
  add_node("$Y$") \%>\%
- add_many_edges(.from = "$A_0$", .to = c("$L_1$","$A_1$", "$Y$")) \%>\%
- add_many_edges(.from = "$L_1$", .to = c("$A_1$", "$Y$")) \%>\%
- add_edge(.from = "$A_1$", .to = "$Y$")
+ add_many_edges(from = "$A_0$", to = c("$L_1$","$A_1$", "$Y$")) \%>\%
+ add_many_edges(from = "$L_1$", to = c("$A_1$", "$Y$")) \%>\%
+ add_edge(from = "$A_1$", to = "$Y$")
 }

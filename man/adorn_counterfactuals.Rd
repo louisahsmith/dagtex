@@ -5,7 +5,7 @@
 \title{Add counterfactual notation to SWIG}
 \usage{
 adorn_counterfactuals(
-  .dag,
+  dag,
   notation = getOption("dagtex.notation"),
   text_color = NULL
 )

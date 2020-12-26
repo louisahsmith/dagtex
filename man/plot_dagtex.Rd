@@ -5,7 +5,7 @@
 \title{Plot DAGs}
 \usage{
 plot_dagtex(
-  .dag,
+  dag,
   density = getOption("dagtex.density"),
   is_latex_code = FALSE,
   has_swig = FALSE,

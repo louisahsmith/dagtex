@@ -4,7 +4,7 @@
 \alias{swigify}
 \title{Turn a DAG into a SWIG}
 \usage{
-swigify(.dag, intervention_nodes, ...)
+swigify(dag, intervention_nodes, ...)
 }
 \description{
 Turn a DAG into a SWIG

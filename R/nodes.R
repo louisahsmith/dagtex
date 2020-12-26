@@ -1,8 +1,8 @@
 #' Add nodes
 #'
-#' @param .dag
-#' @param .name
-#' @param .options
+#' @param dag
+#' @param name
+#' @param options
 #' @param x
 #' @param y
 #' @param right_of
@@ -18,7 +18,7 @@
 #' @examples
 #'
 #' @rdname add_node
-add_node <- function(.dag, .name, .options = NULL, x = NULL, y = NULL,
+add_node <- function(dag, name, options = NULL, x = NULL, y = NULL,
                      right_of = NULL, left_of = NULL,
                      above = NULL, below = NULL, is_swig = FALSE,
                      adorn_math = NULL,
@@ -28,10 +28,10 @@ add_node <- function(.dag, .name, .options = NULL, x = NULL, y = NULL,
     stop("Must specify both of x and y, or neither")
   }
 
-  id <- count_nodes(.dag) + 1
+  id <- count_nodes(dag) + 1
 
   coords <- get_node_coords(
-    .dag,
+    dag,
     id,
     coords = c(x, y),
     right_of = right_of,
@@ -42,7 +42,7 @@ add_node <- function(.dag, .name, .options = NULL, x = NULL, y = NULL,
 
   if (is.null(c(x,y))) {
     position <- get_node_position(
-      .dag,
+      dag,
       id,
       right_of = right_of,
       left_of = left_of,
@@ -53,12 +53,12 @@ add_node <- function(.dag, .name, .options = NULL, x = NULL, y = NULL,
 
 
   add_node_to_dag(
-    .dag = .dag,
-    .name = as.character(.name), # so not a problem when getting id
-    .id = id,
-    .coords = coords,
-    .position = position,
-    .options = .options,
+    dag = dag,
+    name = as.character(name), # so not a problem when getting id
+    id = id,
+    coords = coords,
+    position = position,
+    options = options,
     is_swig = is_swig,
     adorn_math = adorn_math
   )
@@ -67,60 +67,60 @@ add_node <- function(.dag, .name, .options = NULL, x = NULL, y = NULL,
 #' @export
 #'
 #' @examples
-#' dagtex(.node_options = list(shape = "ellipse"),
-#'        .swig_options = list(gap = "3pt", line_color_right = "red")) %>%
+#' dagtex(node_options = list(shape = "ellipse"),
+#'        swig_options = list(gap = "3pt", line_color_right = "red")) %>%
 #'  add_many_nodes(list(c("$A_0$", "$a_0$"), "$L_1$", c("$A_1$", "$a_1$"), "$Y$")) %>%
-#'  add_many_edges(.from = "$a_0$", .to = c("$L_1$","$A_1$", "$Y$")) %>%
-#'  add_many_edges(.from = "$L_1$", .to = c("$A_1$", "$Y$")) %>%
-#'  add_edge(.from = "$a_1$", .to = "$Y$")
+#'  add_many_edges(from = "$a_0$", to = c("$L_1$","$A_1$", "$Y$")) %>%
+#'  add_many_edges(from = "$L_1$", to = c("$A_1$", "$Y$")) %>%
+#'  add_edge(from = "$a_1$", to = "$Y$")
 
 #' @rdname add_node
-add_many_nodes <- function(.dag, .names, .options = NULL, ...) {
+add_many_nodes <- function(dag, names, options = NULL, ...) {
 
-  for (i in seq_along(.names)) {
-    args <- c(.dag = list(.dag), .name = list(.names[[i]]),
-              is_swig = length(.names[[i]]) > 1,
-              .options = list(.options), ...)
-    .dag <- do.call(add_node, args)
+  for (i in seq_along(names)) {
+    args <- c(dag = list(dag), name = list(names[[i]]),
+              is_swig = length(names[[i]]) > 1,
+              options = list(options), ...)
+    dag <- do.call(add_node, args)
   }
 
-  .dag
+  dag
 }
 
 #' @export
 #' @rdname add_node
-add_swig_node <- function(.dag, .left, .right, .options = NULL,  ...) {
-  add_node(.dag, .name = c(.left, .right), .options = .options, is_swig = TRUE, ...)
+add_swig_node <- function(dag, left, right, options = NULL,  ...) {
+  add_node(dag, name = c(left, right), options = options, is_swig = TRUE, ...)
 }
 
-any_swig_nodes <- function(.dag) {
-  any(purrr::map_lgl(.dag$nodes, ~.x$is_swig))
+any_swig_nodes <- function(dag) {
+  any(purrr::map_lgl(dag$nodes, ~.x$is_swig))
 }
 
-add_node_to_dag <- function(.dag, .name, .id, .coords, .position, .options, is_swig = FALSE, adorn_math = NULL, ...) {
+add_node_to_dag <- function(dag, name, id, coords, position, options, is_swig = FALSE, adorn_math = NULL, ...) {
 
   node <- structure(
     list(
-      name = .name,
-      id = .id,
-      coords = .coords,
-      position = .position,
+      name = name,
+      id = id,
+      coords = coords,
+      position = position,
       is_swig = is_swig,
       adorn_math = adorn_math,
-      options = .options
+      options = options
     ),
     class = "dagtex_node"
   )
 
-  .dag$nodes[[.id]] <- node
+  dag$nodes[[id]] <- node
 
-  .dag
+  dag
 }
 
-get_node_position <- function(.dag, .id, right_of = NULL,
+get_node_position <- function(dag, id, right_of = NULL,
                               left_of = NULL, above = NULL, below = NULL) {
   # don't set position if this is the first node
-  if (.id == 1) return(NULL)
+  if (id == 1) return(NULL)
 
   positions <- c(right_of %||% NA, left_of %||% NA, above %||% NA, below %||% NA)
   positions_not_na <- purrr::map_lgl(positions, ~!is.na(.x))
@@ -130,7 +130,7 @@ get_node_position <- function(.dag, .id, right_of = NULL,
 
     next_to <- positions[positions_not_na] %>%
       unique() %>%
-      purrr::map_dbl(~ifelse(is.character(.x), get_id(.dag, .x), .x))
+      purrr::map_dbl(~ifelse(is.character(.x), get_id(dag, .x), .x))
 
     position <- paste0(
       location,
@@ -141,7 +141,7 @@ get_node_position <- function(.dag, .id, right_of = NULL,
   }
 
   # by default, place to the right of previous node
-  next_to <- .id - 1
+  next_to <- id - 1
   position <- paste("right=of", next_to, ",")
 
   position
@@ -149,7 +149,7 @@ get_node_position <- function(.dag, .id, right_of = NULL,
 
 # get_node_coords <- function(x, y) paste0("(", x, ",", y, ")")
 
-get_node_coords <- function(.dag, id, coords, right_of = NULL,
+get_node_coords <- function(dag, id, coords, right_of = NULL,
                             left_of = NULL, above = NULL, below = NULL) {
 
   if (is.null(coords) & id == 1) return(c(0,0))
@@ -164,7 +164,7 @@ get_node_coords <- function(.dag, id, coords, right_of = NULL,
     warning("Cannot place nodes both above and below another node. Choosing one.")
   }
 
-  to_add <- purrr::map_dbl(positions, get_id, .dag = .dag)
+  to_add <- purrr::map_dbl(positions, get_id, dag = dag)
 
   if (!is.null(coords)) {
     if (!all(is.na(to_add))) {
@@ -187,7 +187,7 @@ get_node_coords <- function(.dag, id, coords, right_of = NULL,
     vals_h <- c(2, -2)[!is.na(positions[1:2])] %0% 0
     vals_v <- c(2, -2)[!is.na(positions[3:4])] %0% 0
 
-    new_coords <- .dag$nodes[[to_add]]$coords + c(vals_h, vals_v)
+    new_coords <- dag$nodes[[to_add]]$coords + c(vals_h, vals_v)
 
     return(new_coords)
   }
@@ -196,4 +196,4 @@ get_node_coords <- function(.dag, id, coords, right_of = NULL,
 
 }
 
-count_nodes <- function(.dag) length(.dag$nodes)
+count_nodes <- function(dag) length(dag$nodes)

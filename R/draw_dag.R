@@ -1,6 +1,6 @@
 #' Plot DAGs
 #'
-#' @param .dag
+#' @param dag
 #' @param density
 #' @param ...
 #'
@@ -8,17 +8,17 @@
 #' @export
 #'
 #' @examples
-plot_dagtex <- function(.dag, density = getOption("dagtex.density"),
+plot_dagtex <- function(dag, density = getOption("dagtex.density"),
                         is_latex_code = FALSE, has_swig = FALSE, ...) {
 
   if (!is_latex_code) {
-    .dag$texPreview_options$density <- .dag$texPreview_options$density %||% density
-    latex_code <- get_latex_code(.dag, add_header = FALSE)
-    tikz_opts <- get_tikz_library(.dag)
+    dag$texPreview_options$density <- dag$texPreview_options$density %||% density
+    latex_code <- get_latex_code(dag, add_header = FALSE)
+    tikz_opts <- get_tikz_library(dag)
   } else {
-    latex_code <- structure(.dag, class = "latex_code")
+    latex_code <- structure(dag, class = "latex_code")
     tikz_opts <- get_tikz_library(has_swig = has_swig)
-    .dag <- list(texPreview_options = list(density = density))
+    dag <- list(texPreview_options = list(density = density))
   }
 
   pkg_opts <- texPreview::build_usepackage(pkg = 'tikz',
@@ -28,7 +28,7 @@ plot_dagtex <- function(.dag, density = getOption("dagtex.density"),
             usrPackages = list(pkg_opts),
             fileDir = list(system.file("tex", package = "dagtex")),
             cleanup = list(c("aux", "log", "txt", "Doc", "png", "tex")),
-            .dag$texPreview_options)
+            dag$texPreview_options)
 
   do.call(texPreview::tex_preview, args)
 
@@ -40,11 +40,11 @@ plot_dagtex <- function(.dag, density = getOption("dagtex.density"),
 #' @param x
 #' @param ...
 #' @export
-knit_print.dagtex <- function(x, density = knitr::opts_current$get("density"),
+knit_printdagtex <- function(x, density = knitr::opts_current$get("density"),
                               fig.path = knitr::opts_current$get("fig.path"),
-                              save.dag = knitr::opts_current$get("save.dag"),
+                              savedag = knitr::opts_current$get("savedag"),
                               label = knitr::opts_current$get("label"),
-                              print.dag = knitr::opts_current$get("print.dag"),
+                              printdag = knitr::opts_current$get("printdag"),
                               is_latex_code = knitr::opts_current$get("is_latex_code"),
                               has_swig = knitr::opts_current$get("has_swig"),
                               ...) {
@@ -58,10 +58,10 @@ knit_print.dagtex <- function(x, density = knitr::opts_current$get("density"),
     tikz_opts <- get_tikz_library(has_swig = has_swig)
   }
 
-  save.dag <- save.dag %||% FALSE
-  print.dag <- print.dag %||% TRUE
+  savedag <- savedag %||% FALSE
+  printdag <- printdag %||% TRUE
 
-  if (knitr::is_latex_output() & print.dag & !save.dag) return(knitr::asis_output(latex_code))
+  if (knitr::is_latex_output() & printdag & !savedag) return(knitr::asis_output(latex_code))
 
   fig.path <- fig.path %||% "tikz"
   fig.path <- sub("\\/$", "", fig.path)
@@ -84,9 +84,9 @@ knit_print.dagtex <- function(x, density = knitr::opts_current$get("density"),
     cleanup = getOption("dagtex.cleanup"),
     returnType = "engine")
 
-  if (knitr::is_latex_output() & print.dag) return(knitr::asis_output(latex_code))
+  if (knitr::is_latex_output() & printdag) return(knitr::asis_output(latex_code))
 
-  if (print.dag) knitr::include_graphics(filename)
+  if (printdag) knitr::include_graphics(filename)
 
 }
 
@@ -99,7 +99,7 @@ knit_print.dagtex <- function(x, density = knitr::opts_current$get("density"),
 #'
 #' @export
 #' @method print dagtex
-print.dagtex <- function(x, ...) {
+printdagtex <- function(x, ...) {
   nodes_and_edges <- x[c("nodes", "edges")]
   is_empty_dag <- all(purrr::map_lgl(nodes_and_edges, purrr::is_empty))
 
@@ -113,7 +113,7 @@ print.dagtex <- function(x, ...) {
 
 #' @export
 #' @method plot dagtex
-plot.dagtex <- print.dagtex
+plotdagtex <- printdagtex
 
 
 #' Create tikz picture
@@ -154,7 +154,7 @@ plot.dagtex <- print.dagtex
 
 #' Get LaTeX code
 #'
-#' @param .dag
+#' @param dag
 #' @param add_header
 #'
 #' @return
@@ -164,23 +164,23 @@ plot.dagtex <- print.dagtex
 #'
 
 
-get_latex_code <- function(.dag, add_header = TRUE, node_distance = .dag$node_distance) {
+get_latex_code <- function(dag, add_header = TRUE, node_distance = dag$node_distance) {
 
   swig_paste <- pkg_opts <- lines_paste <- angle_paste <- NULL
   swig_paste_l <- swig_paste_r <- swig_paste_lo <- swig_paste_up <- NULL
 
-  edge_opts <- make_tex_opts(.dag$edge_options)
+  edge_opts <- make_tex_opts(dag$edge_options)
   edge_paste <- paste0("\\begin{tikzpicture}[node distance = ", node_distance,
                        ", every path/.style={>=stealth, thick,",
                        edge_opts, "}]")
 
-  draw_node <- "shape" %in% names(.dag$node_options)
+  draw_node <- "shape" %in% names(dag$node_options)
 
-  if (any_swig_nodes(.dag)) {
+  if (any_swig_nodes(dag)) {
 
-    draw_swig <- "shape" %in% names(.dag$swig_options)
+    draw_swig <- "shape" %in% names(dag$swig_options)
 
-    swig_opts <- split_swig_opts(.dag$swig_options, exclude = "text")
+    swig_opts <- split_swig_opts(dag$swig_options, exclude = "text")
 
     swig_paste <- paste0("\\tikzset{swig vsplit={gap=3pt,", swig_opts$left_included,
                          ",", swig_opts$right_included, ",", swig_opts$all_included,
@@ -202,7 +202,7 @@ get_latex_code <- function(.dag, add_header = TRUE, node_distance = .dag$node_di
 
   }
 
-  node_opts <- make_tex_opts(.dag$node_options)
+  node_opts <- make_tex_opts(dag$node_options)
 
   # start off with defaults so not overwritten by edge style (which applies to all paths)
   node_paste <- paste0("\\tikzstyle{every node}=[solid,black,text=black,",
@@ -210,27 +210,27 @@ get_latex_code <- function(.dag, add_header = TRUE, node_distance = .dag$node_di
                        node_opts, "]")
 
   if (add_header) {
-    tikz_opts <- get_tikz_library(.dag)
+    tikz_opts <- get_tikz_library(dag)
     pkg_opts <- texPreview::build_usepackage(pkg = 'tikz',
                                              uselibrary = tikz_opts)
   }
 
-  if (sum(.dag$help_lines)) {
+  if (sum(dag$help_lines)) {
 
-    if (!is.numeric(.dag$help_lines) | length(.dag$help_lines) != 2) {
-      .dag$help_lines <- get_dimensions(.dag)
+    if (!is.numeric(dag$help_lines) | length(dag$help_lines) != 2) {
+      dag$help_lines <- get_dimensions(dag)
     }
     lines_paste <- paste0("\\draw[help lines] (0,0) grid (",
-                          .dag$help_lines[1],",",.dag$help_lines[2],");")
+                          dag$help_lines[1],",",dag$help_lines[2],");")
   }
 
-  if (sum(.dag$help_angles)) {
+  if (sum(dag$help_angles)) {
 
-    if (!is.numeric(.dag$help_angles)) {
-      .dag$help_angles <- seq(0, 360, 30)
+    if (!is.numeric(dag$help_angles)) {
+      dag$help_angles <- seq(0, 360, 30)
     }
-    angle_vals <- paste(.dag$help_angles, collapse = ", ")
-    node_names <- paste(purrr::map_dbl(.dag$nodes, ~.$id), collapse = ", ")
+    angle_vals <- paste(dag$help_angles, collapse = ", ")
+    node_names <- paste(purrr::map_dbl(dag$nodes, ~.$id), collapse = ", ")
 
     angle_paste <- paste(c(paste0("\\foreach \\name in {", node_names,"}"),
                            paste0("\\foreach \\angle in {", angle_vals, "}"),
@@ -241,7 +241,7 @@ get_latex_code <- function(.dag, add_header = TRUE, node_distance = .dag$node_di
   latex_code <- paste(c(pkg_opts, edge_paste, swig_paste,
                         node_paste, swig_paste_l, swig_paste_r,
                         swig_paste_lo, swig_paste_up, lines_paste,
-                        latexify_dag(.dag), angle_paste, "\\end{tikzpicture}"),
+                        latexify_dag(dag), angle_paste, "\\end{tikzpicture}"),
                       collapse = "\n")
 
   structure(latex_code,
@@ -249,24 +249,24 @@ get_latex_code <- function(.dag, add_header = TRUE, node_distance = .dag$node_di
 }
 
 
-get_dimensions <- function(.dag, ...) {
+get_dimensions <- function(dag, ...) {
 
-  x <- max(purrr::map_dbl(.dag$nodes, ~.$coords[1]))
-  y <- max(purrr::map_dbl(.dag$nodes, ~.$coords[2]))
+  x <- max(purrr::map_dbl(dag$nodes, ~.$coords[1]))
+  y <- max(purrr::map_dbl(dag$nodes, ~.$coords[2]))
 
   c(x, y)
 }
 
 #' @export
 #'
-get_tikz_library <- function(.dag = NULL, has_swig = FALSE, ...) {
+get_tikz_library <- function(dag = NULL, has_swig = FALSE, ...) {
 
-  if (!is.null(.dag) & any_swig_nodes(.dag)) has_swig <- TRUE
+  if (!is.null(dag) & any_swig_nodes(dag)) has_swig <- TRUE
   tikz_opts <- '\\usetikzlibrary{positioning, calc, shapes.geometric,
   shapes.multipart, shapes, arrows.meta, arrows, decorations.markings,
   external, trees, decorations.pathmorphing, positioning, shapes.arrows'
   tikz_opts <- ifelse(has_swig,
-                      paste0(tikz_opts, ", shapes.swigs}"),
+                      paste0(tikz_opts, ", shapesswigs}"),
                       paste0(tikz_opts, "}"))
   class(tikz_opts) <- "latex_code"
   tikz_opts
@@ -281,10 +281,10 @@ print.latex_code <- function(x, ...) {
   cat(x, ...)
 }
 
-latexify_dag <- function(.dag) {
+latexify_dag <- function(dag) {
 
-  nodes_latex <- purrr::map(.dag$nodes, latexify_node, .dag = .dag)
-  edges_latex <- purrr::map_chr(.dag$edges, latexify_edge, .dag = .dag)
+  nodes_latex <- purrr::map(dag$nodes, latexify_node, dag = dag)
+  edges_latex <- purrr::map_chr(dag$edges, latexify_edge, dag = dag)
   nodes_and_edges <- c(unlist(nodes_latex), edges_latex)
 
   paste(nodes_and_edges, collapse = "\n")
@@ -308,26 +308,26 @@ make_tex_opts <- function(opts, exclude = c("split"), remove = c("line_type")) {
 #' that use the terms left/right/upper/lower but can't be passed directly
 #' to the
 #'
-split_swig_opts <- function(.swig_options, exclude = "text", ...) {
+split_swig_opts <- function(swig_options, exclude = "text", ...) {
   # excluded are those that do not get placed within the swig vsplit={}
   # list but instead in the /.style={} list
-  upper <- grepl("upper", names(.swig_options))
-  lower <- grepl("lower", names(.swig_options))
-  left <- grepl("left", names(.swig_options))
-  right <- grepl("right", names(.swig_options))
-  excluded <- grepl(exclude, names(.swig_options))
-  upper_excluded <- .swig_options[as.logical(upper * excluded)]
-  lower_excluded <- .swig_options[as.logical(lower * excluded)]
-  left_excluded <- .swig_options[as.logical(left * excluded)]
-  right_excluded <- .swig_options[as.logical(right * excluded)]
-  upper_included <- .swig_options[as.logical(upper * !excluded)]
-  lower_included <- .swig_options[as.logical(lower * !excluded)]
-  left_included <- .swig_options[as.logical(left * !excluded)]
-  right_included <- .swig_options[as.logical(right * !excluded)]
-  all_included <- .swig_options[["gap"]]
+  upper <- grepl("upper", names(swig_options))
+  lower <- grepl("lower", names(swig_options))
+  left <- grepl("left", names(swig_options))
+  right <- grepl("right", names(swig_options))
+  excluded <- grepl(exclude, names(swig_options))
+  upper_excluded <- swig_options[as.logical(upper * excluded)]
+  lower_excluded <- swig_options[as.logical(lower * excluded)]
+  left_excluded <- swig_options[as.logical(left * excluded)]
+  right_excluded <- swig_options[as.logical(right * excluded)]
+  upper_included <- swig_options[as.logical(upper * !excluded)]
+  lower_included <- swig_options[as.logical(lower * !excluded)]
+  left_included <- swig_options[as.logical(left * !excluded)]
+  right_included <- swig_options[as.logical(right * !excluded)]
+  all_included <- swig_options[["gap"]]
   if (!is.null(all_included)) all_included <- list(gap = all_included)
-  all_excluded <- .swig_options[
-    !(.swig_options %in% c(upper_excluded, lower_excluded, left_excluded,
+  all_excluded <- swig_options[
+    !(swig_options %in% c(upper_excluded, lower_excluded, left_excluded,
                            right_excluded, upper_included, lower_included,
                            left_included , right_included,all_included))
     ]
@@ -348,59 +348,59 @@ split_swig_opts <- function(.swig_options, exclude = "text", ...) {
   )
 }
 
-latexify_node <- function(.node, .dag) {
+latexify_node <- function(node, dag) {
 
-  node_id <- paste0("(", .node$id, ") ")
+  node_id <- paste0("(", node$id, ") ")
 
-  math <- .node$adorn_math %||% .dag$adorn_math
-  node_text <- if (math) paste0("{$", .node$name, "$}") else
-    paste0("{", .node$name, "}")
+  math <- node$adorn_math %||% dag$adorn_math
+  node_text <- if (math) paste0("{$", node$name, "$}") else
+    paste0("{", node$name, "}")
 
-  node_opts <- if (.node$is_swig) split_swig_opts(.node$options) else
-    make_tex_opts(.node$options)
+  node_opts <- if (node$is_swig) split_swig_opts(node$options) else
+    make_tex_opts(node$options)
 
-  shape <- .node$options[["shape"]] %||% .dag$node_options[["shape"]]
+  shape <- node$options[["shape"]] %||% dag$node_options[["shape"]]
   draw <- !is.null(shape)
 
   # only deal with regular (non-swig specific options) here
-  if (.node$is_swig) {
+  if (node$is_swig) {
 
-    shape <- .node$options[["shape"]] %||% .dag$swig_options[["shape"]]
+    shape <- node$options[["shape"]] %||% dag$swig_options[["shape"]]
     draw <- !is.null(shape)
 
     node_split <- NULL
-    split <- .node$options$split %||% .dag$swig_options$split
+    split <- node$options$split %||% dag$swig_options$split
     split <- split %||% "v"
     if (!draw) {
       node_opts$all_excluded <- paste0("opacity=0, text opacity=1", node_opts$all_excluded)
       # to override the solid black if desired in the node splitting line
       # other node opts get passed outside of this if pertinent
-      special_opts <- .node$options[names(.node$options) %in%
+      special_opts <- node$options[names(node$options) %in%
                                   c("color", "line_type", "line_width")]
 
       node_split <- ifelse(split == "v",
                            paste0("\n\\draw[very thick, solid, black,",
                                   make_tex_opts(special_opts),
-                                  "] (", .node$id,
-                                  ".left north) -- (", .node$id,".left south);"),
+                                  "] (", node$id,
+                                  ".left north) -- (", node$id,".left south);"),
                            paste0("\n\\draw[very thick, solid, black,",
                                   make_tex_opts(special_opts),
-                                  "] (", .node$id,
-                                  ".west) -- (", .node$id,".east);"))
+                                  "] (", node$id,
+                                  ".west) -- (", node$id,".east);"))
     } else if (!shape %in% c("ellipse", "circle", "circle part")) warning("Shape not available for SWIG node; defaulting to ellipse.")
   }
 
   # for all nodes
   compiled_options <- paste0(ifelse(draw, "draw,", ""),
-                             .node$position, ",")
+                             node$position, ",")
 
   # now deal with swig specific options, i.e. left/right excluded and all included
-  if (.node$is_swig) {
+  if (node$is_swig) {
 
     main_part <- paste0(compiled_options,
                         ", ", node_opts$all_excluded,
                         ", shape=swig ", split, "split, text=",
-                        .node$options[["text"]] %||% .dag$swig_options[["text"]] %||% "black",
+                        node$options[["text"]] %||% dag$swig_options[["text"]] %||% "black",
                         ", swig ", split, "split={",
                         ifelse(split == "v", node_opts$left_included, node_opts$upper_included),
                         ",",
@@ -416,7 +416,7 @@ latexify_node <- function(.node, .dag) {
                         ifelse(split == "v", "left", "upper"),
                         "}{",
                         if (math) "$",
-                        .node$name[1],
+                        node$name[1],
                         if (math) "$",
                         "}")
     right_part <- paste0("\\nodepart[",
@@ -427,10 +427,10 @@ latexify_node <- function(.node, .dag) {
                         ifelse(split == "v", "right", "lower"),
                         "}{",
                         if (math) "$",
-                        .node$name[2],
+                        node$name[2],
                         if (math) "$",
                         "}}")
-    all_parts <- paste0("\\node[name=",.node$id, ",",
+    all_parts <- paste0("\\node[name=",node$id, ",",
                         main_part, left_part,right_part, ";",
                         node_split)
     return(all_parts)
@@ -439,14 +439,14 @@ latexify_node <- function(.node, .dag) {
 
     compiled_options <- paste0(compiled_options, node_opts,
                                ", text=",
-                               .node$options[["text"]] %||% .dag$node_options[["text"]] %||% "black",
+                               node$options[["text"]] %||% dag$node_options[["text"]] %||% "black",
                                "] ")
 
 
     node_to_paste <- paste0("\\node[", compiled_options, node_id,
-                            ifelse(is.null(.node$position),
-                                   paste0("at (", .node$coords[1],
-                                          ",", .node$coords[2], ") "), ""),
+                            ifelse(is.null(node$position),
+                                   paste0("at (", node$coords[1],
+                                          ",", node$coords[2], ") "), ""),
                             node_text, " ;")
 
     return(node_to_paste)
@@ -455,26 +455,26 @@ latexify_node <- function(.node, .dag) {
 }
 
 
-latexify_edge <- function(.edge, .dag) {
+latexify_edge <- function(edge, dag) {
 
-  arrow_type <- ifelse(.edge$is_double_arrow, "<->,",
-                       ifelse(.edge$is_headless, "",
+  arrow_type <- ifelse(edge$is_double_arrow, "<->,",
+                       ifelse(edge$is_headless, "",
                               "->,"))
 
-  edge_options <- paste0("[", arrow_type, make_tex_opts(.edge$options), "]")
+  edge_options <- paste0("[", arrow_type, make_tex_opts(edge$options), "]")
 
-  edge_from <- paste0(" (", .edge$from, ") ")
-  edge_to <- paste0("(", .edge$to, ")")
+  edge_from <- paste0(" (", edge$from, ") ")
+  edge_to <- paste0("(", edge$to, ")")
 
-  .edge$curve <- .edge$curve %||% "up"
+  edge$curve <- edge$curve %||% "up"
 
-  curve_in <- .edge$curve_in_degree %||%
-    ifelse(.edge$is_curved & .edge$curve == "up", 160,
-           ifelse(.edge$is_curved, -160, NA))
+  curve_in <- edge$curve_in_degree %||%
+    ifelse(edge$is_curved & edge$curve == "up", 160,
+           ifelse(edge$is_curved, -160, NA))
 
-  curve_out <- .edge$curve_out_degree %||%
-    ifelse(.edge$is_curved & .edge$curve == "up", 25,
-           ifelse(.edge$is_curved, -25, NA))
+  curve_out <- edge$curve_out_degree %||%
+    ifelse(edge$is_curved & edge$curve == "up", 25,
+           ifelse(edge$is_curved, -25, NA))
 
   if (!is.na(curve_in) & !is.na(curve_out)) {
     line_code <- "to "
@@ -490,7 +490,7 @@ latexify_edge <- function(.edge, .dag) {
     edge_from,
     line_code,
     line_curve %||% "",
-    .edge$annotate %||% "",
+    edge$annotate %||% "",
     edge_to,
     ";"
   )

@@ -1,10 +1,10 @@
 #'Create a new DAG
 #'
-#'@param .node_options List of options that apply to each node (can be
+#'@param node_options List of options that apply to each node (can be
 #'  overwritten for individual nodes).
-#'@param .edge_options List of options that apply to each edge (can be
+#'@param edge_options List of options that apply to each edge (can be
 #'  overwritten for individual edges).
-#'@param .swig_options List of options that apply to each SWIG node (some can be
+#'@param swig_options List of options that apply to each SWIG node (some can be
 #'  overwritten for individual SWIG nodes).
 #'@param help_lines Logical or numeric vector of length 2 giving the (x,y)
 #'  coordinates that will be used (along with (0,0)) to help troubleshoot node
@@ -25,7 +25,7 @@
 #'"regular polygon", "star". For SWIG nodes, the only option is "ellipse"
 #'(although "circle" and "circle split" return the same result). If no shape is
 #'supplied, the nodes default to being bare, and SWIG nodes are split with a
-#'simple line. Other options regarding shapes can be passed to .node_options.
+#'simple line. Other options regarding shapes can be passed to node_options.
 #'
 #'SWIG nodes take the following possible options: `split`, `shape`, `gap`,
 #'`fill_color_{x}`, `line_color_{x}`, `line_width_{x}`, `inner_line_width_{x}`,
@@ -59,30 +59,30 @@
 #'
 #' @examples
 #' dagtex(
-#'   .node_options = list(shape = "star"),
-#'   .swig_options = list(gap = "3pt", line_color_right = "red",
+#'   node_options = list(shape = "star"),
+#'   swig_options = list(gap = "3pt", line_color_right = "red",
 #'                        fill_color_left = "pink", line_width_left = 2.75),
-#'   .edge_options = list(line_type = "dashed", color = "green")
+#'   edge_options = list(line_type = "dashed", color = "green")
 #' ) %>%
 #'   add_node("THIS IS A SWIG",
-#'            .options = list(shape = "forbidden sign", color = "blue",
+#'            options = list(shape = "forbidden sign", color = "blue",
 #'                            line_width = 4)
 #'            ) %>%
-#'   add_swig_node(.left = "$X$", .right = "$x = 1$") %>%
+#'   add_swig_node(left = "$X$", right = "$x = 1$") %>%
 #'   add_node("$Y^{x = 1}$",
-#'            .options = list(color = "violet", text = "olive")
+#'            options = list(color = "violet", text = "olive")
 #'            ) %>%
 #'   add_edge("$x = 1$", "$Y^{x = 1}$",
 #'            curve = "up", is_double_arrow = TRUE,
-#'            .options = list(color = "teal", line_type = "solid")
+#'            options = list(color = "teal", line_type = "solid")
 #'            ) %>%
 #'   add_edge(1, 3,
 #'            curve_in_degree = 0, curve_out_degree = 40
 #'            ) %>%
 #'   add_node("hello", above = 2,
-#'            .options = list(fill = "yellow"))
+#'            options = list(fill = "yellow"))
 #'
-#' dagtex(.node_options = list(shape = "star", star_point_ratio = 0.8, star_points = 7)) %>%
+#' dagtex(node_options = list(shape = "star", star_point_ratio = 0.8, star_points = 7)) %>%
 #'    add_node("Star")
 #'
 #'# options() can be used to set options for a session
@@ -91,9 +91,9 @@
 #' dagtex() %>% add_node("\\pi")
 #' # The special option "dagtex.shape" sets shape for regular and swig nodes
 
-dagtex <- function(.node_options = NULL,
-                   .edge_options = NULL,
-                   .swig_options = NULL,
+dagtex <- function(node_options = NULL,
+                   edge_options = NULL,
+                   swig_options = NULL,
                    help_lines = getOption("dagtex.help_lines"),
                    help_angles = getOption("dagtex.help_angles"),
                    adorn_math = getOption("dagtex.adorn_math"),
@@ -101,9 +101,9 @@ dagtex <- function(.node_options = NULL,
 
   if (!is.na(getOption("dagtex.shape"))) {
     if (getOption("dagtex.shape") %in% c("ellipse", "circle", "circle part")) {
-    .swig_options <- as.list(c(shape = getOption("dagtex.shape"), .swig_options))
+    swig_options <- as.list(c(shape = getOption("dagtex.shape"), swig_options))
     }
-    .node_options <- as.list(c(shape = getOption("dagtex.shape"), .node_options))
+    node_options <- as.list(c(shape = getOption("dagtex.shape"), node_options))
   }
 
     # can't have null defaults or you can't store them...
@@ -112,22 +112,22 @@ dagtex <- function(.node_options = NULL,
   edge_opts <- getOption("dagtex.edge_options")
   swig_opts <- getOption("dagtex.swig_options")
 
-  .node_options <- c(node_opts, .node_options)
-  .edge_options <- c(edge_opts, .edge_options)
-  .swig_options <- c(swig_opts, .swig_options)
+  node_options <- c(node_opts, node_options)
+  edge_options <- c(edge_opts, edge_options)
+  swig_options <- c(swig_opts, swig_options)
 
-  .node_options <- .node_options[!sapply(.node_options, is.na)] %0% NULL
-  .edge_options <- .edge_options[!sapply(.edge_options, is.na)] %0% NULL
-  .swig_options <- .swig_options[!sapply(.swig_options, is.na)] %0% NULL
+  node_options <- node_options[!sapply(node_options, is.na)] %0% NULL
+  edge_options <- edge_options[!sapply(edge_options, is.na)] %0% NULL
+  swig_options <- swig_options[!sapply(swig_options, is.na)] %0% NULL
 
   structure(
     list(
       nodes = list(),
       edges = list(),
       latex = list(),
-      node_options = .node_options,
-      edge_options = .edge_options,
-      swig_options = .swig_options,
+      node_options = node_options,
+      edge_options = edge_options,
+      swig_options = swig_options,
       help_lines = help_lines,
       help_angles = help_angles,
       adorn_math = adorn_math,

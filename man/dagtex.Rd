@@ -5,9 +5,9 @@
 \title{Create a new DAG}
 \usage{
 dagtex(
-  .node_options = NULL,
-  .edge_options = NULL,
-  .swig_options = NULL,
+  node_options = NULL,
+  edge_options = NULL,
+  swig_options = NULL,
   help_lines = getOption("dagtex.help_lines"),
   help_angles = getOption("dagtex.help_angles"),
   adorn_math = getOption("dagtex.adorn_math"),
@@ -16,13 +16,13 @@ dagtex(
 )
 }
 \arguments{
-\item{.node_options}{List of options that apply to each node (can be
+\item{node_options}{List of options that apply to each node (can be
 overwritten for individual nodes).}
 
-\item{.edge_options}{List of options that apply to each edge (can be
+\item{edge_options}{List of options that apply to each edge (can be
 overwritten for individual edges).}
 
-\item{.swig_options}{List of options that apply to each SWIG node (some can be
+\item{swig_options}{List of options that apply to each SWIG node (some can be
 overwritten for individual SWIG nodes).}
 
 \item{help_lines}{Logical or numeric vector of length 2 giving the (x,y)
@@ -50,7 +50,7 @@ For non-SWIG nodes, \code{shape} options are "rectangle", "circle", "ellipse",
 "regular polygon", "star". For SWIG nodes, the only option is "ellipse"
 (although "circle" and "circle split" return the same result). If no shape is
 supplied, the nodes default to being bare, and SWIG nodes are split with a
-simple line. Other options regarding shapes can be passed to .node_options.
+simple line. Other options regarding shapes can be passed to node_options.
 
 SWIG nodes take the following possible options: \code{split}, \code{shape}, \code{gap},
 \verb{fill_color_\{x\}}, \verb{line_color_\{x\}}, \verb{line_width_\{x\}}, \verb{inner_line_width_\{x\}},
@@ -80,30 +80,30 @@ be treated like a regular TikZ style option.
 }
 \examples{
 dagtex(
-  .node_options = list(shape = "star"),
-  .swig_options = list(gap = "3pt", line_color_right = "red",
+  node_options = list(shape = "star"),
+  swig_options = list(gap = "3pt", line_color_right = "red",
                        fill_color_left = "pink", line_width_left = 2.75),
-  .edge_options = list(line_type = "dashed", color = "green")
+  edge_options = list(line_type = "dashed", color = "green")
 ) \%>\%
   add_node("THIS IS A SWIG",
-           .options = list(shape = "forbidden sign", color = "blue",
+           options = list(shape = "forbidden sign", color = "blue",
                            line_width = 4)
            ) \%>\%
-  add_swig_node(.left = "$X$", .right = "$x = 1$") \%>\%
+  add_swig_node(left = "$X$", right = "$x = 1$") \%>\%
   add_node("$Y^{x = 1}$",
-           .options = list(color = "violet", text = "olive")
+           options = list(color = "violet", text = "olive")
            ) \%>\%
   add_edge("$x = 1$", "$Y^{x = 1}$",
            curve = "up", is_double_arrow = TRUE,
-           .options = list(color = "teal", line_type = "solid")
+           options = list(color = "teal", line_type = "solid")
            ) \%>\%
   add_edge(1, 3,
            curve_in_degree = 0, curve_out_degree = 40
            ) \%>\%
   add_node("hello", above = 2,
-           .options = list(fill = "yellow"))
+           options = list(fill = "yellow"))
 
-dagtex(.node_options = list(shape = "star", star_point_ratio = 0.8, star_points = 7)) \%>\%
+dagtex(node_options = list(shape = "star", star_point_ratio = 0.8, star_points = 7)) \%>\%
    add_node("Star")
 
 # options() can be used to set options for a session

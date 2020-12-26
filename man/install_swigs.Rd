@@ -12,7 +12,7 @@ Install Thomas Richardson's tikz library for drawing SWIGs
 \details{
 Puts the swigs tikz library into the user's texmf path. This file either
 needs to be manually installed, as with this function, or copied from
-\code{system.file("tex", "pgflibraryshapes.swigs.code.tex", package = "dagtex")}
+\code{system.file("tex", "pgflibraryshapesswigs.code.tex", package = "dagtex")}
 to the working directory whenever a SWIG is created in an RMarkdown document.
 Not necessary if not creating SWIGs, or if only previewing in the viewer and
 not via RMarkdown.
