@@ -8,13 +8,18 @@
 #' @export
 #'
 #' @examples
-plot_dagtex <- function(.dag, density = getOption("dagtex.density"), ...) {
+plot_dagtex <- function(.dag, density = getOption("dagtex.density"),
+                        is_latex_code = FALSE, has_swig = FALSE, ...) {
 
-  .dag$texPreview_options$density <- .dag$texPreview_options$density %||% density
-
-  latex_code <- get_latex_code(.dag, add_header = FALSE)
-
-  tikz_opts <- get_tikz_library(.dag)
+  if (!is_latex_code) {
+    .dag$texPreview_options$density <- .dag$texPreview_options$density %||% density
+    latex_code <- get_latex_code(.dag, add_header = FALSE)
+    tikz_opts <- get_tikz_library(.dag)
+  } else {
+    latex_code <- structure(.dag, class = "latex_code")
+    tikz_opts <- get_tikz_library(has_swig = has_swig)
+    .dag <- list(texPreview_options = list(density = density))
+  }
 
   pkg_opts <- texPreview::build_usepackage(pkg = 'tikz',
                                            uselibrary = tikz_opts)
@@ -40,9 +45,19 @@ knit_print.dagtex <- function(x, density = knitr::opts_current$get("density"),
                               save.dag = knitr::opts_current$get("save.dag"),
                               label = knitr::opts_current$get("label"),
                               print.dag = knitr::opts_current$get("print.dag"),
+                              is_latex_code = knitr::opts_current$get("is_latex_code"),
+                              has_swig = knitr::opts_current$get("has_swig"),
                               ...) {
 
-  latex_code <- get_latex_code(x, add_header = FALSE)
+  if (is.null(is_latex_code)) {
+    latex_code <- get_latex_code(x, add_header = FALSE)
+    tikz_opts <- get_tikz_library(x)
+  } else {
+    has_swig <- ifelse(is.null(has_swig), FALSE, has_swig)
+    latex_code <- structure(x, class = "latex_code")
+    tikz_opts <- get_tikz_library(has_swig = has_swig)
+  }
+
   save.dag <- save.dag %||% FALSE
   print.dag <- print.dag %||% TRUE
 
@@ -54,7 +69,6 @@ knit_print.dagtex <- function(x, density = knitr::opts_current$get("density"),
 
   if (!dir.exists(fig.path)) dir.create(fig.path, recursive = TRUE)
 
-  tikz_opts <- get_tikz_library(x)
 
   pkg_opts <- texPreview::build_usepackage(pkg = 'tikz',
                                            uselibrary = tikz_opts)

@@ -107,17 +107,18 @@ dagtex <- function(.node_options = NULL,
   }
 
     # can't have null defaults or you can't store them...
-  node_opts <- edge_opts <- swig_opts <- NULL
-  node_opts <- if (!(length(getOption("dagtex.node_options")) == 1 & is.na(getOption("dagtex.node_options")[1])))
-    getOption("dagtex.node_options")
-  edge_opts <- if (!(length(getOption("dagtex.edge_options")) == 1 & is.na(getOption("dagtex.edge_options")[1])))
-    getOption("dagtex.edge_options")
-  swig_opts <- if (!(length(getOption("dagtex.swig_options")) == 1 & is.na(getOption("dagtex.swig_options")[1])))
-    getOption("dagtex.swig_options")
+
+  node_opts <- getOption("dagtex.node_options")
+  edge_opts <- getOption("dagtex.edge_options")
+  swig_opts <- getOption("dagtex.swig_options")
 
   .node_options <- c(node_opts, .node_options)
   .edge_options <- c(edge_opts, .edge_options)
-  .swig_options <- c(edge_opts, .swig_options)
+  .swig_options <- c(swig_opts, .swig_options)
+
+  .node_options <- .node_options[!sapply(.node_options, is.na)] %0% NULL
+  .edge_options <- .edge_options[!sapply(.edge_options, is.na)] %0% NULL
+  .swig_options <- .swig_options[!sapply(.swig_options, is.na)] %0% NULL
 
   structure(
     list(

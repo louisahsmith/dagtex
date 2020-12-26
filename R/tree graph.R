@@ -5,7 +5,7 @@ tree_graph <- function(tree_tab = NULL, n = NULL, EY = NULL,
                        y3 = seq(3, -3, length.out = 8), x4 = 7.5, y4 = y3,
                        x5 = 8.5, y5 = y3, x6 = 9.25, y6 = y3, x7 = 10, y7 = y3,
                        xtop = c(x1 + 1.25, x2, x3 - 1.5, x4 - .65, x5 , x6, x7),
-                       ytop = max(y7 + .75),
+                       ytop = max(y7 + .75), f_notation = FALSE,
                        n_annotate = TRUE, A0_annotate = TRUE, L1_annotate = TRUE,
                        A1_annotate = TRUE, EY_annotate = TRUE,
                        A0_yshift = -10, A0_xshift = 0,
@@ -39,6 +39,15 @@ tree_graph <- function(tree_tab = NULL, n = NULL, EY = NULL,
   A0_label <- "A_0"
   L1_label <- "L_1"
   A1_label <- "A_1"
+
+  if (f_notation & !probabilities) {
+    A0_label <- "f(A_0)"
+    L1_label <- "f(L_1 \\mid A_0)"
+    A1_label <- "f(A_1 \\mid A_0, L_1)"
+    xtop[2] <- xtop[2] - .35
+    A1_yshift <- A1_yshift - 1
+    A0_yshift <- A0_yshift + 6
+  }
 
   if (probabilities) {
     A0_label <- "f(A_0)"
@@ -146,7 +155,7 @@ tree_graph <- function(tree_tab = NULL, n = NULL, EY = NULL,
     tree <- tree %>%
       add_edge(l1_nodes[i], a1_nodes[i], start_position = a1_start_positions[i],
                end_position = "west", is_headless = TRUE,
-               annotate = annotate_edge(n[i], position = A1_positions[i]))
+               annotate = annotate_edge(ifelse(A1_annotate, n[i], ""), position = A1_positions[i]))
   }
 
   # dashed lines
@@ -167,23 +176,26 @@ tree_graph <- function(tree_tab = NULL, n = NULL, EY = NULL,
       add_node(a1_vals[i], x = x7, y = y7[i], .options = list(draw = "none"))
   }
 
+  top_size <- ifelse(f_notation | probabilities, "\\footnotesize", "\\small")
+
+
   # labels on top row
   # nodes 44:50
   tree <- tree %>%
     add_node(A0_label, x = xtop[1], y = ytop, adorn_math = TRUE,
-             .options = list(draw = "none", font = "\\small")) %>%
+             .options = list(draw = "none", font = top_size)) %>%
     add_node(L1_label, x = xtop[2], y = ytop, adorn_math = TRUE,
-             .options = list(draw = "none", font = "\\small")) %>%
+             .options = list(draw = "none", font = top_size)) %>%
     add_node(A1_label, x = xtop[3], y = ytop, adorn_math = TRUE,
-             .options = list(draw = "none", font = "\\small")) %>%
+             .options = list(draw = "none", font = top_size)) %>%
     add_node("E[Y\\mid A_0, L_1, A_1]", x = xtop[4], y = ytop, adorn_math = TRUE,
-             .options = list(draw = "none", font = "\\small")) %>%
+             .options = list(draw = "none", font = top_size)) %>%
     add_node("A_0", x = xtop[5], y = ytop, adorn_math = TRUE,
-             .options = list(draw = "none", font = "\\small")) %>%
+             .options = list(draw = "none", font = top_size)) %>%
     add_node("L_1", x = xtop[6], y = ytop, adorn_math = TRUE,
-             .options = list(draw = "none", font = "\\small")) %>%
+             .options = list(draw = "none", font = top_size)) %>%
     add_node("A_1", x = xtop[7], y = ytop, adorn_math = TRUE,
-             .options = list(draw = "none", font = "\\small"))
+             .options = list(draw = "none", font = top_size))
 
   tree
 }
