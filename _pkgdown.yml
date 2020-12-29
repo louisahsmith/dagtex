@@ -1,0 +1,23 @@
+reference:
+- title: DAG basics
+  contents:
+  - '`dagtex`'
+  - '`add_node`'
+  - '`add_many_nodes`'
+  - '`add_swig_node`'
+  - '`add_edge`'
+  - '`add_many_edges`'
+  - '`annotate_edge`'
+- title: Quick build tools
+  contents:
+  - '`dag_complete`'
+  - '`swigify`'
+  - '`adorn_counterfactuals`'
+- title: Helper functions
+  contents:
+  - '`get_latex_code`'
+  - '`install_swigs`'
+  - '`print_ids`'
+  - '`knit_print.dagtex`'
+  - '`plot_dagtex`'
+  - '`print.dagtex`'

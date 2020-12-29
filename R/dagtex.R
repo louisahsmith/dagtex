@@ -1,23 +1,22 @@
 #'Create a new DAG
 #'
-#'@param node_options List of options that apply to each node (can be
-#'  overwritten for individual nodes).
-#'@param edge_options List of options that apply to each edge (can be
-#'  overwritten for individual edges).
-#'@param swig_options List of options that apply to each SWIG node (some can be
-#'  overwritten for individual SWIG nodes).
-#'@param help_lines Logical or numeric vector of length 2 giving the (x,y)
+#'@param node_options,edge_options,swig_options List of options that apply to
+#'  each node, edge, or split (SWIG) node (can be overwritten for individual
+#'  elements).
+#'@param help_lines Logical, or numeric vector of length 2 giving the (x,y)
 #'  coordinates that will be used (along with (0,0)) to help troubleshoot node
 #'  placement. If `TRUE`, the upper-right coordinates will be the best guess of
-#'  what will contain the diagram. Defaults to FALSE.
-#'@param help_angles Logical or numeric vector of angles in degrees. If `TRUE`,
+#'  what will contain the diagram. Defaults to `FALSE`.
+#'@param help_angles Logical, or numeric vector of angles in degrees. If `TRUE`,
 #'  plots lines extending from each node at 0, 30, ..., 360 degrees to
 #'  troubleshoot arrow placement. If a numeric vector, lines extend at those
-#'  angles. Defaults to FALSE.
+#'  angles. Defaults to `FALSE`.
 #'@param adorn_math Logical. If all node names should be printed in math mode,
 #'  you can avoid surrounding them all with `$...$` by setting `adorn_math =
 #'  TRUE`.
-#'@return DAG contents, invisibly (DAG is printed to the viewer).
+#'@param node_distance Character (number with unit, to be read by Tikz).
+#'  Distance between nodes. Defaults to "1cm".
+#'@return Object of class "dagtex".
 #'@details
 #'
 #'For non-SWIG nodes, `shape` options are "rectangle", "circle", "ellipse",
@@ -55,10 +54,9 @@
 #'be treated like a regular TikZ style option.
 #'
 #'
-#'
 #'@export
 #'
-#' @examples
+#'@examples
 #' dagtex(
 #'   node_options = list(shape = "star"),
 #'   swig_options = list(gap = "3pt", line_color_right = "red",
@@ -67,7 +65,7 @@
 #' ) %>%
 #'   add_node("THIS IS A SWIG",
 #'            options = list(shape = "forbidden sign", color = "blue",
-#'                            line_width = 4)
+#'                            line_width = 5)
 #'            ) %>%
 #'   add_swig_node(left = "$X$", right = "$x = 1$") %>%
 #'   add_node("$Y^{x = 1}$",
@@ -87,10 +85,15 @@
 #'    add_node("Star")
 #'
 #'# options() can be used to set options for a session
-#' options(dagtex.node_options = list(fill = "orange!30", shape = "rectangle"),
-#'    dagtex.adorn_math = TRUE)
+#' old_opts <- options()
+#'
+#' options(dagtex.node_options = list(fill = "orange!40"),
+#'    dagtex.adorn_math = TRUE,
+#'    # The special option "dagtex.shape" sets shape for regular and swig nodes
+#'    dagtex.shape = "rectangle")
 #' dagtex() %>% add_node("\\pi")
-#' # The special option "dagtex.shape" sets shape for regular and swig nodes
+#'
+#' options(old_opts)
 
 dagtex <- function(node_options = NULL,
                    edge_options = NULL,

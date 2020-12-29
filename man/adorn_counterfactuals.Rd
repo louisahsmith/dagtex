@@ -10,6 +10,9 @@ adorn_counterfactuals(
   text_color = NULL
 )
 }
+\arguments{
+\item{text_color}{}
+}
 \description{
 Add counterfactual notation to SWIG
 }

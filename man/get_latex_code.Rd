@@ -4,17 +4,26 @@
 \alias{get_latex_code}
 \title{Get LaTeX code}
 \usage{
-get_latex_code(dag, add_header = TRUE, node_distance = dag$node_distance)
+get_latex_code(dag, add_header = TRUE, ...)
 }
 \arguments{
-\item{add_header}{}
+\item{dag}{Object created by \code{\link[=dagtex]{dagtex()}}.}
+
+\item{add_header}{Logical. Should the \verb{\\usepackage\{tikz\}} and
+\verb{\\usetikzlibrary\{\}} lines be included?}
+
+\item{...}{Not currently used.}
 }
 \value{
 
 }
 \description{
-Get LaTeX code
+Generally called internally, can be used to extract the code for the TikZ
+drawing to paste directly into a LaTeX document.
 }
 \examples{
-
+dagtex() \%>\%
+add_many_nodes(letters[1:3]) \%>\%
+dag_complete() \%>\%
+get_latex_code()
 }

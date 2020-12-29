@@ -1,6 +1,10 @@
 #' Add counterfactual notation to SWIG
+#'
+#' @param dag
+#' @param notation
+#' @param text_color
+#'
 #' @export
-
 adorn_counterfactuals <- function(dag, notation = getOption("dagtex.notation"),
                                   text_color = NULL) {
 
@@ -74,9 +78,14 @@ adorn_counterfactuals <- function(dag, notation = getOption("dagtex.notation"),
 
 
 #' Turn a DAG into a SWIG
+#'
+#' @param dag
+#' @param split_nodes
+#' @param ...
+#'
 #' @export
-swigify <- function(dag, intervention_nodes, ...) {
-  intervention_ids <- purrr::map_dbl(intervention_nodes, get_id, dag = dag)
+swigify <- function(dag, split_nodes, ...) {
+  intervention_ids <- purrr::map_dbl(split_nodes, get_id, dag = dag)
   for (n in intervention_ids) {
     dag$nodes[[n]]$is_swig <- TRUE
     dag$nodes[[n]]$name <- c(dag$nodes[[n]]$name, tolower(dag$nodes[[n]]$name))
@@ -85,13 +94,12 @@ swigify <- function(dag, intervention_nodes, ...) {
 }
 
 
-#' Turn into a complete DAG
+#' Turn DAG into a complete DAG
 #' @param dag
 #' @param arrow_type One of "directed", "headless", "double". (Only "directed" really works easily with SWIG nodes, the others take some manual manipulation, at least for now.)
 #' @param options A list of edge options for each of the new options. Passed to [add_edge].
 #' @param ... Other options passed to [add_edge].
 #' @export
-
 dag_complete <- function(dag, arrow_type = "directed", options = NULL, ...) {
 
   arrow_type <- match.arg(arrow_type, c("directed", "headless", "double"))
@@ -108,7 +116,7 @@ dag_complete <- function(dag, arrow_type = "directed", options = NULL, ...) {
                                                           to = as.numeric(sub("(.*?)\\..*", "\\1", .x$to))))
   )
 
-  for (i in seq_len(max_id)) {
+  for (i in seq_len(max_id - 1)) {
     existing <- if(purrr::is_empty(all_pairs)) NA else all_pairs$to[all_pairs$from == i]
     dag <- dag %>%
       add_many_edges(from = i, to = setdiff(i:max_id, c(existing, i)),

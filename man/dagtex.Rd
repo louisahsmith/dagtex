@@ -16,30 +16,28 @@ dagtex(
 )
 }
 \arguments{
-\item{node_options}{List of options that apply to each node (can be
-overwritten for individual nodes).}
+\item{node_options, edge_options, swig_options}{List of options that apply to
+each node, edge, or split (SWIG) node (can be overwritten for individual
+elements).}
 
-\item{edge_options}{List of options that apply to each edge (can be
-overwritten for individual edges).}
-
-\item{swig_options}{List of options that apply to each SWIG node (some can be
-overwritten for individual SWIG nodes).}
-
-\item{help_lines}{Logical or numeric vector of length 2 giving the (x,y)
+\item{help_lines}{Logical, or numeric vector of length 2 giving the (x,y)
 coordinates that will be used (along with (0,0)) to help troubleshoot node
 placement. If \code{TRUE}, the upper-right coordinates will be the best guess of
-what will contain the diagram. Defaults to FALSE.}
+what will contain the diagram. Defaults to \code{FALSE}.}
 
-\item{help_angles}{Logical or numeric vector of angles in degrees. If \code{TRUE},
+\item{help_angles}{Logical, or numeric vector of angles in degrees. If \code{TRUE},
 plots lines extending from each node at 0, 30, ..., 360 degrees to
 troubleshoot arrow placement. If a numeric vector, lines extend at those
-angles. Defaults to FALSE.}
+angles. Defaults to \code{FALSE}.}
 
 \item{adorn_math}{Logical. If all node names should be printed in math mode,
 you can avoid surrounding them all with \verb{$...$} by setting \code{adorn_math = TRUE}.}
+
+\item{node_distance}{Character (number with unit, to be read by Tikz).
+Distance between nodes. Defaults to "1cm".}
 }
 \value{
-DAG contents, invisibly (DAG is printed to the viewer).
+Object of class "dagtex".
 }
 \description{
 Create a new DAG
@@ -88,7 +86,7 @@ dagtex(
 ) \%>\%
   add_node("THIS IS A SWIG",
            options = list(shape = "forbidden sign", color = "blue",
-                           line_width = 4)
+                           line_width = 5)
            ) \%>\%
   add_swig_node(left = "$X$", right = "$x = 1$") \%>\%
   add_node("$Y^{x = 1}$",
@@ -108,8 +106,13 @@ dagtex(node_options = list(shape = "star", star_point_ratio = 0.8, star_points =
    add_node("Star")
 
 # options() can be used to set options for a session
-options(dagtex.node_options = list(fill = "orange!30", shape = "rectangle"),
-   dagtex.adorn_math = TRUE)
+old_opts <- options()
+
+options(dagtex.node_options = list(fill = "orange!40"),
+   dagtex.adorn_math = TRUE,
+   # The special option "dagtex.shape" sets shape for regular and swig nodes
+   dagtex.shape = "rectangle")
 dagtex() \%>\% add_node("\\\\pi")
-# The special option "dagtex.shape" sets shape for regular and swig nodes
+
+options(old_opts)
 }

@@ -7,9 +7,9 @@
 \method{print}{dagtex}(x, ...)
 }
 \arguments{
-\item{x}{}
+\item{x}{Object created by \code{\link[=dagtex]{dagtex()}}.}
 
-\item{...}{}
+\item{...}{Not currently used.}
 }
 \description{
 Explicitly draw DAG

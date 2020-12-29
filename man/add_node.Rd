@@ -2,9 +2,7 @@
 % Please edit documentation in R/nodes.R
 \name{add_node}
 \alias{add_node}
-\alias{add_many_nodes}
-\alias{add_swig_node}
-\title{Add nodes}
+\title{Add a single node to a DAG}
 \usage{
 add_node(
   dag,
@@ -20,26 +18,49 @@ add_node(
   adorn_math = NULL,
   ...
 )
-
-add_many_nodes(dag, names, options = NULL, ...)
-
-add_swig_node(dag, left, right, options = NULL, ...)
 }
 \arguments{
-\item{...}{}
+\item{dag}{Object of class "dagtex", created with \code{\link[=dagtex]{dagtex()}}.}
+
+\item{name}{Name of the node, to be printed in DAG. If names within a DAG are
+unique, they can also be used when creating edges. If a split node in a
+SWIG (\code{is_swig = TRUE}), should be a character vector of length two.}
+
+\item{options}{List of node options specific to this node. For details, see
+\code{\link[=dagtex]{dagtex()}}.}
+
+\item{x}{Numeric. Horizontal coordinate at which to place node. If provided,
+\code{y} must also be provided.}
+
+\item{y}{Numeric. Vertical coordinate at which to place node.If provided, \code{x}
+must also be provided.}
+
+\item{right_of}{Name of node already existing in DAG to place current node to
+the right of.}
+
+\item{left_of}{Name of node already existing in DAG to place current node to
+the left of.}
+
+\item{above}{Name of node already existing in DAG to place current node
+above.}
+
+\item{below}{Name of node already existing in DAG to place current node
+below.}
+
+\item{is_swig}{Logical. If node is to be split as part of a SWIG. See also
+\code{\link[=add_swig_node]{add_swig_node()}}. Defaults to \code{FALSE}.}
+
+\item{adorn_math}{Logical. Node name will be automatically surrounded by
+\verb{$...$} if \code{TRUE}. Defaults to \code{FALSE}.}
+
+\item{...}{Not in use.}
 }
 \value{
 
 }
 \description{
-Add nodes
+Add a single node to a DAG
 }
 \examples{
 
-dagtex(node_options = list(shape = "ellipse"),
-       swig_options = list(gap = "3pt", line_color_right = "red")) \%>\%
- add_many_nodes(list(c("$A_0$", "$a_0$"), "$L_1$", c("$A_1$", "$a_1$"), "$Y$")) \%>\%
- add_many_edges(from = "$a_0$", to = c("$L_1$","$A_1$", "$Y$")) \%>\%
- add_many_edges(from = "$L_1$", to = c("$A_1$", "$Y$")) \%>\%
- add_edge(from = "$a_1$", to = "$Y$")
 }

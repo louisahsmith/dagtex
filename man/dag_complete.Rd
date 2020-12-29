@@ -2,7 +2,7 @@
 % Please edit documentation in R/transform.R
 \name{dag_complete}
 \alias{dag_complete}
-\title{Turn into a complete DAG}
+\title{Turn DAG into a complete DAG}
 \usage{
 dag_complete(dag, arrow_type = "directed", options = NULL, ...)
 }
@@ -14,5 +14,5 @@ dag_complete(dag, arrow_type = "directed", options = NULL, ...)
 \item{...}{Other options passed to \link{add_edge}.}
 }
 \description{
-Turn into a complete DAG
+Turn DAG into a complete DAG
 }

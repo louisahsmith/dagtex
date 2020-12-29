@@ -2,10 +2,8 @@
 % Please edit documentation in R/edges.R
 \name{add_edge}
 \alias{add_edge}
-\alias{add_many_edges}
 \alias{add_curved_edge}
-\alias{annotate_edge}
-\title{Add edges}
+\title{Add a single edge between two nodes in a DAG}
 \usage{
 add_edge(
   dag,
@@ -14,8 +12,8 @@ add_edge(
   start_position = NULL,
   end_position = NULL,
   options = NULL,
-  curve = NULL,
   is_curved = !is.null(curve),
+  curve = NULL,
   curve_in_degree = NULL,
   curve_out_degree = NULL,
   is_double_arrow = FALSE,
@@ -24,47 +22,32 @@ add_edge(
   ...
 )
 
-add_many_edges(
-  dag,
-  from,
-  to,
-  options = NULL,
-  is_curved = TRUE,
-  start_curve = "up",
-  ...
-)
-
 add_curved_edge(dag, from, to, options = NULL, curve = "up", ...)
-
-annotate_edge(
-  text,
-  placement = "midway",
-  position = "above",
-  size = "normalsize",
-  color = NULL
-)
 }
 \arguments{
-\item{...}{}
+\item{dag}{}
+
+\item{from, to}{The names (or numeric id) of nodes create by \code{\link[=add_node]{add_node()}} or related functions.}
+
+\item{start_position, end_position}{The start and end positions of the edge in any manner acceptable to Tikz (e.g., a coordinate in degrees like 30 or a direction like "south west")}
+
+\item{options}{A list of edge options specific to this edge; see \code{\link[=dagtex]{dagtex()}}.}
+
+\item{is_curved}{Logical. Whether the edge should be curved.}
+
+\item{curve}{Direction of the curve, if any: "up" or "down".}
+
+\item{curve_in_degree, curve_out_degree}{Angle in degrees at which the edge leaves and enters the nodes.}
+
+\item{is_double_arrow, is_headless}{Logical. Default is directed arrow; these options can be used to specify headless or two-headed arrows.}
+
+\item{annotate}{Annotation specified with \code{\link[=annotate_edge]{annotate_edge()}}.}
+
+\item{...}{Not currently used.}
 }
 \value{
 
 }
 \description{
-Add edges
-}
-\examples{
-
-dagtex(node_options = list(shape = "circle")) \%>\%
- add_node("$A_0$") \%>\%
- add_node("$L_1$") \%>\%
- add_node("$A_1$") \%>\%
- add_node("$Y$") \%>\%
- add_many_edges(from = "$A_0$", to = c("$L_1$","$A_1$", "$Y$")) \%>\%
- add_many_edges(from = "$L_1$", to = c("$A_1$", "$Y$")) \%>\%
- add_edge(from = "$A_1$", to = "$Y$")
-
-dagtex() \%>\%
- add_many_nodes("A", "B", "C", "D") \%>\%
- add_many_edges(from = c("A", "B", "C"), to = "D")
+Add a single edge between two nodes in a DAG
 }

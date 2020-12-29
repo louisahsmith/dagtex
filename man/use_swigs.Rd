@@ -10,6 +10,8 @@ install_swigs(...)
 use_swigs(path = getwd())
 }
 \arguments{
+\item{...}{Not in use currently}
+
 \item{path}{The directory with the RMarkdown file that uses SWIGs}
 }
 \description{

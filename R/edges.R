@@ -1,29 +1,23 @@
-#' Add edges
+#' Add a single edge between two nodes in a DAG
 #'
-#' @param dag
-#' @param from
-#' @param to
-#' @param start_position
-#' @param end_position
-#' @param options
-#' @param is_curved
-#' @param curve
-#' @param curve_in_degree
-#' @param curve_out_degree
-#' @param is_double_arrow
-#' @param is_headless
-#' @param annotate
-#' @param ...
+#' @param dag Object created by [dagtex()].
+#' @param from,to The names (or numeric id) of nodes create by [add_node()] or related functions.
+#' @param start_position,end_position The start and end positions of the edge in any manner acceptable to Tikz (e.g., a coordinate in degrees like 30 or a direction like "south west")
+#' @param options A list of edge options specific to this edge; see [dagtex()].
+#' @param is_curved Logical. Whether the edge should be curved.
+#' @param curve Direction of the curve, if any: "up" or "down".
+#' @param curve_in_degree,curve_out_degree Angle in degrees at which the edge leaves and enters the nodes.
+#' @param is_double_arrow,is_headless Logical. Default is directed arrow; these options can be used to specify headless or two-headed arrows.
+#' @param annotate Annotation specified with [annotate_edge()].
+#' @param ... Not currently used.
 #'
 #'
 #' @return
 #' @export
 #'
-#' @examples
 #'
-#' @rdname add_edge
 add_edge <- function(dag, from, to, start_position = NULL, end_position = NULL,
-                     options = NULL, curve = NULL, is_curved = !is.null(curve),
+                     options = NULL, is_curved = !is.null(curve), curve = NULL,
                      curve_in_degree = NULL, curve_out_degree = NULL,
                      is_double_arrow = FALSE, is_headless = FALSE,
                      annotate = NULL, ...) {
@@ -56,8 +50,11 @@ add_edge <- function(dag, from, to, start_position = NULL, end_position = NULL,
   )
 }
 
+#' Add several edges at once to a DAG
+#'
+#' @inheritParams add_edge
+#'
 #' @export
-#' @rdname add_edge
 #' @examples
 #' dagtex(node_options = list(shape = "circle")) %>%
 #'  add_node("$A_0$") %>%
@@ -69,9 +66,8 @@ add_edge <- function(dag, from, to, start_position = NULL, end_position = NULL,
 #'  add_edge(from = "$A_1$", to = "$Y$")
 #'
 #' dagtex() %>%
-#'  add_many_nodes("A", "B", "C", "D") %>%
+#'  add_many_nodes(c("A", "B", "C", "D")) %>%
 #'  add_many_edges(from = c("A", "B", "C"), to = "D")
-
 add_many_edges <- function(dag, from, to, options = NULL,
                       is_curved = TRUE, start_curve = "up", ...) {
 
@@ -137,12 +133,17 @@ add_many_edges <- function(dag, from, to, options = NULL,
   dag
 }
 
+#' @param dag
+#'
+#' @inheritParams add_edge
+#'
 #' @export
 #' @rdname add_edge
 add_curved_edge <- function(dag, from, to, options = NULL, curve = "up", ...) {
   add_edge(dag = dag, from = from, to = to, curve = curve, options = options, is_curved = TRUE, ...)
 }
 
+#' @keywords internal
 add_edge_to_dag <- function(dag, id, from, to, start_position = NULL,
                             end_position = NULL, options = NULL, is_curved = FALSE,
                             curve = "up",
@@ -177,11 +178,19 @@ add_edge_to_dag <- function(dag, id, from, to, start_position = NULL,
   dag
 }
 
-
-#' @export
-#' @rdname add_edge
+#' Add text to an edge.
 #'
-
+#'
+#' @param text
+#'
+#' @param placement
+#' @param position
+#' @param size
+#' @param color
+#'
+#' @export
+#'
+#'
 annotate_edge <- function(text, placement = "midway", position = "above",
                           size = "normalsize", color = NULL) {
   size <- match.arg(size, c("tiny", "scriptsize", "footnotesize", "small",
@@ -189,8 +198,10 @@ annotate_edge <- function(text, placement = "midway", position = "above",
   paste0("node[draw=none, text=", color, ", ", placement, ", ", position, "]{\\", size, " ", text, "}")
 }
 
+#' @keywords internal
 count_edges <- function(dag) length(dag$edges)
 
+#' @keywords internal
 process_position <- function(target, position) {
   ifelse(
     !is.null(position),
@@ -199,6 +210,7 @@ process_position <- function(target, position) {
   )
 }
 
+#' @keywords internal
 get_id <- function(dag, .var) {
   if (is.numeric(.var)) return(.var)
    node_names <- unlist(purrr::map(dag$nodes, "name"))
