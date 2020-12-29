@@ -1,3 +1,4 @@
+#' @keywords internal
 .onLoad <- function(libname = find.package("dagtex"), pkgname = "dagtex") {
 
   load_packages <- getOption("dagtex.load_tikz", default = TRUE)
@@ -37,6 +38,17 @@
   toset <- !(names(op.dagtex) %in% names(op))
   if (any(toset)) options(op.dagtex[toset])
 
+
+  if (Sys.getenv("IN_PKGDOWN") == "true") {
+    texPreview::tex_opts$set(
+      returnType = 'html'
+    )
+    vctrs::s3_register("downlit::replay_html", "magick-image", replay_html.magick)
+    vctrs::s3_register("pkgdown::replay_html", "magick-image", replay_html.magick)
+  }
+
+
   invisible()
 
 }
+
