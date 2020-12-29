@@ -30,7 +30,7 @@ SWIGs are drawn using Thomas Richardson's [TikZ shapes library](https://www.stat
 
 # Examples
 
-```{r example}
+```{r examples}
 library(dagtex)
 
 dagtex() %>% 
@@ -167,14 +167,15 @@ dagtex(edge_options = list(arrowhead = "{Rays[n=5]}")) %>%
   adorn_counterfactuals(notation = "parens", text_color = "red")
 
 
-dagtex(adorn_math = TRUE, scale = .5,
+dagtex(adorn_math = TRUE,
        swig_options = list(shape = "ellipse", text_right = "red", line_color_right = "red"),
        node_options = list(shape = "ellipse", minimum_height = "2em", minimum_width = "5em")) %>%
   add_many_nodes(c("A_0", "L_1", "A_1", "Y")) %>%
   dag_complete() %>%
-  swigify(intervention_nodes = c("A_0", "A_1")) %>%
-  adorn_counterfactuals(text_color = "red") %>% get_latex_code()
+  swigify(split_nodes = c("A_0", "A_1")) %>%
+  adorn_counterfactuals(text_color = "red")
 
+old_opts <- options()
 options(dagtex.shape = "circle",
         dagtex.adorn_math = TRUE,
         dagtex.edge_options = list(line_type = "densely dotted", color = "darkgray", cap = "round", arrowhead = "latex"))
@@ -187,5 +188,6 @@ dagtex(adorn_math = TRUE) %>%
   add_edge("\\beta", "\\gamma") %>%
   add_edge(1, "\\gamma", is_headless = TRUE, is_curved = TRUE,
            start_position = "north", end_position = "north")
+options(old_opts)
 ```
 
