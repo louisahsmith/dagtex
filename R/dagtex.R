@@ -2,7 +2,7 @@
 #'
 #'@param node_options,edge_options,swig_options List of options that apply to
 #'  each node, edge, or split (SWIG) node (can be overwritten for individual
-#'  elements).
+#'  elements). See details.
 #'@param help_lines Logical, or numeric vector of length 2 giving the (x,y)
 #'  coordinates that will be used (along with (0,0)) to help troubleshoot node
 #'  placement. If `TRUE`, the upper-right coordinates will be the best guess of
@@ -98,9 +98,9 @@
 dagtex <- function(node_options = NULL,
                    edge_options = NULL,
                    swig_options = NULL,
+                   adorn_math = getOption("dagtex.adorn_math"),
                    help_lines = getOption("dagtex.help_lines"),
                    help_angles = getOption("dagtex.help_angles"),
-                   adorn_math = getOption("dagtex.adorn_math"),
                    node_distance = "1cm", ...) {
 
   if (!is.na(getOption("dagtex.shape"))) {
