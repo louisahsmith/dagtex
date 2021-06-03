@@ -11,7 +11,7 @@ reference:
   - '`save_dag`'
 - title: Quick build tools
   contents:
-  - '`dag_complete`'
+  - '`complete_dag`'
   - '`swigify`'
   - '`adorn_counterfactuals`'
 - title: Helper functions
@@ -19,6 +19,5 @@ reference:
   - '`get_latex_code`'
   - '`install_swigs`'
   - '`print_ids`'
-  - '`knit_print.dagtex`'
-  - '`plot_dagtex`'
-  - '`print.dagtex`'
+#  - '`knit_print.dagtex`'
+#  - '`print.dagtex`'

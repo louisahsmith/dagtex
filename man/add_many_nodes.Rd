@@ -26,11 +26,12 @@ Object of class "dagtex".
 Add several nodes
 }
 \examples{
-dagtex(node_options = list(shape = "ellipse"),
-       swig_options = list(gap = "3pt", line_color_right = "red")) \%>\%
- add_many_nodes(list(c("$A_0$", "$a_0$"), "$L_1$", c("$A_1$", "$a_1$"), "$Y$")) \%>\%
- add_many_edges(from = "$a_0$", to = c("$L_1$","$A_1$", "$Y$")) \%>\%
- add_many_edges(from = "$L_1$", to = c("$A_1$", "$Y$")) \%>\%
- add_edge(from = "$a_1$", to = "$Y$")
-
+dagtex(
+  node_options = list(shape = "ellipse"),
+  swig_options = list(gap = "3pt", line_color_right = "red")
+) \%>\%
+  add_many_nodes(list(c("$A_0$", "$a_0$"), "$L_1$", c("$A_1$", "$a_1$"), "$Y$")) \%>\%
+  add_many_edges(from = "$a_0$", to = c("$L_1$", "$A_1$", "$Y$")) \%>\%
+  add_many_edges(from = "$L_1$", to = c("$A_1$", "$Y$")) \%>\%
+  add_edge(from = "$a_1$", to = "$Y$")
 }

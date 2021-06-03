@@ -23,7 +23,7 @@ drawing to paste directly into a LaTeX document.
 }
 \examples{
 dagtex() \%>\%
-add_many_nodes(letters[1:3]) \%>\%
-dag_complete() \%>\%
-get_latex_code()
+  add_many_nodes(letters[1:3]) \%>\%
+  complete_dag() \%>\%
+  get_latex_code()
 }

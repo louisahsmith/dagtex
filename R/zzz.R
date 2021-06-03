@@ -1,12 +1,12 @@
 #' @keywords internal
 .onLoad <- function(libname = find.package("dagtex"), pkgname = "dagtex") {
-
   load_packages <- getOption("dagtex.load_tikz", default = TRUE)
   if (load_packages) {
     knitr::knit_meta_add(
       list(
         rmarkdown::latex_dependency_tikz(
-          c("positioning",
+          c(
+            "positioning",
             "calc",
             "shapes.geometric",
             "shapes.multipart",
@@ -16,7 +16,8 @@
             "shapes.arrows",
             "decorations.markings",
             "external",
-            "trees")
+            "trees"
+          )
         )
       )
     )
@@ -34,14 +35,14 @@
     dagtex.cleanup = c("aux", "log", "txt", "Doc", "tex"),
     dagtex.shape = NA,
     dagtex.notation = "superscript"
-    )
+  )
   toset <- !(names(op.dagtex) %in% names(op))
   if (any(toset)) options(op.dagtex[toset])
 
 
   if (Sys.getenv("IN_PKGDOWN") == "true") {
     texPreview::tex_opts$set(
-      returnType = 'html'
+      returnType = "html"
     )
     vctrs::s3_register("downlit::replay_html", "magick-image", replay_html.magick)
     vctrs::s3_register("pkgdown::replay_html", "magick-image", replay_html.magick)
@@ -49,6 +50,4 @@
 
 
   invisible()
-
 }
-

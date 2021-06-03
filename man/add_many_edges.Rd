@@ -15,11 +15,13 @@ add_many_edges(
 )
 }
 \arguments{
-\item{dag}{}
+\item{dag}{Object created by \code{\link[=dagtex]{dagtex()}}.}
 
-\item{from}{The names (or numeric id) of nodes create by \code{\link[=add_node]{add_node()}} or related functions.}
+\item{from}{The names (or numeric id) of nodes create by \code{\link[=add_node]{add_node()}} or
+related functions.}
 
-\item{to}{The names (or numeric id) of nodes create by \code{\link[=add_node]{add_node()}} or related functions.}
+\item{to}{The names (or numeric id) of nodes create by \code{\link[=add_node]{add_node()}} or
+related functions.}
 
 \item{options}{A list of edge options specific to this edge; see \code{\link[=dagtex]{dagtex()}}.}
 
@@ -28,19 +30,22 @@ add_many_edges(
 \item{...}{Not currently used.}
 }
 \description{
-Add several edges at once to a DAG
+A shortcut to adding multiple edges at once to a DAG, will either add an edge
+from every node in \code{from} to a single \code{to} node, or an edge from a single
+\code{from} node to every node in \code{to}. Edges will be straight between adjacent
+nodes and curved otherwise, but may look funny if nodes are not in a line.
 }
 \examples{
 dagtex(node_options = list(shape = "circle")) \%>\%
- add_node("$A_0$") \%>\%
- add_node("$L_1$") \%>\%
- add_node("$A_1$") \%>\%
- add_node("$Y$") \%>\%
- add_many_edges(from = "$A_0$", to = c("$L_1$","$A_1$", "$Y$")) \%>\%
- add_many_edges(from = "$L_1$", to = c("$A_1$", "$Y$")) \%>\%
- add_edge(from = "$A_1$", to = "$Y$")
+  add_node("$A_0$") \%>\%
+  add_node("$L_1$") \%>\%
+  add_node("$A_1$") \%>\%
+  add_node("$Y$") \%>\%
+  add_many_edges(from = "$A_0$", to = c("$L_1$", "$A_1$", "$Y$")) \%>\%
+  add_many_edges(from = "$L_1$", to = c("$A_1$", "$Y$")) \%>\%
+  add_edge(from = "$A_1$", to = "$Y$")
 
 dagtex() \%>\%
- add_many_nodes(c("A", "B", "C", "D")) \%>\%
- add_many_edges(from = c("A", "B", "C"), to = "D")
+  add_many_nodes(c("A", "B", "C", "D")) \%>\%
+  add_many_edges(from = c("A", "B", "C"), to = "D")
 }

@@ -8,9 +8,9 @@ dagtex(
   node_options = NULL,
   edge_options = NULL,
   swig_options = NULL,
+  adorn_math = getOption("dagtex.adorn_math"),
   help_lines = getOption("dagtex.help_lines"),
   help_angles = getOption("dagtex.help_angles"),
-  adorn_math = getOption("dagtex.adorn_math"),
   node_distance = "1cm",
   ...
 )
@@ -18,7 +18,10 @@ dagtex(
 \arguments{
 \item{node_options, edge_options, swig_options}{List of options that apply to
 each node, edge, or split (SWIG) node (can be overwritten for individual
-elements).}
+elements). See details.}
+
+\item{adorn_math}{Logical. If all node names should be printed in math mode,
+you can avoid surrounding them all with \verb{$...$} by setting \code{adorn_math = TRUE}.}
 
 \item{help_lines}{Logical, or numeric vector of length 2 giving the (x,y)
 coordinates that will be used (along with (0,0)) to help troubleshoot node
@@ -29,9 +32,6 @@ what will contain the diagram. Defaults to \code{FALSE}.}
 plots lines extending from each node at 0, 30, ..., 360 degrees to
 troubleshoot arrow placement. If a numeric vector, lines extend at those
 angles. Defaults to \code{FALSE}.}
-
-\item{adorn_math}{Logical. If all node names should be printed in math mode,
-you can avoid surrounding them all with \verb{$...$} by setting \code{adorn_math = TRUE}.}
 
 \item{node_distance}{Character (number with unit, to be read by Tikz).
 Distance between nodes. Defaults to "1cm".}
@@ -80,38 +80,46 @@ be treated like a regular TikZ style option.
 \examples{
 dagtex(
   node_options = list(shape = "star"),
-  swig_options = list(gap = "3pt", line_color_right = "red",
-                       fill_color_left = "pink", line_width_left = 2.75),
+  swig_options = list(
+    gap = "3pt", line_color_right = "red",
+    fill_color_left = "pink", line_width_left = 2.75
+  ),
   edge_options = list(line_type = "dashed", color = "green")
 ) \%>\%
   add_node("THIS IS A SWIG",
-           options = list(shape = "forbidden sign", color = "blue",
-                           line_width = 5)
-           ) \%>\%
+    options = list(
+      shape = "forbidden sign", color = "blue",
+      line_width = 5
+    )
+  ) \%>\%
   add_swig_node(left = "$X$", right = "$x = 1$") \%>\%
   add_node("$Y^{x = 1}$",
-           options = list(color = "violet", text = "olive")
-           ) \%>\%
+    options = list(color = "violet", text = "olive")
+  ) \%>\%
   add_edge("$x = 1$", "$Y^{x = 1}$",
-           curve = "up", is_double_arrow = TRUE,
-           options = list(color = "teal", line_type = "solid")
-           ) \%>\%
+    curve = "up", is_double_arrow = TRUE,
+    options = list(color = "teal", line_type = "solid")
+  ) \%>\%
   add_edge(1, 3,
-           curve_in_degree = 0, curve_out_degree = 40
-           ) \%>\%
-  add_node("hello", above = 2,
-           options = list(fill = "yellow"))
+    curve_in_degree = 0, curve_out_degree = 40
+  ) \%>\%
+  add_node("hello",
+    above = 2,
+    options = list(fill = "yellow")
+  )
 
 dagtex(node_options = list(shape = "star", star_point_ratio = 0.8, star_points = 7)) \%>\%
-   add_node("Star")
+  add_node("Star")
 
 # options() can be used to set options for a session
 old_opts <- options()
 
-options(dagtex.node_options = list(fill = "orange!40"),
-   dagtex.adorn_math = TRUE,
-   # The special option "dagtex.shape" sets shape for regular and swig nodes
-   dagtex.shape = "rectangle")
+options(
+  dagtex.node_options = list(fill = "orange!40"),
+  dagtex.adorn_math = TRUE,
+  # The special option "dagtex.shape" sets shape for regular and swig nodes
+  dagtex.shape = "rectangle"
+)
 dagtex() \%>\% add_node("\\\\pi")
 
 options(old_opts)

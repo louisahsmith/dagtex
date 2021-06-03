@@ -11,20 +11,25 @@
 #' @rdname use_swigs
 
 install_swigs <- function(...) {
-  tryCatch({
-    val <- system("tlmgr conf texmf TEXMFHOME", intern = TRUE)
-    dir <- regexpr("\\(.+\\)", val)
-    short_dir <- substr(val, dir + 1, dir + attr(dir, "match.length") - 2)
-    short_dir <- substr(short_dir, 1, rev(gregexpr("\\/", short_dir)[[1]])[1] - 1)
-    full_dir <- file.path(short_dir, "texmf-dist", "tex", "latex", "local")
-    if (!dir.exists(full_dir)) {
-      dir.create(full_dir)
-    }
-    file.copy(system.file("tex", "pgflibraryshapes.swigs.code.tex", package = "dagtex"),
-              file.path(full_dir, "pgflibraryshapes.swigs.code.tex"))
-    system("texhash")
-  }, error = function(e) e,
-  finally = cat("Error installing tikz library for SWIGs. You may need to do so manually.\n"))
+  tryCatch(
+    {
+      val <- system("tlmgr conf texmf TEXMFHOME", intern = TRUE)
+      dir <- regexpr("\\(.+\\)", val)
+      short_dir <- substr(val, dir + 1, dir + attr(dir, "match.length") - 2)
+      short_dir <- substr(short_dir, 1, rev(gregexpr("\\/", short_dir)[[1]])[1] - 1)
+      full_dir <- file.path(short_dir, "texmf-dist", "tex", "latex", "local")
+      if (!dir.exists(full_dir)) {
+        dir.create(full_dir)
+      }
+      file.copy(
+        system.file("tex", "pgflibraryshapes.swigs.code.tex", package = "dagtex"),
+        file.path(full_dir, "pgflibraryshapes.swigs.code.tex")
+      )
+      system("texhash")
+    },
+    error = function(e) e,
+    finally = cat("Error installing tikz library for SWIGs. You may need to do so manually.\n")
+  )
 }
 
 
@@ -41,5 +46,5 @@ use_swigs <- function(path = getwd()) {
   file.copy(
     system.file("tex", "pgflibraryshapes.swigs.code.tex", package = "dagtex"),
     path
-    )
+  )
 }

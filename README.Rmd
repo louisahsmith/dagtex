@@ -161,7 +161,7 @@ dagtex(help_angles = TRUE, node_options = list(color = "orange")) %>%
 
 dagtex(edge_options = list(arrowhead = "{Rays[n=5]}")) %>%
   add_many_nodes(list(c("A", "a"), "b", c("C", "c"), "d")) %>%
-  dag_complete(arrow_type = "directed", options = list(line_type = "dotted")) %>%
+  complete_dag(arrow_type = "directed", options = list(line_type = "dotted")) %>%
     add_many_edges("a", c("b", "C"), is_headless = TRUE,
                    options = list(color = "red", line_type = "dashed")) %>%
   adorn_counterfactuals(notation = "parens", text_color = "red")
@@ -171,7 +171,7 @@ dagtex(adorn_math = TRUE,
        swig_options = list(shape = "ellipse", text_right = "red", line_color_right = "red"),
        node_options = list(shape = "ellipse", minimum_height = "2em", minimum_width = "5em")) %>%
   add_many_nodes(c("A_0", "L_1", "A_1", "Y")) %>%
-  dag_complete() %>%
+  complete_dag() %>%
   swigify(split_nodes = c("A_0", "A_1")) %>%
   adorn_counterfactuals(text_color = "red")
 

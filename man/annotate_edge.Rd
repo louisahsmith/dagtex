@@ -13,10 +13,32 @@ annotate_edge(
 )
 }
 \arguments{
-\item{text}{}
+\item{text}{Text to add to the DAG.}
 
-\item{color}{}
+\item{placement}{Character, describes where along the edge to place the
+annotation. Defaults to "midway", other options include "near start", "at
+end", etc. (see TikZ documentation).}
+
+\item{position}{"above", "below", or "" for positioning text on top of the
+edge.}
+
+\item{size}{Font size, to LaTex. Defaults to "normalsize", other options are
+"footnotesize", "LARGE", etc.}
+
+\item{color}{TExt color of annotation}
 }
 \description{
 Add text to an edge.
+}
+\examples{
+dagtex() \%>\%
+add_many_nodes(c("A", "B")) \%>\%
+add_edge("A", "B", annotate = annotate_edge("example"))
+
+dagtex() \%>\%
+add_many_nodes(c("A", "B")) \%>\%
+add_edge("A", "B",
+annotate = annotate_edge("example", color = "teal", size = "tiny",
+position = "very near start", placement = ""))
+
 }

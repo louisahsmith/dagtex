@@ -1,21 +1,39 @@
 #' Add a single edge between two nodes in a DAG
 #'
+#' Connect two nodes using a straight or curved line. By default, edges are
+#' directed (`from` to `to`) but undirected or bidirectional arrows are also
+#' possible. The angles at which the edge leaves and enters the nodes, and the
+#' location at which it does so, can be finely tuned. [add_curved_edge()] is a
+#' shortcut for a (hopefully) reasonably curved edge.
+#'
 #' @param dag Object created by [dagtex()].
-#' @param from,to The names (or numeric id) of nodes create by [add_node()] or related functions.
-#' @param start_position,end_position The start and end positions of the edge in any manner acceptable to Tikz (e.g., a coordinate in degrees like 30 or a direction like "south west")
+#' @param from,to The names (or numeric id) of nodes create by [add_node()] or
+#'   related functions.
+#' @param start_position,end_position The start and end positions of the edge in
+#'   any manner acceptable to Tikz (e.g., a coordinate in degrees like 30 or a
+#'   direction like "south west")
 #' @param options A list of edge options specific to this edge; see [dagtex()].
 #' @param is_curved Logical. Whether the edge should be curved.
 #' @param curve Direction of the curve, if any: "up" or "down".
-#' @param curve_in_degree,curve_out_degree Angle in degrees at which the edge leaves and enters the nodes.
-#' @param is_double_arrow,is_headless Logical. Default is directed arrow; these options can be used to specify headless or two-headed arrows.
+#' @param curve_in_degree,curve_out_degree Angle in degrees at which the edge
+#'   leaves and enters the nodes.
+#' @param is_double_arrow,is_headless Logical. Default is directed arrow; these
+#'   options can be used to specify headless or two-headed arrows.
 #' @param annotate Annotation specified with [annotate_edge()].
 #' @param ... Not currently used.
 #'
 #'
-#' @return
+#' @return The same object of class "dagtex" with an additional edge.
 #' @export
 #'
-#'
+#' @examples
+#' dagtex(edge_options = list(line_type = "dotted", color = "red")) %>%
+#'   add_many_nodes(c("A", "B", "C")) %>%
+#'   add_edge("A", "C", curve = "down", is_double_arrow = TRUE,
+#'            annotate = annotate_edge("example", position = "below"),
+#'            options = list(color = "teal", line_type = "solid")) %>%
+#'   add_edge(1, 2, start_position = "north", curve_in_degree = 0, curve_out_degree = 90)
+
 add_edge <- function(dag, from, to, start_position = NULL, end_position = NULL,
                      options = NULL, is_curved = !is.null(curve), curve = NULL,
                      curve_in_degree = NULL, curve_out_degree = NULL,
@@ -41,7 +59,7 @@ add_edge <- function(dag, from, to, start_position = NULL, end_position = NULL,
     end_position = end_position,
     options = options,
     is_curved = is_curved,
-    curve =  curve,
+    curve = curve,
     curve_in_degree = curve_in_degree,
     curve_out_degree = curve_out_degree,
     is_double_arrow = is_double_arrow,
@@ -52,25 +70,29 @@ add_edge <- function(dag, from, to, start_position = NULL, end_position = NULL,
 
 #' Add several edges at once to a DAG
 #'
+#' A shortcut to adding multiple edges at once to a DAG, will either add an edge
+#' from every node in `from` to a single `to` node, or an edge from a single
+#' `from` node to every node in `to`. Edges will be straight between adjacent
+#' nodes and curved otherwise, but may look funny if nodes are not in a line.
+#'
 #' @inheritParams add_edge
 #'
 #' @export
 #' @examples
 #' dagtex(node_options = list(shape = "circle")) %>%
-#'  add_node("$A_0$") %>%
-#'  add_node("$L_1$") %>%
-#'  add_node("$A_1$") %>%
-#'  add_node("$Y$") %>%
-#'  add_many_edges(from = "$A_0$", to = c("$L_1$","$A_1$", "$Y$")) %>%
-#'  add_many_edges(from = "$L_1$", to = c("$A_1$", "$Y$")) %>%
-#'  add_edge(from = "$A_1$", to = "$Y$")
+#'   add_node("$A_0$") %>%
+#'   add_node("$L_1$") %>%
+#'   add_node("$A_1$") %>%
+#'   add_node("$Y$") %>%
+#'   add_many_edges(from = "$A_0$", to = c("$L_1$", "$A_1$", "$Y$")) %>%
+#'   add_many_edges(from = "$L_1$", to = c("$A_1$", "$Y$")) %>%
+#'   add_edge(from = "$A_1$", to = "$Y$")
 #'
 #' dagtex() %>%
-#'  add_many_nodes(c("A", "B", "C", "D")) %>%
-#'  add_many_edges(from = c("A", "B", "C"), to = "D")
+#'   add_many_nodes(c("A", "B", "C", "D")) %>%
+#'   add_many_edges(from = c("A", "B", "C"), to = "D")
 add_many_edges <- function(dag, from, to, options = NULL,
-                      is_curved = TRUE, start_curve = "up", ...) {
-
+                           is_curved = TRUE, start_curve = "up", ...) {
   if (length(from) > 1 & length(to) > 1) stop("Can only choose a single \"from\" or \"to\" node at a time")
 
   # originally written from one to many, backwards allows for many to one
@@ -90,11 +112,15 @@ add_many_edges <- function(dag, from, to, options = NULL,
   if (!is_curved) {
     for (i in seq_along(to_ids)) {
       if (backwards) {
-        args <- c(dag = list(dag), to = from,
-                  from = to_ids[i], options = list(options), ...)
+        args <- c(
+          dag = list(dag), to = from,
+          from = to_ids[i], options = list(options), ...
+        )
       } else {
-        args <- c(dag = list(dag), from = from,
-                  to = to_ids[i], options = list(options), ...)
+        args <- c(
+          dag = list(dag), from = from,
+          to = to_ids[i], options = list(options), ...
+        )
       }
       dag <- do.call(add_edge, args)
     }
@@ -107,25 +133,33 @@ add_many_edges <- function(dag, from, to, options = NULL,
 
   for (i in seq_along(adj)) {
     if (backwards) {
-      args <- c(dag = list(dag), to = from,
-                from = adj[i], options = list(options), ...)
+      args <- c(
+        dag = list(dag), to = from,
+        from = adj[i], options = list(options), ...
+      )
     } else {
-      args <- c(dag = list(dag), from = from,
-                to = adj[i], options = list(options), ...)
+      args <- c(
+        dag = list(dag), from = from,
+        to = adj[i], options = list(options), ...
+      )
     }
     dag <- do.call(add_edge, args)
   }
 
   for (i in seq_along(not_adj)) {
-    curve = ifelse(i %% 2 == 1, start_curve, next_curve)
+    curve <- ifelse(i %% 2 == 1, start_curve, next_curve)
     if (backwards) {
-      args <- c(dag = list(dag), to = from,
-                from = not_adj[i], curve = curve,
-                options = list(options))
+      args <- c(
+        dag = list(dag), to = from,
+        from = not_adj[i], curve = curve,
+        options = list(options)
+      )
     } else {
-      args <- c(dag = list(dag), from = from,
-                to = not_adj[i], curve = curve,
-                options = list(options))
+      args <- c(
+        dag = list(dag), from = from,
+        to = not_adj[i], curve = curve,
+        options = list(options)
+      )
     }
     dag <- do.call(add_edge, args)
   }
@@ -133,12 +167,17 @@ add_many_edges <- function(dag, from, to, options = NULL,
   dag
 }
 
-#' @param dag
-#'
 #' @inheritParams add_edge
 #'
 #' @export
 #' @rdname add_edge
+#' @examples
+#' dagtex(edge_options = list(line_type = "dotted", color = "red")) %>%
+#'   add_many_nodes(c("A", "B", "C")) %>%
+#'   add_curved_edge("A", "C", curve = "down", is_double_arrow = TRUE,
+#'            annotate = annotate_edge("example", position = "below"),
+#'            options = list(color = "teal", line_type = "solid")) %>%
+#'   add_curved_edge(1, 2, curve = "down")
 add_curved_edge <- function(dag, from, to, options = NULL, curve = "up", ...) {
   add_edge(dag = dag, from = from, to = to, curve = curve, options = options, is_curved = TRUE, ...)
 }
@@ -152,7 +191,6 @@ add_edge_to_dag <- function(dag, id, from, to, start_position = NULL,
                             is_double_arrow = FALSE,
                             is_headless = FALSE,
                             annotate = NULL) {
-
   from <- process_position(from, start_position)
   to <- process_position(to, end_position)
 
@@ -162,7 +200,7 @@ add_edge_to_dag <- function(dag, id, from, to, start_position = NULL,
       from = from,
       to = to,
       is_curved = is_curved,
-      curve =  curve,
+      curve = curve,
       curve_in_degree = curve_in_degree,
       curve_out_degree = curve_out_degree,
       options = options,
@@ -178,23 +216,39 @@ add_edge_to_dag <- function(dag, id, from, to, start_position = NULL,
   dag
 }
 
-#' Add text to an edge.
+#' Add text to an edge
 #'
+#' Annotate the edge between two nodes with some additional text.
 #'
-#' @param text
+#' @param text Text to add to the DAG.
 #'
-#' @param placement
-#' @param position
-#' @param size
-#' @param color
+#' @param placement Character, describes where along the edge to place the
+#'   annotation. Defaults to "midway", other options include "near start", "at
+#'   end", etc. (see TikZ documentation).
+#' @param position "above", "below", or "" for positioning text on top of the
+#'   edge.
+#' @param size Font size, in LaTex-speak. Defaults to "normalsize", other options are
+#'   "footnotesize", "LARGE", etc.
+#' @param color Text color of annotation.
 #'
 #' @export
+#' @examples
+#' dagtex() %>%
+#' add_many_nodes(c("A", "B")) %>%
+#' add_edge("A", "B", annotate = annotate_edge("example"))
 #'
+#' dagtex() %>%
+#' add_many_nodes(c("A", "B")) %>%
+#' add_edge("A", "B",
+#' annotate = annotate_edge("example", color = "teal", size = "tiny",
+#' position = "very near start", placement = ""))
 #'
 annotate_edge <- function(text, placement = "midway", position = "above",
                           size = "normalsize", color = NULL) {
-  size <- match.arg(size, c("tiny", "scriptsize", "footnotesize", "small",
-                             "normalsize", "large", "Large", "LARGE", "huge", "Huge"))
+  size <- match.arg(size, c(
+    "tiny", "scriptsize", "footnotesize", "small",
+    "normalsize", "large", "Large", "LARGE", "huge", "Huge"
+  ))
   paste0("node[draw=none, text=", color, ", ", placement, ", ", position, "]{\\", size, " ", text, "}")
 }
 
@@ -212,12 +266,14 @@ process_position <- function(target, position) {
 
 #' @keywords internal
 get_id <- function(dag, .var) {
-  if (is.numeric(.var)) return(.var)
-   node_names <- unlist(purrr::map(dag$nodes, "name"))
-   swig_nodes <- purrr::map_lgl(dag$nodes, "is_swig")
-   node_ids <- purrr::map_dbl(dag$nodes, "id")
-   node_ids <- unlist(purrr::map2(node_ids, swig_nodes, ~rep(.x, ifelse(.y, 2, 1))))
-   node_index <- which(node_names == .var)
-   id <- node_ids[node_index]
-   ifelse(length(id) != 1, NA_real_, id)
+  if (is.numeric(.var)) {
+    return(.var)
+  }
+  node_names <- unlist(purrr::map(dag$nodes, "name"))
+  swig_nodes <- purrr::map_lgl(dag$nodes, "is_swig")
+  node_ids <- purrr::map_dbl(dag$nodes, "id")
+  node_ids <- unlist(purrr::map2(node_ids, swig_nodes, ~ rep(.x, ifelse(.y, 2, 1))))
+  node_index <- which(node_names == .var)
+  id <- node_ids[node_index]
+  ifelse(length(id) != 1, NA_real_, id)
 }

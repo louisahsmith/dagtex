@@ -14,3 +14,10 @@ When a DAG has non-unique node names, edges connecting any of the non-unique
 nodes must be referred to by numeric id. This function will print the DAG
 with the node names replaced by their numeric ids to help that process.
 }
+\examples{
+dag <- dagtex() \%>\%
+  add_many_nodes(rep("A", 3))
+print_ids(dag)
+dag \%>\%
+  add_edge(1, 3, curve = "up")
+}
