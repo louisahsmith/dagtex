@@ -117,7 +117,7 @@ dagtex <- function(.node_options = NULL,
 
   .node_options <- c(node_opts, .node_options)
   .edge_options <- c(edge_opts, .edge_options)
-  .swig_options <- c(edge_opts, .swig_options)
+  .swig_options <- c(swig_opts, .swig_options)
 
   structure(
     list(

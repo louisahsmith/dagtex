@@ -164,7 +164,7 @@ get_latex_code <- function(.dag, add_header = TRUE, node_distance = .dag$node_di
 
   if (any_swig_nodes(.dag)) {
 
-    draw_swig <- "shape" %in% names(.dag$swig_options)
+    draw_swig <- "shape" %in% names(.dag$swig_options) | "shape" %in% names(.dag$node_options)
 
     swig_opts <- split_swig_opts(.dag$swig_options, exclude = "text")
 
