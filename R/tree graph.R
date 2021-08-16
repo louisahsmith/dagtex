@@ -1,5 +1,4 @@
-#' @export
-tree_graph <- function(tree_tab = NULL, n = NULL, EY = NULL,
+old_tree_graph <- function(tree_tab = NULL, n = NULL, EY = NULL,
                        probabilities = FALSE, fractions = FALSE, digits = 2,
                        x1 = 0, y1 = 0, x2 = 3, y2 = c(1.5, -1.5), x3 = 6,
                        y3 = seq(3, -3, length.out = 8), x4 = 7.5, y4 = y3,

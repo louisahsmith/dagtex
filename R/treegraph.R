@@ -1,3 +1,5 @@
+#' @export
+
 tree_graph <- function(tree_tab = NULL, n = NULL, EY = NULL,
                        probabilities = FALSE, fractions = FALSE, digits = 2,
                        x1 = 0, y1 = 0, x2 = 3, y2 = c(1.5, -1.5), x3 = 6,
@@ -102,23 +104,23 @@ tree_graph <- function(tree_tab = NULL, n = NULL, EY = NULL,
 
   # base
   tree <- dagtex(
-    node_options = list(inner_sep = "0.01pt", shape = "circle"),
+    .node_options = list(inner_sep = "0.01pt", shape = "circle"),
     adorn_math = FALSE, ...
   ) %>%
     # node 1
     add_node(ifelse(n_annotate, N, ""),
       x = x1, y = y1,
-      options = list(shape = "circle split", minimum_width = circle_width)
+      .options = list(shape = "circle split", minimum_width = circle_width)
     ) %>%
     # node 2: L1-a
     add_node(" ",
       x = x2, y = y2[1],
-      options = list(shape = "circle", minimum_width = circle_width)
+      .options = list(shape = "circle", minimum_width = circle_width)
     ) %>%
     # node 3: L1-b
     add_node(" ",
       x = x2, y = y2[2],
-      options = list(shape = "circle", minimum_width = circle_width)
+      .options = list(shape = "circle", minimum_width = circle_width)
     ) %>%
 
     # A0 numbers
@@ -168,7 +170,7 @@ tree_graph <- function(tree_tab = NULL, n = NULL, EY = NULL,
     tree <- tree %>%
       add_node(sprintf("%03s", EY[i]),
         x = x3, y = y3[i],
-        options = list(
+        .options = list(
           draw = "none", text = "white",
           font = "\\footnotesize"
         )
@@ -181,7 +183,7 @@ tree_graph <- function(tree_tab = NULL, n = NULL, EY = NULL,
     tree <- tree %>%
       add_node(paste0(EY[i]),
         x = x4, y = y4[i],
-        options = list(
+        .options = list(
           draw = "none", anchor = "west",
           text = ifelse(EY_annotate, "black", "white")
         )
@@ -204,7 +206,7 @@ tree_graph <- function(tree_tab = NULL, n = NULL, EY = NULL,
       add_edge(a1_nodes[i], EY_nodes[i],
         start_position = "west",
         end_position = "west", is_headless = TRUE,
-        options = list(line_type = "dashed")
+        .options = list(line_type = "dashed")
       )
   }
 
@@ -213,9 +215,9 @@ tree_graph <- function(tree_tab = NULL, n = NULL, EY = NULL,
   # ..... 41, 42, 43
   for (i in 1:8) {
     tree <- tree %>%
-      add_node(a0_vals[i], x = x5, y = y5[i], options = list(draw = "none")) %>%
-      add_node(l1_vals[i], x = x6, y = y6[i], options = list(draw = "none")) %>%
-      add_node(a1_vals[i], x = x7, y = y7[i], options = list(draw = "none"))
+      add_node(a0_vals[i], x = x5, y = y5[i], .options = list(draw = "none")) %>%
+      add_node(l1_vals[i], x = x6, y = y6[i], .options = list(draw = "none")) %>%
+      add_node(a1_vals[i], x = x7, y = y7[i], .options = list(draw = "none"))
   }
 
   top_size <- ifelse(f_notation | probabilities, "\\footnotesize", "\\small")
@@ -226,31 +228,31 @@ tree_graph <- function(tree_tab = NULL, n = NULL, EY = NULL,
   tree <- tree %>%
     add_node(A0_label,
       x = xtop[1], y = ytop, adorn_math = TRUE,
-      options = list(draw = "none", font = top_size)
+      .options = list(draw = "none", font = top_size)
     ) %>%
     add_node(L1_label,
       x = xtop[2], y = ytop, adorn_math = TRUE,
-      options = list(draw = "none", font = top_size)
+      .options = list(draw = "none", font = top_size)
     ) %>%
     add_node(A1_label,
       x = xtop[3], y = ytop, adorn_math = TRUE,
-      options = list(draw = "none", font = top_size)
+      .options = list(draw = "none", font = top_size)
     ) %>%
     add_node("E[Y\\mid A_0, L_1, A_1]",
       x = xtop[4], y = ytop, adorn_math = TRUE,
-      options = list(draw = "none", font = top_size)
+      .options = list(draw = "none", font = top_size)
     ) %>%
     add_node("A_0",
       x = xtop[5], y = ytop, adorn_math = TRUE,
-      options = list(draw = "none", font = top_size)
+      .options = list(draw = "none", font = top_size)
     ) %>%
     add_node("L_1",
       x = xtop[6], y = ytop, adorn_math = TRUE,
-      options = list(draw = "none", font = top_size)
+      .options = list(draw = "none", font = top_size)
     ) %>%
     add_node("A_1",
       x = xtop[7], y = ytop, adorn_math = TRUE,
-      options = list(draw = "none", font = top_size)
+      .options = list(draw = "none", font = top_size)
     )
 
   tree
