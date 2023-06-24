@@ -3,12 +3,12 @@ Type: Package
 Title: Create DAGs using TikZ
 Version: 0.1.0
 Authors@R: 
-    person("Louisa", "Smith", , "louisahsmith@gmail.com", role = c("aut", "cre"),
-           comment = c(ORCID = "0000-0001-9029-4644"))
-    person("Malcolm", "Barrett", , "malcolmbarrett@gmail.com", role = c("aut", "cre"),
-           comment = c(ORCID = "0000-0003-0299-5825"))
+    c(person("Louisa", "Smith", , "louisahsmith@gmail.com", role = c("aut"),
+           comment = c(ORCID = "0000-0001-9029-4644")),
+      person("Malcolm", "Barrett", , "malcolmbarrett@gmail.com", role = c("aut", "cre"),
+           comment = c(ORCID = "0000-0003-0299-5825")))
 Description: Draw DAGs (and SWIGs) by writing the underlying TikZ code.
-License: What license is it under?
+License: MIT + file LICENSE
 Encoding: UTF-8
 LazyData: true
 Imports: 
@@ -18,6 +18,3 @@ Imports:
     rmarkdown (>= 1.11.3)
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.2.3
-Remotes: 
-    metrumresearchgroup/texPreview,
-    rstudio/rmarkdown

@@ -3,9 +3,7 @@ reference:
   contents:
   - '`dagtex`'
   - '`add_node`'
-  - '`add_node`'
   - '`add_swig_node`'
-  - '`add_edge`'
   - '`add_edge`'
   - '`annotate_edge`'
   - '`save_dag`'
@@ -17,7 +15,9 @@ reference:
 - title: Helper functions
   contents:
   - '`get_latex_code`'
+  - '`save_dag`'
   - '`install_swigs`'
+  - '`use_swigs`'
   - '`print_ids`'
-#  - '`knit_print.dagtex`'
-#  - '`print.dagtex`'
+  - '`get_node_ids`'
+
