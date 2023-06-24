@@ -2,11 +2,11 @@
 % Please edit documentation in R/nodes.R
 \name{add_node}
 \alias{add_node}
-\title{Add a single node to a DAG}
+\title{Add node(s) to a DAG}
 \usage{
 add_node(
   dag,
-  name,
+  names,
   options = NULL,
   x = NULL,
   y = NULL,
@@ -14,7 +14,6 @@ add_node(
   left_of = NULL,
   above = NULL,
   below = NULL,
-  is_swig = FALSE,
   adorn_math = NULL,
   ...
 )
@@ -22,45 +21,54 @@ add_node(
 \arguments{
 \item{dag}{Object of class "dagtex", created with \code{\link[=dagtex]{dagtex()}}.}
 
-\item{name}{Name of the node, to be printed in DAG. If names within a DAG are
-unique, they can also be used when creating edges. If a split node in a
-SWIG (\code{is_swig = TRUE}), should be a character vector of length two.}
+\item{names}{Name of the node, to be printed in DAG.
+Can also be a vector of names to add multiple nodes at once, in which case
+the first node will be placed at the requested location, and
+dagtex() will attempt to place the rest appropriately. For finer control,
+add nodes individually. If names within a DAG are
+unique, they can also be used when creating edges. If any of the nodes are
+split nodes in a SWIG, provide names as a list with nodes to split as
+vectors of length 2 (see example).}
 
-\item{options}{List of node options specific to this node. For details, see
+\item{options}{List of node options specific to these nodes. For details, see
 \code{\link[=dagtex]{dagtex()}}.}
 
-\item{x}{Numeric. Horizontal coordinate at which to place node. If provided,
+\item{x}{Numeric. Horizontal coordinate at which to place (first) node. If provided,
 \code{y} must also be provided.}
 
-\item{y}{Numeric. Vertical coordinate at which to place node.If provided, \code{x}
+\item{y}{Numeric. Vertical coordinate at which to place (first) node. If provided, \code{x}
 must also be provided.}
 
-\item{right_of}{Name of node already existing in DAG to place current node to
+\item{right_of}{Name of node already existing in DAG to place (first) node to
 the right of.}
 
-\item{left_of}{Name of node already existing in DAG to place current node to
+\item{left_of}{Name of node already existing in DAG to place (first) node to
 the left of.}
 
-\item{above}{Name of node already existing in DAG to place current node
+\item{above}{Name of node already existing in DAG to place (first) node
 above.}
 
-\item{below}{Name of node already existing in DAG to place current node
+\item{below}{Name of node already existing in DAG to place (first) node
 below.}
 
-\item{is_swig}{Logical. If node is to be split as part of a SWIG. See also
-\code{\link[=add_swig_node]{add_swig_node()}}. Defaults to \code{FALSE}.}
-
-\item{adorn_math}{Logical. Node name will be automatically surrounded by
+\item{adorn_math}{Logical. Node names will be automatically surrounded by
 \verb{$...$} if \code{TRUE}. Defaults to \code{FALSE}.}
 
 \item{...}{Not in use.}
 }
 \value{
-
+Object of class "dagtex".
 }
 \description{
-Add a single node to a DAG
+Add node(s) to a DAG
 }
 \examples{
-
+dagtex(
+  node_options = list(shape = "ellipse"),
+  swig_options = list(gap = "3pt", line_color_right = "red")
+) \%>\%
+  add_node(list(c("$A_0$", "$a_0$"), "$L_1$", c("$A_1$", "$a_1$"), "$Y$")) \%>\%
+  add_edge(from = "$a_0$", to = c("$L_1$", "$A_1$", "$Y$")) \%>\%
+  add_edge(from = "$L_1$", to = c("$A_1$", "$Y$")) \%>\%
+  add_edge(from = "$a_1$", to = "$Y$")
 }

@@ -24,13 +24,9 @@
 #'   `$...$` if `TRUE`. Defaults to `FALSE`.
 #' @param ... Not in use.
 #'
-#' @return
-#' @export
+#' @return The DAG
 #'
-#' @examples
-#'
-#' @rdname add_node
-add_node <- function(dag, name, options = NULL, x = NULL, y = NULL,
+add_single_node <- function(dag, name, options = NULL, x = NULL, y = NULL,
                      right_of = NULL, left_of = NULL,
                      above = NULL, below = NULL, is_swig = FALSE,
                      adorn_math = NULL,
@@ -77,15 +73,33 @@ add_node <- function(dag, name, options = NULL, x = NULL, y = NULL,
   )
 }
 
-#' Add several nodes
+#' Add node(s) to a DAG
 #'
 #' @param dag Object of class "dagtex", created with [dagtex()].
-#' @param names Vector of names of the nodes to add. If names within a DAG are
+#' @param names Name of the node, to be printed in DAG.
+#'   Can also be a vector of names to add multiple nodes at once, in which case
+#'   the first node will be placed at the requested location, and
+#'   dagtex() will attempt to place the rest appropriately. For finer control,
+#'   add nodes individually. If names within a DAG are
 #'   unique, they can also be used when creating edges. If any of the nodes are
 #'   split nodes in a SWIG, provide names as a list with nodes to split as
 #'   vectors of length 2 (see example).
 #' @param options List of node options specific to these nodes. For details, see
 #'   [dagtex()].
+#' @param x Numeric. Horizontal coordinate at which to place (first) node. If provided,
+#'   `y` must also be provided.
+#' @param y Numeric. Vertical coordinate at which to place (first) node. If provided, `x`
+#'   must also be provided.
+#' @param right_of Name of node already existing in DAG to place (first) node to
+#'   the right of.
+#' @param left_of Name of node already existing in DAG to place (first) node to
+#'   the left of.
+#' @param above Name of node already existing in DAG to place (first) node
+#'   above.
+#' @param below Name of node already existing in DAG to place (first) node
+#'   below.
+#' @param adorn_math Logical. Node names will be automatically surrounded by
+#'   `$...$` if `TRUE`. Defaults to `FALSE`.
 #' @param ... Not in use.
 #' @return Object of class "dagtex".
 #' @export
@@ -95,18 +109,36 @@ add_node <- function(dag, name, options = NULL, x = NULL, y = NULL,
 #'   node_options = list(shape = "ellipse"),
 #'   swig_options = list(gap = "3pt", line_color_right = "red")
 #' ) %>%
-#'   add_many_nodes(list(c("$A_0$", "$a_0$"), "$L_1$", c("$A_1$", "$a_1$"), "$Y$")) %>%
-#'   add_many_edges(from = "$a_0$", to = c("$L_1$", "$A_1$", "$Y$")) %>%
-#'   add_many_edges(from = "$L_1$", to = c("$A_1$", "$Y$")) %>%
+#'   add_node(list(c("$A_0$", "$a_0$"), "$L_1$", c("$A_1$", "$a_1$"), "$Y$")) %>%
+#'   add_edge(from = "$a_0$", to = c("$L_1$", "$A_1$", "$Y$")) %>%
+#'   add_edge(from = "$L_1$", to = c("$A_1$", "$Y$")) %>%
 #'   add_edge(from = "$a_1$", to = "$Y$")
-add_many_nodes <- function(dag, names, options = NULL, ...) {
+add_node <- function(dag, names, options = NULL, x = NULL, y = NULL,
+                     right_of = NULL, left_of = NULL,
+                     above = NULL, below = NULL,
+                     adorn_math = NULL, ...) {
   for (i in seq_along(names)) {
-    args <- c(
-      dag = list(dag), name = list(names[[i]]),
-      is_swig = length(names[[i]]) > 1,
-      options = list(options), ...
-    )
-    dag <- do.call(add_node, args)
+
+    if (i == 1) {
+      args <- c(
+        dag = list(dag), name = list(names[[i]]),
+        options = list(options),
+        x = x, y = y, right_of = right_of, left_of = left_of,
+        above = above, below = below, adorn_math = adorn_math,
+        is_swig = length(names[[i]]) > 1,
+        ...
+      )
+
+    } else {
+      args <- c(
+        dag = list(dag), name = list(names[[i]]),
+        options = list(options), adorn_math = adorn_math,
+        is_swig = length(names[[i]]) > 1,
+        ...
+      )
+    }
+
+    dag <- do.call(add_single_node, args)
   }
 
   dag
@@ -114,12 +146,11 @@ add_many_nodes <- function(dag, names, options = NULL, ...) {
 
 #' Create a split node for a SWIG
 #' @param dag Object of class "dagtex", created with [dagtex()].
-#' @param dag
 #' @param left Name to print on the left (or upper) side of the split node.
 #' @param right Name to print on the right (or lower) side of the split node.
 #' @param options List of swig node options specific to this split node. For details, see
 #'   [dagtex()].
-#' @param ...  Not in use.
+#' @param ...  Other named arguments passed to [add_swig()].
 #' @return Object of class "dagtex".
 #'
 #' @export
@@ -131,9 +162,10 @@ add_many_nodes <- function(dag, names, options = NULL, ...) {
 #' dagtex() %>%
 #'   add_node(c("A", "a"), is_swig = TRUE)
 add_swig_node <- function(dag, left, right, options = NULL, ...) {
-  add_node(dag, name = c(left, right), options = options, is_swig = TRUE, ...)
+  add_single_node(dag, name = c(left, right), options = options, is_swig = TRUE, ...)
 }
 
+#' Check for SWIG nodes
 #' @keywords internal
 #' @return Logical indicating whether there are any split nodes in the graph.
 any_swig_nodes <- function(dag) {
@@ -161,7 +193,7 @@ add_node_to_dag <- function(dag, name, id, coords, position, options, is_swig = 
   dag
 }
 
-
+#' Put position-related options into the correct format
 #' @keywords internal
 #' @return Tikz code to set location of node (e.g., right = of A)
 
@@ -197,6 +229,7 @@ get_node_position <- function(dag, id, right_of = NULL,
   position
 }
 
+#' Get coordinates for adding a new node
 #' @keywords internal
 #' @return Vector of x,y coordinates at which to place node
 get_node_coords <- function(dag, id, coords, right_of = NULL,

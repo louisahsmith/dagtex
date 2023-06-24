@@ -1,8 +1,8 @@
 #' Add counterfactual notation to SWIG
 #'
-#' @param dag
-#' @param notation
-#' @param text_color
+#' @param dag Object created by [dagtex()].
+#' @param notation One of "superscript", "subsript", or "parentheses"
+#' @param text_color Text color
 #'
 #' @export
 adorn_counterfactuals <- function(dag, notation = getOption("dagtex.notation"),
@@ -104,8 +104,8 @@ adorn_counterfactuals <- function(dag, notation = getOption("dagtex.notation"),
 
 #' Turn a DAG into a SWIG
 #'
-#' @param dag
-#' @param split_nodes
+#' @param dag Object created by [dagtex()].
+#' @param split_nodes Names/ids of nodes to split
 #' @param ...
 #'
 #' @export
@@ -120,7 +120,7 @@ swigify <- function(dag, split_nodes, ...) {
 
 
 #' Turn DAG into a complete DAG
-#' @param dag
+#' @param dag Object created by [dagtex()].
 #' @param arrow_type One of "directed", "headless", "double". (Only "directed" really works easily with SWIG nodes, the others take some manual manipulation, at least for now.)
 #' @param options A list of edge options for each of the new options. Passed to [add_edge].
 #' @param ... Other options passed to [add_edge].
@@ -145,11 +145,11 @@ complete_dag <- function(dag, arrow_type = "directed", options = NULL, ...) {
   for (i in seq_len(max_id - 1)) {
     existing <- if (purrr::is_empty(all_pairs)) NA else all_pairs$to[all_pairs$from == i]
     dag <- dag %>%
-      add_many_edges(
+      add_edge(
         from = i, to = setdiff(i:max_id, c(existing, i)),
         is_headless = arrow_type == "headless",
         is_double_arrow = arrow_type == "double",
-        is_curved = TRUE, options = options, ...
+        auto_curve = "up", options = options, ...
       )
   }
   dag

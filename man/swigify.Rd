@@ -7,6 +7,10 @@
 swigify(dag, split_nodes, ...)
 }
 \arguments{
+\item{dag}{Object created by \code{\link[=dagtex]{dagtex()}}.}
+
+\item{split_nodes}{Names/ids of nodes to split}
+
 \item{...}{}
 }
 \description{

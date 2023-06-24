@@ -23,5 +23,5 @@ called? (Only needed if passing LaTeX code directly.)).}
 Include DAGs and SWIGs as part of RMarkdown documents by calling \code{\link[=dagtex]{dagtex()}}
 in an R code chunk. In pdf documents, the resulting TikZ code will be
 included; for all other document types, an image will be printed via
-\link[texPreview:texPreview]{texPreview::texPreview}. This function is not called directly.
+\link[texPreview:tex_preview]{texPreview::tex_preview}. This function is not called directly.
 }

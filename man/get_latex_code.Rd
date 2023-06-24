@@ -15,7 +15,7 @@ get_latex_code(dag, add_header = TRUE, ...)
 \item{...}{Not currently used.}
 }
 \value{
-
+Text that can be used to print the DAG in a LaTeX file.
 }
 \description{
 Generally called internally, can be used to extract the code for the TikZ
@@ -23,7 +23,7 @@ drawing to paste directly into a LaTeX document.
 }
 \examples{
 dagtex() \%>\%
-  add_many_nodes(letters[1:3]) \%>\%
+  add_node(letters[1:3]) \%>\%
   complete_dag() \%>\%
   get_latex_code()
 }

@@ -45,7 +45,7 @@ Save the DAG image
 \examples{
 \dontrun{
 dagtex() \%>\%
-  add_many_nodes(c("A", "B", "C")) \%>\%
+  add_node(c("A", "B", "C")) \%>\%
   complete_dag() \%>\%
   save_dag("path/to/my/dag.png")
 }

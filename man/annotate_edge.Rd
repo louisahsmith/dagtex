@@ -2,7 +2,7 @@
 % Please edit documentation in R/edges.R
 \name{annotate_edge}
 \alias{annotate_edge}
-\title{Add text to an edge.}
+\title{Add text to an edge}
 \usage{
 annotate_edge(
   text,
@@ -22,21 +22,21 @@ end", etc. (see TikZ documentation).}
 \item{position}{"above", "below", or "" for positioning text on top of the
 edge.}
 
-\item{size}{Font size, to LaTex. Defaults to "normalsize", other options are
+\item{size}{Font size, in LaTex-speak. Defaults to "normalsize", other options are
 "footnotesize", "LARGE", etc.}
 
-\item{color}{TExt color of annotation}
+\item{color}{Text color of annotation.}
 }
 \description{
-Add text to an edge.
+Annotate the edge between two nodes with some additional text.
 }
 \examples{
 dagtex() \%>\%
-add_many_nodes(c("A", "B")) \%>\%
+add_node(c("A", "B")) \%>\%
 add_edge("A", "B", annotate = annotate_edge("example"))
 
 dagtex() \%>\%
-add_many_nodes(c("A", "B")) \%>\%
+add_node(c("A", "B")) \%>\%
 add_edge("A", "B",
 annotate = annotate_edge("example", color = "teal", size = "tiny",
 position = "very near start", placement = ""))

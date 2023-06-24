@@ -16,7 +16,7 @@ with the node names replaced by their numeric ids to help that process.
 }
 \examples{
 dag <- dagtex() \%>\%
-  add_many_nodes(rep("A", 3))
+  add_node(rep("A", 3))
 print_ids(dag)
 dag \%>\%
   add_edge(1, 3, curve = "up")

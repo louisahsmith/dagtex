@@ -3,7 +3,7 @@
 \name{add_edge}
 \alias{add_edge}
 \alias{add_curved_edge}
-\title{Add a single edge between two nodes in a DAG}
+\title{Add edge(s) to a DAG}
 \usage{
 add_edge(
   dag,
@@ -12,8 +12,8 @@ add_edge(
   start_position = NULL,
   end_position = NULL,
   options = NULL,
-  is_curved = !is.null(curve),
   curve = NULL,
+  auto_curve = "up",
   curve_in_degree = NULL,
   curve_out_degree = NULL,
   is_double_arrow = FALSE,
@@ -28,43 +28,65 @@ add_curved_edge(dag, from, to, options = NULL, curve = "up", ...)
 \item{dag}{Object created by \code{\link[=dagtex]{dagtex()}}.}
 
 \item{from, to}{The names (or numeric id) of nodes create by \code{\link[=add_node]{add_node()}} or
-related functions.}
+related functions. Only one of either \code{from} or \code{to} can be a vector.}
 
-\item{start_position, end_position}{The start and end positions of the edge in
+\item{start_position, end_position}{The start and end positions of the edges in
 any manner acceptable to Tikz (e.g., a coordinate in degrees like 30 or a
-direction like "south west")}
+direction like "south west"). If  multiple \code{from} or \code{to} nodes are given,
+matching vectors of \code{start_position} and \code{end_position} can be given.
+Otherwise dagtex() will attempt to place the edges appropriately.}
 
-\item{options}{A list of edge options specific to this edge; see \code{\link[=dagtex]{dagtex()}}.}
+\item{options}{A list of edge options specific to these edges; see \code{\link[=dagtex]{dagtex()}}.}
 
-\item{is_curved}{Logical. Whether the edge should be curved.}
+\item{curve}{Direction of the curve, if any: "up" or "down". Can be a vector
+if  multiple \code{from} or \code{to} nodes are given, otherwise applies to all edges.}
 
-\item{curve}{Direction of the curve, if any: "up" or "down".}
+\item{auto_curve}{One of "up" (the default), "down", or NULL. If "up" or "down",
+dagtex() will attempt to curve the edges appropriately, with the first
+curved edge being either "up" or "down". If \code{auto_curve} is not NULL,
+\code{curve} will be ignored if multiple \code{from} or \code{to} nodes are given.}
 
 \item{curve_in_degree, curve_out_degree}{Angle in degrees at which the edge
-leaves and enters the nodes.}
+leaves and enters the nodes. If  multiple \code{from} or \code{to} nodes are given,
+matching vectors of \code{curve_in_degree} and \code{curve_out_degree} can be given,
+otherwise applies to all edges.}
 
 \item{is_double_arrow, is_headless}{Logical. Default is directed arrow; these
-options can be used to specify headless or two-headed arrows.}
+options can be used to specify headless or two-headed arrows. Can be a vector
+if  multiple \code{from} or \code{to} nodes are given, otherwise applies to all edges.}
 
-\item{annotate}{Annotation specified with \code{\link[=annotate_edge]{annotate_edge()}}.}
+\item{annotate}{Annotation specified with \code{\link[=annotate_edge]{annotate_edge()}}. Can be a vector
+if  multiple \code{from} or \code{to} nodes are given, otherwise applies to all edges.}
 
 \item{...}{Not currently used.}
 }
-\value{
-The same object of class "dagtex" with an additional edge.
-}
 \description{
-Connect two nodes using a straight or curved line. By default, edges are
+Connect nodes using a straight or curved line. By default, edges are
 directed (\code{from} to \code{to}) but undirected or bidirectional arrows are also
 possible. The angles at which the edge leaves and enters the nodes, and the
-location at which it does so, can be finely tuned. \code{\link[=add_curved_edge]{add_curved_edge()}} is a
-shortcut for a (hopefully) reasonably curved edge.
+location at which it does so, can be finely tuned. Vectors of nodes can be
+used to draw and edge from every node in \code{from} to a single \code{to} node,
+or an edge from a single \code{from} node to every node in \code{to}. Edges will be
+straight between adjacent nodes and curved otherwise if \code{auto_curve} is specified,
+but may look funny if nodes are not in a line.
 }
 \examples{
+dagtex(node_options = list(shape = "circle")) \%>\%
+  add_node("$A_0$") \%>\%
+  add_node("$L_1$") \%>\%
+  add_node("$A_1$") \%>\%
+  add_node("$Y$") \%>\%
+  add_edge(from = "$A_0$", to = c("$L_1$", "$A_1$", "$Y$")) \%>\%
+  add_edge(from = "$L_1$", to = c("$A_1$", "$Y$")) \%>\%
+  add_edge(from = "$A_1$", to = "$Y$")
+
+dagtex() \%>\%
+  add_node(c("A", "B", "C", "D")) \%>\%
+  add_edge(from = c("A", "B", "C"), to = "D")
 dagtex(edge_options = list(line_type = "dotted", color = "red")) \%>\%
-  add_many_nodes(c("A", "B", "C")) \%>\%
-  add_edge("A", "C", curve = "down", is_double_arrow = TRUE,
+  add_node(c("A", "B", "C")) \%>\%
+  add_curved_edge("A", "C", curve = "down", is_double_arrow = TRUE,
            annotate = annotate_edge("example", position = "below"),
            options = list(color = "teal", line_type = "solid")) \%>\%
-  add_edge(1, 2, start_position = "north", curve_in_degree = 0, curve_out_degree = 90)
+  add_curved_edge(1, 2, curve = "down")
 }

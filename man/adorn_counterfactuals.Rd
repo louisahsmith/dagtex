@@ -11,7 +11,11 @@ adorn_counterfactuals(
 )
 }
 \arguments{
-\item{text_color}{}
+\item{dag}{Object created by \code{\link[=dagtex]{dagtex()}}.}
+
+\item{notation}{One of "superscript", "subsript", or "parentheses"}
+
+\item{text_color}{Text color}
 }
 \description{
 Add counterfactual notation to SWIG

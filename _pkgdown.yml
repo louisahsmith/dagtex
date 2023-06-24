@@ -3,10 +3,10 @@ reference:
   contents:
   - '`dagtex`'
   - '`add_node`'
-  - '`add_many_nodes`'
+  - '`add_node`'
   - '`add_swig_node`'
   - '`add_edge`'
-  - '`add_many_edges`'
+  - '`add_edge`'
   - '`annotate_edge`'
   - '`save_dag`'
 - title: Quick build tools

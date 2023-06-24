@@ -1,5 +1,5 @@
 #' Install Thomas Richardson's tikz library for drawing SWIGs
-#' @param ...
+#' @param ... Not currently used
 #' @details
 #' Puts the swigs tikz library into the user's texmf path. This file either
 #' needs to be manually installed, as with this function, or copied from
@@ -41,8 +41,6 @@ install_swigs <- function(...) {
   })
   system("texhash")
 }
-install_swigs()
-
 
 
 #' Use Thomas Richardson's tikz library for drawing SWIGs

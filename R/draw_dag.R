@@ -65,7 +65,7 @@ plot_dagtex <- function(dag, density = getOption("dagtex.density"),
 #' @examples
 #' \dontrun{
 #' dagtex() %>%
-#'   add_many_nodes(c("A", "B", "C")) %>%
+#'   add_node(c("A", "B", "C")) %>%
 #'   complete_dag() %>%
 #'   save_dag("path/to/my/dag.png")
 #' }
@@ -114,7 +114,7 @@ save_dag <- function(dag, filename, filetype = "png",
 #' Include DAGs and SWIGs as part of RMarkdown documents by calling [dagtex()]
 #' in an R code chunk. In pdf documents, the resulting TikZ code will be
 #' included; for all other document types, an image will be printed via
-#' [texPreview::texPreview]. This function is not called directly.
+#' [texPreview::tex_preview]. This function is not called directly.
 #'
 #' @importFrom knitr knit_print
 #'
@@ -227,7 +227,7 @@ plot.dagtex <- print.dagtex
 #'
 #' @examples
 #' dag <- dagtex() %>%
-#'   add_many_nodes(rep("A", 3))
+#'   add_node(rep("A", 3))
 #' print_ids(dag)
 #' dag %>%
 #'   add_edge(1, 3, curve = "up")
@@ -249,12 +249,12 @@ print_ids <- function(dag, ...) {
 #'   `\usetikzlibrary{}` lines be included?
 #' @param ... Not currently used.
 #'
-#' @return
+#' @return Text that can be used to print the DAG in a LaTeX file.
 #' @export
 #'
 #' @examples
 #' dagtex() %>%
-#'   add_many_nodes(letters[1:3]) %>%
+#'   add_node(letters[1:3]) %>%
 #'   complete_dag() %>%
 #'   get_latex_code()
 get_latex_code <- function(dag, add_header = TRUE, ...) {
@@ -396,6 +396,7 @@ latexify_dag <- function(dag) {
   paste(nodes_and_edges, collapse = "\n")
 }
 
+#' Turn options into LaTeX format
 #' @param exclude Options to exclude (character vector)
 #' @param remove Names (regular expression) of options to remove (i.e., paste
 #'   bare argument)
@@ -411,6 +412,7 @@ make_tex_opts <- function(opts, exclude = c("split"), remove = c("line_type")) {
   args
 }
 
+#' Put SWIG options in the right format
 #' @param exclude Text (regular expression) for searching out SWIG options
 #' that use the terms left/right/upper/lower but can't be passed directly
 #' @keywords internal

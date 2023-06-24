@@ -7,6 +7,8 @@
 complete_dag(dag, arrow_type = "directed", options = NULL, ...)
 }
 \arguments{
+\item{dag}{Object created by \code{\link[=dagtex]{dagtex()}}.}
+
 \item{arrow_type}{One of "directed", "headless", "double". (Only "directed" really works easily with SWIG nodes, the others take some manual manipulation, at least for now.)}
 
 \item{options}{A list of edge options for each of the new options. Passed to \link{add_edge}.}
