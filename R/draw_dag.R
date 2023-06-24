@@ -127,7 +127,7 @@ save_dag <- function(dag, filename, filetype = "png",
 #'   directly); is_swig (logical; does the TikZ library for SWIGs need to be
 #'   called? (Only needed if passing LaTeX code directly.)).
 #' @param ... Not currently used.
-#'
+#' @keywords internal
 #' @export
 knit_print.dagtex <- function(x, options, ...) {
   if (is.null(options$is_latex_code)) {
@@ -196,7 +196,7 @@ knit_print.dagtex <- function(x, options, ...) {
 #' @param x Object created by [dagtex()].
 #'
 #' @param ... Not currently used.
-#'
+#' @keywords internal
 #' @export
 #' @method print dagtex
 print.dagtex <- function(x, ...) {

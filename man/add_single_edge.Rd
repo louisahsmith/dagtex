@@ -65,3 +65,4 @@ dagtex(edge_options = list(line_type = "dotted", color = "red")) \%>\%
            options = list(color = "teal", line_type = "solid")) \%>\%
   add_edge(1, 2, start_position = "north", curve_in_degree = 0, curve_out_degree = 90)
 }
+\keyword{internal}

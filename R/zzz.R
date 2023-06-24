@@ -1,6 +1,6 @@
 #' @keywords internal
 .onLoad <- function(libname = find.package("dagtex"), pkgname = "dagtex") {
-  load_packages <- getOption("dagtex.load_tikz", default = TRUE)
+  load_packages <- getOption("dagtex.load_tikz", default = FALSE) #causing tikz code in quarto revealjs?
   if (load_packages) {
     knitr::knit_meta_add(
       list(

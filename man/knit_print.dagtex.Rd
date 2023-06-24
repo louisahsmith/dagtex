@@ -25,3 +25,4 @@ in an R code chunk. In pdf documents, the resulting TikZ code will be
 included; for all other document types, an image will be printed via
 \link[texPreview:tex_preview]{texPreview::tex_preview}. This function is not called directly.
 }
+\keyword{internal}

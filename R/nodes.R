@@ -23,7 +23,7 @@
 #' @param adorn_math Logical. Node name will be automatically surrounded by
 #'   `$...$` if `TRUE`. Defaults to `FALSE`.
 #' @param ... Not in use.
-#'
+#' @keywords internal
 #' @return The DAG
 #'
 add_single_node <- function(dag, name, options = NULL, x = NULL, y = NULL,

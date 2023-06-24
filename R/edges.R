@@ -24,7 +24,7 @@
 #'
 #'
 #' @return The same object of class "dagtex" with an additional edge.
-#'
+#' @keywords internal
 #' @examples
 #' dagtex(edge_options = list(line_type = "dotted", color = "red")) %>%
 #'   add_node(c("A", "B", "C")) %>%
