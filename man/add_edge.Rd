@@ -13,7 +13,7 @@ add_edge(
   end_position = NULL,
   options = NULL,
   curve = NULL,
-  auto_curve = "up",
+  auto_curve = FALSE,
   curve_in_degree = NULL,
   curve_out_degree = NULL,
   is_double_arrow = FALSE,
@@ -41,7 +41,7 @@ Otherwise dagtex() will attempt to place the edges appropriately.}
 \item{curve}{Direction of the curve, if any: "up" or "down". Can be a vector
 if  multiple \code{from} or \code{to} nodes are given, otherwise applies to all edges.}
 
-\item{auto_curve}{One of "up" (the default), "down", or FALSE. If "up" or "down",
+\item{auto_curve}{One of "up", "down", or FALSE (the default). If "up" or "down",
 dagtex() will attempt to curve the edges appropriately, with the first
 curved edge being either "up" or "down". If \code{auto_curve} is not FALSE,
 \code{curve} will be ignored if multiple \code{from} or \code{to} nodes are given.}

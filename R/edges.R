@@ -89,7 +89,7 @@ add_single_edge <- function(dag, from, to, start_position = NULL, end_position =
 #' @param options A list of edge options specific to these edges; see [dagtex()].
 #' @param curve Direction of the curve, if any: "up" or "down". Can be a vector
 #'   if  multiple `from` or `to` nodes are given, otherwise applies to all edges.
-#' @param auto_curve One of "up" (the default), "down", or FALSE. If "up" or "down",
+#' @param auto_curve One of "up", "down", or FALSE (the default). If "up" or "down",
 #'   dagtex() will attempt to curve the edges appropriately, with the first
 #'   curved edge being either "up" or "down". If `auto_curve` is not FALSE,
 #'   `curve` will be ignored if multiple `from` or `to` nodes are given.
@@ -119,7 +119,7 @@ add_single_edge <- function(dag, from, to, start_position = NULL, end_position =
 #'   add_node(c("A", "B", "C", "D")) %>%
 #'   add_edge(from = c("A", "B", "C"), to = "D")
 add_edge <- function(dag, from, to, start_position = NULL, end_position = NULL,
-                     options = NULL, curve = NULL, auto_curve = "up",
+                     options = NULL, curve = NULL, auto_curve = FALSE,
                      curve_in_degree = NULL, curve_out_degree = NULL,
                      is_double_arrow = FALSE, is_headless = FALSE,
                      annotate = NULL, ...) {
