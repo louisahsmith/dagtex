@@ -146,7 +146,7 @@ add_edge <- function(dag, from, to, start_position = NULL, end_position = NULL,
   is_headless <- expand_args(is_headless, length(to_ids))
   annotate <- expand_args(annotate, length(to_ids))
 
-  if (!(auto_curve) | length(to_ids) == 1) {
+  if (isFALSE(auto_curve) | is.null(auto_curve) | length(to_ids) == 1) {
     for (i in seq_along(to_ids)) {
       if (backwards) {
         args <- c(
