@@ -4,7 +4,13 @@
 \alias{complete_dag}
 \title{Turn DAG into a complete DAG}
 \usage{
-complete_dag(dag, arrow_type = "directed", options = NULL, ...)
+complete_dag(
+  dag,
+  arrow_type = "directed",
+  auto_curve = "up",
+  options = NULL,
+  ...
+)
 }
 \arguments{
 \item{dag}{Object created by \code{\link[=dagtex]{dagtex()}}.}

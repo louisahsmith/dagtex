@@ -125,7 +125,7 @@ swigify <- function(dag, split_nodes, ...) {
 #' @param options A list of edge options for each of the new options. Passed to [add_edge].
 #' @param ... Other options passed to [add_edge].
 #' @export
-complete_dag <- function(dag, arrow_type = "directed", options = NULL, ...) {
+complete_dag <- function(dag, arrow_type = "directed", auto_curve = "up", options = NULL, ...) {
   arrow_type <- match.arg(arrow_type, c("directed", "headless", "double"))
 
   max_id <- count_nodes(dag)
@@ -149,7 +149,7 @@ complete_dag <- function(dag, arrow_type = "directed", options = NULL, ...) {
         from = i, to = setdiff(i:max_id, c(existing, i)),
         is_headless = arrow_type == "headless",
         is_double_arrow = arrow_type == "double",
-        auto_curve = "up", options = options, ...
+        auto_curve = auto_curve, options = options, ...
       )
   }
   dag
