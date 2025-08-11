@@ -142,6 +142,8 @@ add_edge <- function(dag, from, to, start_position = NULL, end_position = NULL,
   curve <- expand_args(curve, length(to_ids))
   curve_out_degree <- expand_args(curve_out_degree, length(to_ids))
   curve_in_degree <- expand_args(curve_in_degree, length(to_ids))
+  start_position <- expand_args(start_position, length(to_ids))
+  end_position <- expand_args(end_position, length(to_ids))
   is_double_arrow <- expand_args(is_double_arrow, length(to_ids))
   is_headless <- expand_args(is_headless, length(to_ids))
   annotate <- expand_args(annotate, length(to_ids))
@@ -155,6 +157,7 @@ add_edge <- function(dag, from, to, start_position = NULL, end_position = NULL,
           curve = curve[i],
           # these are backwards because arguments have been switched
           curve_in_degree = curve_out_degree[i], curve_out_degree = curve_in_degree[i],
+          start_position = end_position[i], end_position = start_position[i],
           is_double_arrow = is_double_arrow[i], is_headless = is_headless[i],
           annotate = annotate[i], ...
         )
@@ -163,6 +166,7 @@ add_edge <- function(dag, from, to, start_position = NULL, end_position = NULL,
           dag = list(dag), from = from,
           to = to_ids[i], options = list(options), curve = curve[i],
           curve_in_degree = curve_in_degree[i], curve_out_degree = curve_out_degree[i],
+          start_position = start_position[i], end_position = end_position[i],
           is_double_arrow = is_double_arrow[i], is_headless = is_headless[i],
           annotate = annotate[i],
           ...
@@ -184,6 +188,7 @@ add_edge <- function(dag, from, to, start_position = NULL, end_position = NULL,
         from = adj[i], options = list(options),
         # these are backwards because arguments have been switched
         curve_in_degree = curve_out_degree[i], curve_out_degree = curve_in_degree[i],
+        start_position = end_position[i], end_position = start_position[i],
         is_double_arrow = is_double_arrow[i], is_headless = is_headless[i],
         annotate = annotate[i], ...
       )
@@ -191,6 +196,7 @@ add_edge <- function(dag, from, to, start_position = NULL, end_position = NULL,
       args <- c(
         dag = list(dag), from = from,
         to = adj[i], options = list(options), curve_in_degree = curve_in_degree[i], curve_out_degree = curve_out_degree[i],
+        start_position = start_position[i], end_position = end_position[i],
         is_double_arrow = is_double_arrow[i], is_headless = is_headless[i],
         annotate = annotate[i],
         ...
@@ -208,6 +214,7 @@ add_edge <- function(dag, from, to, start_position = NULL, end_position = NULL,
         options = list(options),
         # these are backwards because arguments have been switched
         curve_in_degree = curve_out_degree[i], curve_out_degree = curve_in_degree[i],
+        start_position = end_position[i], end_position = start_position[i],
         is_double_arrow = is_double_arrow[i], is_headless = is_headless[i],
         annotate = annotate[i], ...
       )
@@ -217,6 +224,7 @@ add_edge <- function(dag, from, to, start_position = NULL, end_position = NULL,
         to = not_adj[i], curve = curve,
         options = list(options),
         curve_in_degree = curve_in_degree[i], curve_out_degree = curve_out_degree[i],
+        start_position = start_position[i], end_position = end_position[i],
         is_double_arrow = is_double_arrow[i], is_headless = is_headless[i],
         annotate = annotate[i], ...
       )
