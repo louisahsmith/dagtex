@@ -21,3 +21,5 @@ reference:
   - '`print_ids`'
   - '`get_node_ids`'
 
+template:
+  bootstrap: 5

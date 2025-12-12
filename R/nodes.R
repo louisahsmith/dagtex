@@ -150,7 +150,7 @@ add_node <- function(dag, names, options = NULL, x = NULL, y = NULL,
 #' @param right Name to print on the right (or lower) side of the split node.
 #' @param options List of swig node options specific to this split node. For details, see
 #'   [dagtex()].
-#' @param ...  Other named arguments passed to [add_swig()].
+#' @param ...  Other named arguments passed to [add_node()].
 #' @return Object of class "dagtex".
 #'
 #' @export

@@ -16,7 +16,7 @@ add_swig_node(dag, left, right, options = NULL, ...)
 \item{options}{List of swig node options specific to this split node. For details, see
 \code{\link[=dagtex]{dagtex()}}.}
 
-\item{...}{Other named arguments passed to \code{\link[=add_swig]{add_swig()}}.}
+\item{...}{Other named arguments passed to \code{\link[=add_node]{add_node()}}.}
 }
 \value{
 Object of class "dagtex".
