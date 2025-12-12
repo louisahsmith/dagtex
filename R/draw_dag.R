@@ -533,7 +533,14 @@ latexify_node <- function(node, dag) {
       ",",
       ifelse(split == "v", node_opts$right_included, node_opts$lower_included),
       ", ",
-      node_opts$all_included, "}]{"
+      node_opts$all_included, "}]",
+      ifelse(is.null(node$position),
+             paste0(
+               "at (", node$coords[1],
+               ",", node$coords[2], ") "
+             ), ""
+      ),
+      "{"
     )
 
     left_part <- paste0(
