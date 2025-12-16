@@ -22,6 +22,9 @@ The easiest way to do so is with the [R package
 `texPreview`](https://yonicd.github.io/texPreview/) is used to show
 graphs in the viewer, as well as in non-pdf RMarkdown documents.
 
+When using RMarkdown, each graph may need to be created/printed in a
+different R chunk (or only the last one will show).
+
 SWIGs are drawn using Thomas Richardson’s [TikZ shapes
 library](https://www.stat.washington.edu/tsr/website/documents/2018/tikz-for-swigs/swig-examples.pdf).
 The source code for this library is in `inst/tex`. Because it is not
@@ -30,7 +33,8 @@ part of the TikZ distribution, it must be installed manually, or the
 called. If you have installed LaTeX via `tinytex` or another TeXLive
 distribution, you can use the `dagtex::install_swigs()` function to
 attempt to place the TikZ library in the appropriate directory on your
-computer and tell TeX where it is. No guarantees!
+computer and tell TeX where it is. No guarantees! If that doesn’t work,
+use `dagtex::use_swigs()` to copy the file to your working directory.
 
 # Examples
 
@@ -43,10 +47,9 @@ dagtex() %>%
   add_edge("x", "y", curve = "up")
 ```
 
-<img src="man/figures/README/examples-72.png" width="500px" />
+<img src="man/figures/README/examples.png" width="500px" />
 
 ``` r
-
 dagtex() %>% 
   add_node("u1") %>% 
   add_node("l") %>% 
@@ -64,17 +67,16 @@ dagtex() %>%
   add_edge("u3", "y", start_position = "north", end_position = "south")
 ```
 
-<img src="man/figures/README/examples-73.png" width="500px" />
+<img src="man/figures/README/examples2.png" width="500px" />
 
 ``` r
-
 dagtex(node_options = list(shape = "star"),
        swig_options = list(gap = "3pt", line_color_upper = "red", split = "h",
                             fill_color_lower = "pink", line_width_lower = 2.75),
        edge_options = list(line_type = "dashed", color = "green")) %>%
   add_node("THIS IS A SWIG",
            options = list(shape = "forbidden sign", color = "blue", line_width = 4)) %>%
-  add_swig_node(left = "$X$", right = "$x = 1$") %>%
+  add_swig_node(left = "$X$", right = "$x = 1$", options = list(shape = "circle")) %>%
   add_node("$Y^{x = 1}$",
            options = list(color = "violet", text = "olive")) %>%
   add_edge("$x = 1$", "$Y^{x = 1}$", curve = "up", is_double_arrow = TRUE,
@@ -83,49 +85,46 @@ dagtex(node_options = list(shape = "star"),
   add_node("hello", above = 2, options = list(fill = "yellow"))
 ```
 
-<img src="man/figures/README/examples-74.png" width="500px" />
+<img src="man/figures/README/swig_examples.png" width="500px" />
 
 ``` r
-
 dagtex(node_options = list(shape = "circle")) %>%
   add_node("$A_0$") %>%
   add_node("$L_1$") %>%
   add_node("$A_1$") %>%
   add_node("$Y$") %>%
-  add_edge(from = "$A_0$", to = c("$L_1$","$A_1$", "$Y$")) %>%
-  add_edge(from = "$L_1$", to = c("$A_1$", "$Y$")) %>%
+  add_edge(from = "$A_0$", to = c("$L_1$","$A_1$", "$Y$"), auto_curve = "up") %>%
+  add_edge(from = "$L_1$", to = c("$A_1$", "$Y$"),
+           auto_curve = "up") %>%
   add_edge(from = "$A_1$", to = "$Y$")
 ```
 
-<img src="man/figures/README/examples-75.png" width="500px" />
+<img src="man/figures/README/more_examples-NA.png" width="500px" />
 
 ``` r
-
 dagtex(node_options = list(shape = "ellipse"),
        swig_options = list(gap = "3pt", line_color_right = "red", shape = "ellipse")) %>%
   add_node(list(c("$A_0$", "$a_0$"), "$L_1^{a_0}$", c("$A_1^{a_0}$", "$a_1$"), "$Y^{a_0, a_1}$")) %>%
-  add_edge(from = "$a_0$", to = c("$L_1^{a_0}$","$A_1^{a_0}$", "$Y^{a_0, a_1}$")) %>%
-  add_edge(from = "$L_1^{a_0}$", to = c("$A_1^{a_0}$", "$Y^{a_0, a_1}$")) %>%
+  add_edge(from = "$a_0$", to = c("$L_1^{a_0}$","$A_1^{a_0}$", "$Y^{a_0, a_1}$"), auto_curve = "up") %>%
+  add_edge(from = "$L_1^{a_0}$", to = c("$A_1^{a_0}$", "$Y^{a_0, a_1}$"), auto_curve = "up") %>%
   add_edge(from = "$a_1$", to = "$Y^{a_0, a_1}$")
 ```
 
-<img src="man/figures/README/examples-76.png" width="500px" />
+<img src="man/figures/README/more_swig_examples-NA.png" width="500px" />
 
 ``` r
-
 dagtex(swig_options = list(gap = "1pt",
                                     text_right = "red"),
        adorn_math = TRUE) %>%
   add_node(list(c("A_0", "a_0"), "L_1^{a_0}", c("A_1^{a_0}", "a_1"), "Y^{a_0, a_1}")) %>%
-  add_edge(from = "a_0", to = c("L_1^{a_0}","A_1^{a_0}", "Y^{a_0, a_1}")) %>%
-  add_edge(from = "L_1^{a_0}", to = c("A_1^{a_0}", "Y^{a_0, a_1}")) %>%
+  add_edge(from = "a_0", to = c("L_1^{a_0}","A_1^{a_0}", "Y^{a_0, a_1}"), auto_curve = "up") %>%
+  add_edge(from = "L_1^{a_0}", to = c("A_1^{a_0}", "Y^{a_0, a_1}"), auto_curve = "up") %>%
   add_edge(from = "a_1", to = "Y^{a_0, a_1}")
 ```
 
-<img src="man/figures/README/examples-77.png" width="500px" />
+<img src="man/figures/README/more_swig_examples_no_dollars-4.png" width="500px" />
 
 ``` r
-
 dagtex(swig_options = list(gap = "1pt",
                             text_right = "red"),
        adorn_math = TRUE) %>%
@@ -133,38 +132,39 @@ dagtex(swig_options = list(gap = "1pt",
                       "L_1", 
                       c("A_1", "a_1"), 
                       "Y")) %>%
-  add_edge(from = "a_0", to = c("L_1","A_1", "Y")) %>%
-  add_edge(from = "L_1", to = c("A_1", "Y")) %>%
+  add_edge(from = "a_0", to = c("L_1","A_1", "Y"), auto_curve = "up") %>%
+  add_edge(from = "L_1", to = c("A_1", "Y"), auto_curve = "up") %>%
   add_edge(from = "a_1", to = "Y") %>%
   adorn_counterfactuals()
 ```
 
-<img src="man/figures/README/examples-78.png" width="500px" />
+<img src="man/figures/README/even_more_swig_examples-4.png" width="500px" />
 
 ``` r
-
 dagtex(swig_options = list(gap = "1pt",
                             text_right = "red"),
        adorn_math = FALSE) %>%
-  add_node(list(c("$A_0$", "$a_0$"), 
-                      "$L_1$", 
-                      c("$A_1$", "$a_1$"), 
-                      "$Y$")) %>%
-  add_edge(from = "$a_0$", to = c("$L_1$","$A_1$", "$Y$")) %>%
-  add_edge(from = "$L_1$", to = c("$A_1$", "$Y$")) %>%
+  add_node(list(c("$A_0$", "$a_0$"), "$L_1$", 
+                c("$A_1$", "$a_1$"), "$Y$")) %>%
+  add_edge(from = "$a_0$", to = c("$L_1$","$A_1$", "$Y$"), auto_curve = "up") %>%
+  add_edge(from = "$L_1$", to = c("$A_1$", "$Y$"), auto_curve = "up") %>%
   add_edge(from = "$a_1$", to = "$Y$") %>%
   adorn_counterfactuals()
 ```
 
-<img src="man/figures/README/examples-79.png" width="500px" />
+<img src="man/figures/README/yet_more_examples-4.png" width="500px" />
 
 ``` r
-
-dagtex(swig_options = list(gap = "1pt", text = "teal",
-                                    shape = "circle", 
-                                    line_color_left = "purple"),
-       node_options = list(color = "green", shape = "star", fill = "red!30!blue!30"),
-       edge_options = list(color = "blue", arrowhead = "latex", line_type = "dashed"),
+dagtex(swig_options = list(gap = "1pt", 
+                           text = "teal",
+                           shape = "circle", 
+                           line_color_left = "purple"),
+       node_options = list(color = "green", 
+                           shape = "star", 
+                           fill = "red!30!blue!30"),
+       edge_options = list(color = "blue", 
+                           arrowhead = "latex", 
+                           line_type = "dashed"),
        adorn_math = TRUE) %>%
   add_swig_node(left = "A_0", right = "a_0", 
                 options = list(text_left = "magenta", line_color_right = "cyan")) %>%
@@ -174,10 +174,9 @@ dagtex(swig_options = list(gap = "1pt", text = "teal",
   add_edge(from = "a_1", to = "Y^{a_0, a_1}")
 ```
 
-<img src="man/figures/README/examples-80.png" width="500px" />
+<img src="man/figures/README/custom_swig_nodes-4.png" width="500px" />
 
 ``` r
- 
 exposure0 <- "A_0"
 exposure1 <- "A_1"
 confounder1 <- "L_1"
@@ -187,31 +186,30 @@ dagtex(node_options = list(shape = "circle"),
        adorn_math = TRUE) %>%
   add_node(c(exposure0, confounder1, exposure1, outcome)) %>%
   add_edge(from = exposure0, 
-                 to = c(confounder1, exposure1, outcome), 
-                 annotate = annotate_edge("From $A_0$!", position = "yshift=3pt, xshift=-2pt", 
-                                          size = "tiny", color = "purple")) %>%
-  add_edge(from = confounder1, to = c(exposure1, outcome)) %>%
+           to = c(confounder1, exposure1, outcome),
+           auto_curve = "up",
+           annotate = annotate_edge("From $A_0$!", position = "yshift=3pt, xshift=-2pt", 
+                                    size = "tiny", color = "purple")) %>%
+  add_edge(from = confounder1, to = c(exposure1, outcome), auto_curve = "up") %>%
   add_edge(from = exposure1, to = outcome)
 ```
 
-<img src="man/figures/README/examples-81.png" width="500px" />
+<img src="man/figures/README/custom_edge_annotation-4.png" width="500px" />
 
 ``` r
-
 dagtex() %>%
   add_node("Pentagon", 
            options = list(shape = "regular polygon", regular_polygon_sides = 5, color = "orange")) %>%
   add_node("Star",
            options = list(shape = "star", star_point_ratio = 0.3, star_points = 7, color = "teal",
-                           font = "\\tiny", minimum_size = "10pt")) %>%
+                          font = "\\tiny", minimum_size = "10pt")) %>%
   add_node("Octagon", 
            options = list(shape = "regular polygon", regular_polygon_sides = 8, color = "purple"))
 ```
 
-<img src="man/figures/README/examples-82.png" width="500px" />
+<img src="man/figures/README/custom_node_shapes-4.png" width="500px" />
 
 ``` r
-
 dagtex(help_angles = TRUE, node_options = list(color = "orange")) %>%
   add_node("easy") %>%
   add_node("as") %>%
@@ -219,23 +217,20 @@ dagtex(help_angles = TRUE, node_options = list(color = "orange")) %>%
            options = list(color = "purple", fill = "teal", shape = "circle"))
 ```
 
-<img src="man/figures/README/examples-83.png" width="500px" />
+<img src="man/figures/README/custom_options-4.png" width="500px" />
 
 ``` r
-
 dagtex(edge_options = list(arrowhead = "{Rays[n=5]}")) %>%
   add_node(list(c("A", "a"), "b", c("C", "c"), "d")) %>%
   complete_dag(arrow_type = "directed", options = list(line_type = "dotted")) %>%
-    add_edge("a", c("b", "C"), is_headless = TRUE,
-                   options = list(color = "red", line_type = "dashed")) %>%
+  add_edge("a", c("b", "C"), is_headless = TRUE,
+                   options = list(color = "red", line_type = "dashed"), auto_curve = "up") %>%
   adorn_counterfactuals(notation = "parens", text_color = "red")
 ```
 
-<img src="man/figures/README/examples-84.png" width="500px" />
+<img src="man/figures/README/custom_counterfactuals-NA.png" width="500px" />
 
 ``` r
-
-
 dagtex(adorn_math = TRUE,
        swig_options = list(shape = "ellipse", text_right = "red", line_color_right = "red"),
        node_options = list(shape = "ellipse", minimum_height = "2em", minimum_width = "5em")) %>%
@@ -245,10 +240,9 @@ dagtex(adorn_math = TRUE,
   adorn_counterfactuals(text_color = "red")
 ```
 
-<img src="man/figures/README/examples-85.png" width="500px" />
+<img src="man/figures/README/final_custom_counterfactuals-4.png" width="500px" />
 
 ``` r
-
 old_opts <- options()
 options(dagtex.shape = "circle",
         dagtex.adorn_math = TRUE,
@@ -264,7 +258,7 @@ dagtex(adorn_math = TRUE) %>%
            start_position = "north", end_position = "north")
 ```
 
-<img src="man/figures/README/examples-86.png" width="500px" />
+<img src="man/figures/README/session_options-4.png" width="500px" />
 
 ``` r
 options(old_opts)
