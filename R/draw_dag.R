@@ -129,7 +129,7 @@ save_dag <- function(dag, filename, filetype = "png",
 #' @param ... Not currently used.
 #' @keywords internal
 #' @export
-knit_print.dagtex <- function(x, options, ...) {
+knit_print.dagtex <- function(x, options = NULL, ...) {
   if (is.null(options$is_latex_code)) {
     latex_code <- get_latex_code(x, add_header = FALSE)
     tikz_opts <- get_tikz_library(x)
@@ -142,54 +142,97 @@ knit_print.dagtex <- function(x, options, ...) {
   savedag <- options$savedag %||% FALSE
   printdag <- options$printdag %||% TRUE
 
-  if (knitr::is_latex_output() & printdag & !savedag) {
-    return(knitr::asis_output(latex_code))
-  }
-
+  # always generate files for proper figure tracking
   fig.path <- options$fig.path %||% "tikz"
   fig.path <- sub("\\/$", "", fig.path)
   density <- options$density %||% getOption("dagtex.density")
 
   if (!dir.exists(fig.path)) dir.create(fig.path, recursive = TRUE)
 
-  pkg_opts <- texPreview::build_usepackage(
-    pkg = "tikz",
-    uselibrary = tikz_opts
-  )
+  # get tikz library string (not the full package structure)
+  tikz_library <- tikz_opts  # this is already just the \usetikzlibrary line
 
   stem <- options$label %||% substr(tempfile(pattern = "dagtex_", tmpdir = ""), 2, 21)
 
-  ending <- texPreview::tex_opts$get("imgFormat")
+  # force PDF format for latex output
+  pandoc_to <- knitr::opts_knit$get("rmarkdown.pandoc.to")
+  ending <- if (!is.null(pandoc_to) && pandoc_to %in% c("latex", "beamer")) {
+    "pdf"
+  } else {
+    texPreview::tex_opts$get("imgFormat")
+  }
 
-  if (file.exists(file.path(fig.path, paste0(stem, ".", ending)))) {
-    if (file.exists(file.path(fig.path, paste0(stem, "-1.", ending)))) {
-      ex <- list.files(fig.path, pattern = paste0(stem, "\\-"))
-      ex <- sub(paste0(stem, "\\-"), "", ex)
-      ex <- sub(paste0("\\.", ending, "$"), "", ex)
-      n <- max(as.numeric(ex))
-      stem <- paste0(stem, "-", n + 1)
-    } else {
-      stem <- paste0(stem, "-1")
+  # check if this is the first call for this chunk - if so, clean up old files
+  chunk_counter_key <- paste0(".dagtex_counter_", stem)
+  if (!exists(chunk_counter_key, envir = knitr::knit_global())) {
+    # first call in this chunk - remove old files
+    old_files <- list.files(fig.path, pattern = paste0("^", stem, "-\\d+\\.", ending, "$"), full.names = TRUE)
+    if (length(old_files) > 0) {
+      file.remove(old_files)
     }
+    # initialize counter
+    assign(chunk_counter_key, 1, envir = knitr::knit_global())
+  } else {
+    # increment counter
+    current <- get(chunk_counter_key, envir = knitr::knit_global())
+    assign(chunk_counter_key, current + 1, envir = knitr::knit_global())
   }
 
-  filename <- texPreview::tex_preview(
-    latex_code,
-    usrPackages = pkg_opts,
-    fileDir = fig.path,
-    density = density,
-    stem = stem,
-    cleanup = getOption("dagtex.cleanup"),
-    returnType = "engine"
-  )
+  fig_num <- get(chunk_counter_key, envir = knitr::knit_global())
+  stem <- paste0(stem, "-", fig_num)
 
-  if (knitr::is_latex_output() & printdag) {
-    return(knitr::asis_output(latex_code))
+  # for PDF output, compile with tinytex for vector graphics
+  if (ending == "pdf") {
+    # create a complete LaTeX document
+    full_doc <- paste0(
+      "\\documentclass{standalone}\n",
+      "\\usepackage{tikz}\n",
+      tikz_library, "\n",
+      "\\begin{document}\n",
+      latex_code, "\n",
+      "\\end{document}"
+    )
+
+    # construct full paths
+    tex_file <- file.path(fig.path, paste0(stem, ".tex"))
+    pdf_file <- file.path(fig.path, paste0(stem, ".pdf"))
+
+    writeLines(full_doc, tex_file)
+
+    # compile to PDF with explicit output path
+    tinytex::latexmk(tex_file, pdf_file = pdf_file)
+
+    # clean up .tex file if you want (latexmk should handle the rest)
+    if (file.exists(tex_file)) {
+      file.remove(tex_file)
+    }
+
+    # return path in same format as texPreview (relative from doc root)
+    filename <- paste0(fig.path, "/", stem, ".pdf")
+  } else {
+    # for non-PDF, use texPreview
+    pkg_opts <- texPreview::build_usepackage(
+      pkg = "tikz",
+      uselibrary = tikz_opts
+    )
+
+    filename <- texPreview::tex_preview(
+      latex_code,
+      usrPackages = pkg_opts,
+      fileDir = fig.path,
+      density = density,
+      stem = stem,
+      cleanup = getOption("dagtex.cleanup"),
+      returnType = "engine",
+      imgFormat = ending
+    )
   }
 
-  if (printdag) knitr::include_graphics(filename)
+  if (printdag) {
+    knitr::include_graphics(filename)
+  }
+
 }
-
 
 #' Explicitly draw DAG
 #'
@@ -208,6 +251,14 @@ print.dagtex <- function(x, ...) {
     return(invisible(x))
   }
 
+  # check if we're in a knitr context
+  if (isTRUE(getOption('knitr.in.progress'))) {
+    opts <- knitr::opts_current$get()
+    result <- knitr::knit_print(x, options = opts, ...)
+    return(result)
+  }
+
+  # otherwise use plot_dagtex for interactive viewing
   plot_dagtex(x, ...)
 }
 

@@ -4,7 +4,7 @@
 \alias{knit_print.dagtex}
 \title{Draw DAGs with knitr}
 \usage{
-\method{knit_print}{dagtex}(x, options, ...)
+\method{knit_print}{dagtex}(x, options = NULL, ...)
 }
 \arguments{
 \item{x}{Object created by \code{\link[=dagtex]{dagtex()}}.}
